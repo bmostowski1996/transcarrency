@@ -5,6 +5,7 @@ test_routes = Blueprint("test", __name__)
 
 # This will need to get adapted to the database side code
 # Dummy user database
+# Test
 USERS = {
     "user@example.com": {
         "password": "password123",
