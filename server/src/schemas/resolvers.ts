@@ -1,5 +1,6 @@
 import { Profile } from '../models/index.js';
 import { signToken, AuthenticationError } from '../utils/auth.js';
+import { getVehicleParts } from '../utils/nhtsaApi.js'; // Import the new function
 
 interface Profile {
   _id: string;
@@ -35,6 +36,14 @@ interface Context {
   user?: Profile; // Optional user profile in context
 }
 
+interface VehiclePartsArgs {
+  vin?: string;
+  make?: string;
+  model?: string;
+  year?: number;
+  type?: string;
+}
+
 const resolvers = {
   Query: {
     profiles: async (): Promise<Profile[]> => {
@@ -55,6 +64,21 @@ const resolvers = {
       }
       // If not authenticated, throw an authentication error
       throw new AuthenticationError('Not Authenticated');
+    },
+
+    vehicleParts: async (_parent: unknown, args: VehiclePartsArgs) => {
+      try {
+        // Ensure at least one identifier is provided
+        if (!args.vin && (!args.make || !args.model || !args.year)) {
+          throw new Error('You must provide a VIN, or a combination of make, model, and year.');
+        }
+        const parts = await getVehicleParts(args);
+        return parts;
+      } catch (error) {
+        console.error('Error in vehicleParts resolver:', error);
+        // Consider throwing a more specific GraphQL error
+        throw new Error('Failed to fetch vehicle parts.');
+      }
     },
   },
 
