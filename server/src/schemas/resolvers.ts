@@ -1,55 +1,7 @@
-
-{ Profile } from '../models/index.js';
-import { signToken, AuthenticationError } from '../utils/auth.js';
-import { getVehicleParts } from '../utils/nhtsaApi.js'; // Import the new function
-
-interface Profile {
-  _id: string;
-  name: string;
-  email: string;
-  password: string;
-  skills: string[];
-}
-
-interface ProfileArgs {
-  profileId: string;
-}
-
-interface AddProfileArgs {
-  input:{
-    name: string;
-    email: string;
-    password: string;
-  }
-}
-
-interface AddSkillArgs {
-  profileId: string;
-  skill: string;
-}
-
-interface RemoveSkillArgs {
-  profileId: string;
-  skill: string;
-}
-
-interface Context {
-  user?: Profile; // Optional user profile in context
-}
-
-import { User } from '../models/User';
+import { User } from '../models/usermodel';
 import { AuthenticationError } from 'apollo-server-errors';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-
-
-interface VehiclePartsArgs {
-  vin?: string;
-  make?: string;
-  model?: string;
-  year?: number;
-  type?: string;
-}
 
 const resolvers = {
   Query: {
@@ -67,21 +19,6 @@ const resolvers = {
         throw new AuthenticationError('You must be logged in');
       }
       return await User.findById(context.user._id);
-    },
-
-    vehicleParts: async (_parent: unknown, args: VehiclePartsArgs) => {
-      try {
-        // Ensure at least one identifier is provided
-        if (!args.vin && (!args.make || !args.model || !args.year)) {
-          throw new Error('You must provide a VIN, or a combination of make, model, and year.');
-        }
-        const parts = await getVehicleParts(args);
-        return parts;
-      } catch (error) {
-        console.error('Error in vehicleParts resolver:', error);
-        // Consider throwing a more specific GraphQL error
-        throw new Error('Failed to fetch vehicle parts.');
-      }
     },
   },
   Mutation: {
