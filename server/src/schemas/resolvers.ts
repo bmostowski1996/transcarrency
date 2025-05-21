@@ -37,7 +37,7 @@ interface Context {
   user?: Profile; // Optional user profile in context
 }
 
-import { User } from '../models/User';
+import { User } from '../models/User.js';
 import { AuthenticationError } from 'apollo-server-errors';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -142,3 +142,5 @@ const resolvers = {
 };
 
 export default resolvers;
+
+// export default resolvers;
