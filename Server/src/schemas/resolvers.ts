@@ -1,4 +1,4 @@
-import { User } from '../models/User';
+import { User } from '../models/usermodel';
 import { AuthenticationError } from 'apollo-server-errors';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
