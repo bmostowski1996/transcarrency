@@ -18,11 +18,18 @@ const typeDefs = `
     password: String!
   }
 
+  type VehiclePart {
+    PartName: String
+    PartType: String
+    # Add other fields from your VehiclePart interface in nhtsaApi.ts
+  }
+
   type Query {
     profiles: [Profile]!
     profile(profileId: ID!): Profile
     # Because we have the context functionality in place to check a JWT and decode its data, we can use a query that will always find and return the logged in user's data
     me: Profile
+    vehicleParts(vin: String, make: String, model: String, year: Int, type: String): [VehiclePart]
   }
 
   type Mutation {
