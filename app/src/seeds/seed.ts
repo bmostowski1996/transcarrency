@@ -1,5 +1,5 @@
 import db from '../config/connection.js';
-import { Profile } from '../models/index.js';
+import { Profile } from '../models/index_temp.js';
 import profileSeeds from './profileData.json' assert { type: "json" };
 import cleanDB from './cleanDB.js';
 
