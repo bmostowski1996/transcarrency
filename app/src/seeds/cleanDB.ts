@@ -1,4 +1,4 @@
-import { Profile } from '../models/index.js';
+import { Profile } from '../models/index_temp.js';
 import process from 'process';
 
 const cleanDB = async (): Promise<void> => {
