@@ -1,10 +1,11 @@
 // resolver.ts
 import { Profile } from '../models/index.js';
-import { signToken, AuthenticationError as AuthError } from '../utils/auth.js';
+import { signToken } from '../utils/auth.js';
 import { getVehicleParts } from '../utils/nhtsaApi.js'; // Import the new function
 import { User } from '../models/User.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { AuthenticationError } from 'apollo-server-express'; // Fix import for AuthError
 
 interface Profile {
   _id: string;
@@ -59,9 +60,9 @@ const resolvers = {
       return await User.findById(userId);
     },
     // Fetch the currently logged-in user's data
-    me: async (_: any, __: any, context: any) => {
+    me: async (_: any, __: any, context: Context) => {
       if (!context.user) {
-        throw new AuthError('You must be logged in');
+        throw new AuthenticationError('You must be logged in'); // Use correct error class
       }
       return await User.findById(context.user._id);
     },
@@ -110,12 +111,12 @@ const resolvers = {
     login: async (_: any, { email, password }: { email: string; password: string }) => {
       const user = await User.findOne({ email });
       if (!user) {
-        throw new AuthError('Invalid credentials');
+        throw new AuthenticationError('Invalid credentials');
       }
 
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
-        throw new AuthError('Invalid credentials');
+        throw new AuthenticationError('Invalid credentials');
       }
 
       const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET!, {
