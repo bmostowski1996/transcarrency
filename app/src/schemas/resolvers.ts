@@ -1,7 +1,10 @@
-
-{ Profile } from '../models/index.js';
-import { signToken, AuthenticationError } from '../utils/auth.js';
+// resolver.ts
+import { Profile } from '../models/index.js';
+import { signToken, AuthenticationError as AuthError } from '../utils/auth.js';
 import { getVehicleParts } from '../utils/nhtsaApi.js'; // Import the new function
+import { User } from '../models/User.js';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
 interface Profile {
   _id: string;
@@ -16,11 +19,11 @@ interface ProfileArgs {
 }
 
 interface AddProfileArgs {
-  input:{
+  input: {
     name: string;
     email: string;
     password: string;
-  }
+  };
 }
 
 interface AddSkillArgs {
@@ -36,12 +39,6 @@ interface RemoveSkillArgs {
 interface Context {
   user?: Profile; // Optional user profile in context
 }
-
-import { User } from '../models/User.js';
-import { AuthenticationError } from 'apollo-server-errors';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-
 
 interface VehiclePartsArgs {
   vin?: string;
@@ -64,11 +61,12 @@ const resolvers = {
     // Fetch the currently logged-in user's data
     me: async (_: any, __: any, context: any) => {
       if (!context.user) {
-        throw new AuthenticationError('You must be logged in');
+        throw new AuthError('You must be logged in');
       }
       return await User.findById(context.user._id);
     },
 
+    // Fetch vehicle parts using NHTSA API utility
     vehicleParts: async (_parent: unknown, args: VehiclePartsArgs) => {
       try {
         // Ensure at least one identifier is provided
@@ -79,49 +77,45 @@ const resolvers = {
         return parts;
       } catch (error) {
         console.error('Error in vehicleParts resolver:', error);
-        // Consider throwing a more specific GraphQL error
         throw new Error('Failed to fetch vehicle parts.');
       }
     },
   },
   Mutation: {
     // Register a new user
-    registerUser: async (_: any, { input }: { input: UserInput }) => {
+    registerUser: async (_: any, { input }: { input: AddProfileArgs['input'] }) => {
       const { name, email, password } = input;
 
-      // Check if the user already exists
       const existingUser = await User.findOne({ email });
       if (existingUser) {
         throw new Error('User already exists');
       }
 
-      // Hash the password
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      // Create a new user
       const newUser = await User.create({
         name,
         email,
         password: hashedPassword,
       });
 
-      // Generate a JWT token
       const token = jwt.sign({ _id: newUser._id }, process.env.JWT_SECRET!, {
         expiresIn: '1h',
       });
 
       return { token, user: newUser };
     },
+
     // Login an existing user
     login: async (_: any, { email, password }: { email: string; password: string }) => {
       const user = await User.findOne({ email });
       if (!user) {
-        throw new AuthenticationError('Invalid credentials');
+        throw new AuthError('Invalid credentials');
       }
 
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
-        throw new AuthenticationError('Invalid credentials');
+        throw new AuthError('Invalid credentials');
       }
 
       const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET!, {
@@ -130,10 +124,12 @@ const resolvers = {
 
       return { token, user };
     },
+
     // Update a user's information
-    updateUser: async (_: any, { userId, input }: { userId: string; input: UserInput }) => {
+    updateUser: async (_: any, { userId, input }: { userId: string; input: AddProfileArgs['input'] }) => {
       return await User.findByIdAndUpdate(userId, input, { new: true });
     },
+
     // Delete a user by ID
     deleteUser: async (_: any, { userId }: { userId: string }) => {
       return await User.findByIdAndDelete(userId);
