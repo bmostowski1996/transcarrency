@@ -48,4 +48,22 @@ function App() {
   );
 }
 
+// function Login() {
+//   return (
+//     <div className="login-background">
+//       <button className="back-btn">← Back</button>
+//       <img src="/logo.png" alt="TransCARrency Logo" className="logo" />
+//       <h2>Welcome to TransCARrency! Please enter your username or email to login.</h2>
+//       <input type="text" placeholder="Username or email" />
+//       <input type="password" placeholder="Password" />
+//       <button className="login-btn">Log In</button>
+//       <div>Log In With Google</div>
+//       <button className="google-btn">
+//         <img src="/google-icon.svg" alt="Google" /> Google Login
+//       </button>
+//     </div>
+//   );
+// }
+
 export default App;
+// export { Login };
