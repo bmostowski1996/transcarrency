@@ -77,8 +77,6 @@ export const typeDefs = gql`
     users: [User]!
     # Fetch a single user by ID
     user(userId: ID!): User
-    # Fetch the currently logged-in user's data
-    me: User
   }
 
   # Auth token and user data returned after login or registration
@@ -136,3 +134,4 @@ export const typeDefs = gql`
 
 
 export default typeDefs;
+
