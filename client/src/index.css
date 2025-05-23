@@ -1,0 +1,165 @@
+/* Gradient background for all main screens */
+body, #root, .app-background {
+  min-height: 100vh;
+  min-width: 100vw;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: linear-gradient(120deg, #1ec6f7 0%, #000 70%);
+  color: #fff;
+}
+
+/* Center content vertically and horizontally */
+.centered-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+/* Logo styling */
+.logo {
+  width: 220px;
+  margin-bottom: 10px;
+}
+
+/* App title */
+.app-title {
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  letter-spacing: 1px;
+}
+
+/* Welcome text */
+.welcome-text {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  text-align: center;
+  text-shadow: 1px 2px 8px #000a;
+}
+
+/* Form container */
+.form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  background: transparent;
+}
+
+/* Input fields */
+input[type="text"], input[type="email"], input[type="password"] {
+  width: 100%;
+  padding: 18px 20px;
+  margin: 12px 0;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  background: #eaeaea;
+  color: #222;
+  outline: none;
+  box-sizing: border-box;
+}
+
+/* Main buttons */
+.button, .main-btn {
+  width: 100%;
+  max-width: 400px;
+  padding: 18px 0;
+  margin: 18px 0 0 0;
+  background: #000;
+  color: #fff;
+  font-size: 2rem;
+  font-weight: bold;
+  border: 2px solid #fff;
+  border-radius: 12px;
+  box-shadow: 2px 4px 10px #000a;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  text-align: center;
+}
+
+.button:hover, .main-btn:hover {
+  background: #222;
+  color: #1ec6f7;
+  box-shadow: 2px 6px 18px #000c;
+}
+
+/* Secondary text (Or, Log In With Google, etc.) */
+.secondary-text {
+  margin: 18px 0 8px 0;
+  font-size: 1.2rem;
+  color: #fff;
+  text-align: center;
+}
+
+/* Google login button */
+.google-btn {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  max-width: 400px;
+  padding: 14px 18px;
+  margin: 10px 0 0 0;
+  background: #eaeaea;
+  color: #444;
+  font-size: 1.3rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+  box-shadow: 1px 2px 8px #0002;
+}
+
+.google-btn:hover {
+  background: #d2e3fc;
+}
+
+.google-icon {
+  height: 28px;
+  margin-right: 16px;
+}
+
+/* Back button styling */
+.back-btn {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  display: flex;
+  align-items: center;
+  color: #fff;
+  font-size: 1.3rem;
+  font-weight: 500;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 10;
+  text-shadow: 1px 2px 8px #000a;
+}
+
+.back-btn svg, .back-btn-icon {
+  margin-right: 8px;
+  font-size: 2rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .form-container, .button, .main-btn, .google-btn {
+    max-width: 95vw;
+    font-size: 1.1rem;
+    padding: 14px 0;
+  }
+  .logo {
+    width: 150px;
+  }
+  .app-title, .welcome-text {
+    font-size: 1.3rem;
+  }
+}
