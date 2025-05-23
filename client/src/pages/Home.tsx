@@ -1,7 +1,23 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import tclogo from '../assets/tclogo_transparent.png';
 
 const Home = () => {
+
+  const navigate = useNavigate();
+
+  const handleLogin = (event: React.MouseEvent<HTMLButtonElement>) => {
+    // your logic here
+    event.preventDefault();
+    navigate('/login');
+  };
+
+  const handleSignup = (event: React.MouseEvent<HTMLButtonElement>) => {
+    // your logic here
+    event.preventDefault();
+    navigate('/signup');
+  };
+
   return (
     <main className="home-background" style={{ textAlign: 'center', minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
       <img src={tclogo} alt="TransCARrency Logo" style={{ width: '50vh' }} />
@@ -23,6 +39,7 @@ const Home = () => {
           boxShadow: '0 0 0 4px #fff, 0 4px 24px rgba(0,0,0,0.2)',
           cursor: 'pointer',
         }}
+        onClick={handleLogin}
       >
         Login
       </button>
@@ -45,6 +62,7 @@ const Home = () => {
           boxShadow: '0 0 0 4px #fff, 0 4px 24px rgba(0,0,0,0.2)',
           cursor: 'pointer',
         }}
+        onClick={handleSignup}
       >
         Sign-Up
       </button>
