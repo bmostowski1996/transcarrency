@@ -128,7 +128,7 @@ input[type="text"], input[type="email"], input[type="password"] {
 }
 
 .home-background {
-  background: linear-gradient(120deg, #1ec6f7 0%, #000 70%);
+  background: linear-gradient(120deg, #1ec6f7 0%, #000 40%, #000 60%, #1ec6f7 100%);
   min-height: 100vh;
   width: 100vw;
 }
