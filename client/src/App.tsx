@@ -6,10 +6,17 @@ import {
   createHttpLink,
 } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
-import { Outlet } from 'react-router-dom';
 
-import Header from './components/Header';
-import Footer from './components/Footer';
+import Home from './pages/Home';
+import Signup from './pages/Signup';
+import Login from './pages/Login';
+import Dashboard from './pages/Dashboard';
+import Error from './pages/Error';
+
+import LayoutWithHeader from './layouts/LayoutHeader';
+import LayoutNoHeader from './layouts/LayoutNoHeader';
+
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 
 const httpLink = createHttpLink({
   uri: '/graphql',
@@ -28,24 +35,37 @@ const authLink = setContext((_, { headers }) => {
   };
 });
 
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <LayoutNoHeader />, // Home route uses no-header layout
+    errorElement: <Error />,
+    children: [
+      { index: true, element: <Home /> },
+      { path: '/login', element: <Login />},
+      { path: '/signup', element: <Signup />}
+    ]
+  },
+  {
+    path: '/',
+    element: <LayoutWithHeader />, // All other pages get the header
+    errorElement: <Error />,
+    children: [
+      { path: 'dashboard', element: <Dashboard /> }
+    ]
+  }
+]);
+
 const client = new ApolloClient({
   // Set up our client to execute the `authLink` middleware prior to making the request to our GraphQL API
   link: authLink.concat(httpLink),
   cache: new InMemoryCache(),
 });
 
-function App() {
+export default function App() {
   return (
     <ApolloProvider client={client}>
-      <div className="flex-column justify-flex-start min-100-vh">
-        <Header />
-        <div className="container">
-          <Outlet />
-        </div>
-        <Footer />
-      </div>
+      <RouterProvider router={router} />
     </ApolloProvider>
   );
 }
-
-export default App;
