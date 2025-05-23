@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
 
-export const QUERY_PROFILES = gql`
+export const QUERY_USER = gql`
   query allProfiles {
     profiles {
       _id
@@ -11,7 +11,7 @@ export const QUERY_PROFILES = gql`
   }
 `;
 
-export const QUERY_SINGLE_PROFILE = gql`
+export const QUERY_SINGLE_USER = gql`
   query singleProfile($profileId: ID!) {
     profile(profileId: $profileId) {
       _id
