@@ -1,6 +1,8 @@
 // file for user model
 import { Schema, model, Document } from 'mongoose';
 import bycrypt from 'bcrypt';
+import { google } from 'googleapis';
+import { OAuth2Client } from 'google-auth-library';
 
 // user interface
 interface IUser extends Document {
@@ -8,6 +10,9 @@ interface IUser extends Document {
   password: string;
   firstName: string;
   lastName: string;
+  googleAccessToken?: string;
+  googleRefreshToken?: string;
+  googleTokenExpiryDate?: Date | null;
 }
 
 // user schema
@@ -17,6 +22,19 @@ const userSchema = new Schema<IUser>(
     password: { type: String, required: true },
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
+    googleAccessToken: {
+      type: String,
+      required: false,
+    },
+    googleRefreshToken: {
+      type: String,
+      required: false,
+    },
+    googleTokenExpiryDate: {
+      type: Date,
+      required: false,
+      default: null,
+    },
   },
   { timestamps: true }
 );

@@ -61,3 +61,4 @@ const vehicleSchema = new Schema<IVehicle>(
 // Export Vehicle model
 const Vehicle = model('Vehicle', vehicleSchema);
 export default Vehicle;
+

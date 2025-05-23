@@ -6,6 +6,7 @@ import { ApolloServer } from '@apollo/server';// Note: Import from @apollo/serve
 import { expressMiddleware } from '@apollo/server/express4';
 import { typeDefs, resolvers } from './schemas/index.js';
 import { authenticateToken } from './utils/auth.js';
+import { googleCalendarController } from './controllers/index.js';
 
 import { fileURLToPath } from 'url';
 
@@ -32,6 +33,8 @@ const startApolloServer = async () => {
       context: authenticateToken as any
     }
   ));
+
+  app.use('/', googleCalendarController);
 
   if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.join(__dirname, '../../client/dist')));
