@@ -1,6 +1,14 @@
-// index for schemas to be used in the server
-import { typeDefs, resolvers } from './Schemas';
+import { typeDefs } from './typeDefs'; // or typeDefs.js
+// Import the default export from './resolvers' and alias it
+import resolversFromFile from './resolvers'; // or resolvers.js
 
-export { typeDefs, resolvers };
-// This file serves as an index for all the schemas in the project.
-// It imports the type definitions and resolvers from the Schemas file and exports them.
+// Export typeDefs and the imported default resolver as 'resolvers'
+export { typeDefs, resolversFromFile as resolvers };
+
+export { default as typeDefs } from './typeDefs';
+export { default as resolvers } from './resolvers';
+
+// ...existing code...
+
+// index for schemas to be used in the server
+
