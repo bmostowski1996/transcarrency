@@ -14,7 +14,7 @@ class AuthService {
   /**
    * Decode the stored token and return the user's profile data
    */
-  getProfile(): ExtendedJwt | null {
+  getUser(): ExtendedJwt | null {
     try {
       const token = this.getToken();
       return jwtDecode<ExtendedJwt>(token);

@@ -8,7 +8,9 @@
 
 // import Auth from '../utils/auth';
 
-// First, we should take a look at Evan's mockups...
+// TODO: This page is intended for logged in users. We should redirect the user to the login page if they try to access
+// this page without being logged in
+
 import ford_mustang from '../assets/ford_mustang.png';
 
 interface ServiceReportData {
@@ -26,6 +28,9 @@ const Dashboard = () => {
 
   // Dummy data for testing purposes
   useEffect(() => {
+    // TODO: Check if the user is logged in. If they aren't, redirect them to the login page.
+    // We should probably review past lessons on authentication with graphQL...
+
     setServiceReport({
       serviceDate: new Date(`2025-05-26`),
       mileage: 50000,
