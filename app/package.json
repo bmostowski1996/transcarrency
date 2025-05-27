@@ -9,7 +9,7 @@
     "start": "node dist/server.js",
     "watch": "nodemon dist/server.js",
     "seed": "node dist/seeds/seed.js",
-    "test": "jest" 
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
@@ -30,6 +30,6 @@
     "@types/mocha": "^10.0.10",
     "cypress": "^14.4.0",
     "nodemon": "^3.1.0",
-    "typescript": "^5.4.5"
+    "typescript": "^5.8.3"
   }
 }
