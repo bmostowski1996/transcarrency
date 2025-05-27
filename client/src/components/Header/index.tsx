@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import tclogo from '../../assets/tclogo_compact.png';
+import tclogo from '../../assets/tclogo_simple.png';
 import { type MouseEvent} from 'react';
 import Auth from '../../utils/auth';
 

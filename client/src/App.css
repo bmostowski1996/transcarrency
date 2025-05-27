@@ -20,6 +20,10 @@ body, #root, .app-background {
   min-height: 100vh;
 }
 
+h3 {
+  font-size: 72px;
+}
+
 /* Logo styling */
 .logo {
   width: 220px;
@@ -34,6 +38,33 @@ body, #root, .app-background {
   letter-spacing: 1px;
 }
 
+.bg-dashboard {
+  background-color: #64C6D7;
+  border-radius: 25px;
+  font-family: "IBM Plex Sans", sans-serif;
+  align-items: center;
+}
+
+.service-report {
+  background-color: #DBFFE8;
+  border-radius: 10px;
+  font-family: "IBM Plex Sans", sans-serif;
+  align-items: center;
+}
+
+.font-dashboard {
+  font-size: 48px;
+  font-weight: 500;
+  text-align: center;
+  color: #000
+}
+
+.font-dashboard-h3 {
+  font-size: 32px;
+  font-weight: 500;
+  text-align: center;
+  color: #000
+}
 /* Welcome text */
 .welcome-text {
   font-size: 2rem;
