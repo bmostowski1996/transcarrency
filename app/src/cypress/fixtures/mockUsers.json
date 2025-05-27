@@ -1,0 +1,23 @@
+[
+    {
+      "_id": "1",
+      "email": "john@example.com",
+      "firstName": "John",
+      "lastName": "Doe",
+      "password": "hashedpassword"
+    },
+    {
+      "_id": "2",
+      "email": "jane@example.com",
+      "firstName": "Jane",
+      "lastName": "Doe",
+      "password": "hashedpassword"
+    },
+    {
+      "_id": "3",
+      "email": "alice@example.com",
+      "firstName": "Alice",
+      "lastName": "Smith",
+      "password": "hashedpassword"
+    }
+  ]

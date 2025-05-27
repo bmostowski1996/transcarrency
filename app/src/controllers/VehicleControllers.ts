@@ -1,6 +1,6 @@
 // Controler for handling vehicle-related operations/ export to routes
 import {Request, Response} from 'express';
-import {Vehicle} from '../models/Vehicle';
+import Vehicle from '../models/Vehicle';
 
 export const getAllVehicles = async (req: Request, res: Response) => {
     try{
