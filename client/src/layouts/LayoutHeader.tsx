@@ -6,9 +6,9 @@ import Footer from '../components/Footer';
 export default function LayoutHeader() {
   return (
     
-    <div className="flex-column justify-flex-start min-100-vh">
+    <div className="flex-column justify-flex-start min-100-vh space-y-6">
         <Header/>
-        <div className="container">
+        <div className="px-4">
             <Outlet />
         </div>
         <Footer />

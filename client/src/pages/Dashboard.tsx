@@ -1,61 +1,69 @@
-import { Navigate, useParams } from 'react-router-dom';
-import { useQuery } from '@apollo/client';
+ import { useState, useEffect } from 'react';
+// import { useQuery } from '@apollo/client';
 
-import SkillsList from '../components/SkillsList';
-import SkillForm from '../components/SkillForm';
+// import SkillsList from '../components/SkillsList';
+// import SkillForm from '../components/SkillForm';
 
-import { QUERY_SINGLE_PROFILE, QUERY_ME } from '../utils/queries';
+// import { QUERY_SINGLE_PROFILE, QUERY_ME } from '../utils/queries';
 
-import Auth from '../utils/auth';
+// import Auth from '../utils/auth';
+
+// TODO: This page is intended for logged in users. We should redirect the user to the login page if they try to access
+// this page without being logged in
+
+import ford_mustang from '../assets/ford_mustang.png';
+
+interface ServiceReportData {
+  serviceDate: Date;
+  serviceType: 'Oil Change' | 'Brake Replacement' | 'Tire Rotation' | 'Battery Replacement' | 'Inspection' | 'Other';
+  mileage: number;
+  notes: string[];
+  cost: number;
+  shopName: string | null;
+}
 
 const Dashboard = () => {
-  const { profileId } = useParams();
 
-  // If there is no `profileId` in the URL as a parameter, execute the `QUERY_ME` query instead for the logged in user's information
-  const { loading, data } = useQuery(
-    profileId ? QUERY_SINGLE_PROFILE : QUERY_ME,
-    {
-      variables: { profileId: profileId },
-    }
-  );
+  const [serviceReport, setServiceReport] = useState<ServiceReportData>({});
 
-  // Check if data is returning from the `QUERY_ME` query, then the `QUERY_SINGLE_PROFILE` query
-  const profile = data?.me || data?.profile || {};
+  // Dummy data for testing purposes
+  useEffect(() => {
+    // TODO: Check if the user is logged in. If they aren't, redirect them to the login page.
+    // We should probably review past lessons on authentication with graphQL...
 
-  // Use React Router's `<Navigate />` component to redirect to personal profile page if username is yours
-  if (Auth.loggedIn() && Auth.getProfile().data._id === profileId) {
-    return <Navigate to="/me" />;
-  }
+    setServiceReport({
+      serviceDate: new Date(`2025-05-26`),
+      mileage: 50000,
+      serviceType: 'Oil Change',
+      notes: [
+        'Car owner drinks way too much Pepsi'
+      ],
+      cost: 115,
+      shopName: null
+    });
+  },[]);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (!profile?.name) {
-    return (
-      <h4>
-        You need to be logged in to see your profile page. Use the navigation
-        links above to sign up or log in!
-      </h4>
-    );
-  }
 
   return (
-    <div>
-      <h2 className="card-header">
-        {profileId ? `${profile.name}'s` : 'Your'} friends have endorsed these
-        skills...
-      </h2>
-
-      {profile.skills?.length > 0 && (
-        <SkillsList
-          skills={profile.skills}
-          isLoggedInUser={!profileId && true}
-        />
-      )}
-
-      <div className="my-4 p-4" style={{ border: '1px dotted #1a1a1a' }}>
-        <SkillForm profileId={profile._id} />
+    <div className='bg-dashboard mx-auto w-7/8 items-center'>
+      {/* Displays current vehicles */}
+      {/* TODO: Add arrows which let you move between vehicles */}
+      <h2 className='font-dashboard'>Dashboard</h2>
+      <h3 className='font-dashboard-h3'>My Vehicles</h3>
+      <img src={ford_mustang} alt="Ford Mustang" className="w-[25vh] mx-auto" />
+      <h3 className='font-dashboard-h3'>1971 Ford Mustang</h3>
+      
+      {/* Displays the most recent service report recorded for the vehicle */}
+      <div className='service-report mx-auto w-7/8'>
+        <h3 className='font-dashboard-h3'>Most Recent Service Report</h3>
+        {/* Grid of service report details */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-4 bg-mint-100 rounded-xl">
+          <h3 className='font-dashboard-h3'>Service Date: {String(serviceReport.serviceDate)}</h3>
+          <h3 className='font-dashboard-h3'>Service Type: {serviceReport.serviceType}</h3>
+          <h3 className='font-dashboard-h3'>Service Cost: {serviceReport.cost}</h3>
+          <h3 className='font-dashboard-h3'>Repair Shop: {serviceReport.shopName || 'None'}</h3>
+          <h3 className='font-dashboard-h3'>Car Mileage: {serviceReport.mileage}</h3>
+        </div>
       </div>
     </div>
   );

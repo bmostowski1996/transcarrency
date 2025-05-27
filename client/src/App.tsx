@@ -51,7 +51,7 @@ const router = createBrowserRouter([
     element: <LayoutWithHeader />, // All other pages get the header
     errorElement: <Error />,
     children: [
-      { path: 'dashboard', element: <Dashboard /> }
+      { path: '/dashboard', element: <Dashboard /> }
     ]
   }
 ]);

@@ -11,11 +11,13 @@
   },
   "dependencies": {
     "@apollo/client": "^3.7.14",
+    "@tailwindcss/vite": "^4.1.7",
     "graphql": "^16.6.0",
     "jwt-decode": "^4.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.23.1"
+    "react-router-dom": "^6.23.1",
+    "tailwindcss": "^4.1.7"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",
