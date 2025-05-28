@@ -1,8 +1,8 @@
 // resolver.ts
-import { Profile } from '../models/index.js';
+import { User } from '../models/index.js';
 import { signToken } from '../utils/auth.js';
 import { getVehicleParts } from '../utils/nhtsaApi.js'; // Import the new function
-import { User } from '../models/User.js';
+// Removed duplicate import of User
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { AuthenticationError } from 'apollo-server-express'; // Fix import for AuthError
@@ -27,16 +27,6 @@ interface AddProfileArgs {
   };
 }
 
-interface AddSkillArgs {
-  profileId: string;
-  skill: string;
-}
-
-interface RemoveSkillArgs {
-  profileId: string;
-  skill: string;
-}
-
 interface Context {
   user?: Profile; // Optional user profile in context
 }
@@ -48,6 +38,8 @@ interface VehiclePartsArgs {
   year?: number;
   type?: string;
 }
+
+const token = signToken(User,Email, _id); // Example usage of signToken
 
 const resolvers = {
   Query: {
