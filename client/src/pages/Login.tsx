@@ -6,88 +6,6 @@ import Auth from '../utils/auth';
 import tclogo from '../assets/tclogo_transparent.png';
 import gicon from '../assets/gi-transparent.png'; // Adjust the path as necessary
 
-// const Login = () => {
-//   const [formState, setFormState] = useState({ email: '', password: '' });
-//   const [login, { error, data }] = useMutation(LOGIN_USER);
-//   const navigate = useNavigate();
-
-//   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-//     const { name, value } = event.target;
-//     setFormState({
-//       ...formState,
-//       [name]: value,
-//     });
-//   };
-
-//   const handleFormSubmit = async (event: FormEvent) => {
-//     event.preventDefault();
-//     try {
-//       const { data } = await login({
-//         variables: { ...formState },
-//       });
-//       Auth.login(data.login.token);
-//     } catch (e) {
-//       console.error(e);
-//     }
-//     setFormState({
-//       email: '',
-//       password: '',
-//     });
-//   };
-
-//   return (
-//     <div className="login-background">
-//       <button className="back-btn" onClick={() => navigate(-1)}>
-//         <span style={{ fontSize: '2rem', marginRight: '8px' }}>←</span> Back
-//       </button>
-//       <img src={tclogo} alt="TransCARrency Logo" className="logo" style={{ textAlign: 'center', minHeight: '30vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }} /> 
-//       <h2 className="login-title">
-//         Welcome to TransCARrency! Please enter your username or email to login.
-//       </h2>
-//       {data ? (
-//         <div className="login-success">
-//           Success! You may now head <Link to="/">back to the homepage.</Link>
-//         </div>
-//       ) : (
-//         <form className="login-form" onSubmit={handleFormSubmit}>
-//           <input
-//             className="login-input"
-//             placeholder="Username or email"
-//             name="email"
-//             type="text"
-//             value={formState.email}
-//             onChange={handleChange}
-//             autoComplete="username"
-//           />
-//           <input
-//             className="login-input"
-//             placeholder="Password"
-//             name="password"
-//             type="password"
-//             value={formState.password}
-//             onChange={handleChange}
-//             autoComplete="current-password"
-//           />
-//           <button className="login-btn" type="submit" style={{ marginTop: '20px', boxShadow: '0 0 0 4px #fff, 0 4px 24px rgba(0,0,0,0.2)', background: '#000', color: '#fff', fontWeight: 'bold', padding: '0.5em 2em', borderRadius: '12px', border: 'none', cursor: 'pointer' }}>
-//             Log In
-            
-//           </button>
-//         </form>
-//       )}
-//       {error && (
-//         <div className="login-error">
-//           {error.message}
-//         </div>
-//       )}
-//       <div className="login-google-label">Log In With Google</div>
-//       <button className="google-btn" type="button">
-//         <img src={gicon} alt="Google" className="google-icon" /> Google Login
-//       </button>
-//     </div>
-//   );
-// };
-
-// export default Login;
 
 const Login = () => {
   const [formState, setFormState] = useState({ email: '', password: '' });
@@ -157,7 +75,7 @@ const Login = () => {
       />
 
       <h2 className="login-title" style={{ fontWeight: 'bold', fontSize: '3rem', marginBottom: '1rem' }}>
-        Welcome to TransCARrency! Please enter your username or email to login.
+        Welcome to TransCarrency! Please enter your username or email to login.
       </h2>
 
       {data ? (
@@ -236,9 +154,9 @@ const Login = () => {
         </div>
       )}
 
-      <div className="login-google-label" style={{ marginTop: '3em', fontWeight: 'bold' }}>
+      {/* <div className="login-google-label" style={{ marginTop: '3em', fontWeight: 'bold' }}>
         Log In With Google
-      </div>
+      </div> */}
 
       {/* <button
         className="google-btn"
