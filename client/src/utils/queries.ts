@@ -1,47 +1,101 @@
 import { gql } from '@apollo/client';
 
 export const QUERY_USER = gql`
-  query allProfiles {
-    profiles {
+  query allUsers {
+    users {
       _id
       name
       email
-      skills
+      vehicles {
+        _id
+        make
+        model
+        year
+        vin
+        licensePlate
+        mileage
+        serviceRecords {
+          date
+          type
+          cost
+          mileage
+          notes
+          shop
+          recommendedPrice
+        }
+      }
     }
   }
 `;
 
 export const QUERY_SINGLE_USER = gql`
-  query singleProfile($profileId: ID!) {
-    profile(profileId: $profileId) {
+  query singleUser($userId: ID!) {
+    user(userId: $userId) {
       _id
       name
       email
-      skills
+      vehicles {
+        _id
+        make
+        model
+        year
+        vin
+        licensePlate
+        mileage
+        serviceRecords {
+          date
+          type
+          cost
+          mileage
+          notes
+          shop
+          recommendedPrice
+        }
+      }
     }
   }
 `;
 
+// Written based on what I expect the back-end code to look like.
+// TODO: The back-end code must be adjusted to reflect this structure
 export const QUERY_ME = gql`
   query me {
     me {
       _id
       name
       email
-      skills
+      vehicles {
+        _id
+        make
+        model
+        year
+        vin
+        licensePlate
+        mileage
+        serviceRecords {
+          date
+          type
+          cost
+          mileage
+          notes
+          shop
+          recommendedPrice
+        }
+      }
     }
   }
 `;
 
 export const QUERY_VEHICLES_BY_USER = gql`
   query getVehiclesByUser($ownerId: ID!) {
-    getVehiclesByUser(ownerId: $ownerId) {
+    user(userId: $ownerId) { {
       _id
-      make
-      model
-      year
-      vin
-      mileage
+      vehicles {
+        _id
+        make
+        model
+        year
+      }
     }
   }
 `;
@@ -54,16 +108,16 @@ export const QUERY_VEHICLE_BY_ID = gql`
       model
       year
       vin
+      licensePlate
       mileage
-      serviceHistory {
-        _id
+      serviceRecords {
         date
         type
         cost
         mileage
         notes
         shop
-        invoiceUrl
+        recommendedPrice
       }
     }
   }
