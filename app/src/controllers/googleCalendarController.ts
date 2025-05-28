@@ -122,43 +122,54 @@ router.get('/auth/google/callback', async (req: Request, res: Response) => {
 
 // Example API route to get calendar events
 router.get('/api/calendar/events', async (req: Request, res: Response) => {
-  // TODO: Retrieve the user's ID (e.g., from session or JWT)
-  const userId = (req.user as any)?.id; // Placeholder
+  const userId = (req.user as any)?.id; // Assumes your app's auth middleware populates req.user
 
   if (!userId) {
-    return res.status(401).send('User not authenticated.');
+    return res.status(401).send('User not authenticated for this application.');
   }
 
   try {
     const user = await User.findById(userId);
-    if (!user || !user.googleAccessToken) {
-      return res.status(403).send('Google Calendar not linked for this user.');
+    if (!user || !user.googleAccessToken || !user.googleRefreshToken) { // Check for refresh token too
+      return res.status(403).send('Google Calendar not linked or tokens missing for this user. Please re-authenticate with Google.');
     }
 
-    oauth2Client.setCredentials({
+    // Create a new OAuth2Client instance for this request to avoid shared state issues
+    // if this controller is used by multiple users concurrently.
+    const userSpecificOauth2Client = new google.auth.OAuth2(
+        googleApiConfig.clientId,
+        googleApiConfig.clientSecret,
+        googleApiConfig.redirectUri
+    );
+
+    userSpecificOauth2Client.setCredentials({
       access_token: user.googleAccessToken,
       refresh_token: user.googleRefreshToken,
-      // expiry_date is managed by the library if refresh_token is present
     });
 
-    // Check if the access token is expired and refresh if necessary
-    // The google-auth-library handles this automatically if a refresh token is set
-    // and the library makes a request that requires authentication.
-    // You can also manually refresh if needed:
-    // if (user.googleTokenExpiryDate && new Date() > user.googleTokenExpiryDate) {
-    //   console.log('Access token expired, attempting to refresh...');
-    //   const { credentials } = await oauth2Client.refreshAccessToken();
-    //   oauth2Client.setCredentials(credentials);
-    //   // Update the stored tokens for the user
-    //   await User.findByIdAndUpdate(userId, {
-    //     googleAccessToken: credentials.access_token,
-    //     googleRefreshToken: credentials.refresh_token || user.googleRefreshToken, // Keep old refresh token if new one isn't provided
-    //     googleTokenExpiryDate: credentials.expiry_date ? new Date(credentials.expiry_date) : null,
-    //   });
-    //   console.log('Tokens refreshed and updated for user:', userId);
-    // }
+    // Listen for token refresh events to save new tokens
+    userSpecificOauth2Client.on('tokens', async (newTokens) => {
+      console.log('Google tokens were refreshed for user:', userId);
+      const updateData: any = {
+        googleAccessToken: newTokens.access_token,
+      };
+      if (newTokens.refresh_token) {
+        // A new refresh token is rare from Google but handle if provided
+        updateData.googleRefreshToken = newTokens.refresh_token;
+        console.log('New Google refresh_token received and will be updated for user:', userId);
+      }
+      if (newTokens.expiry_date) {
+        updateData.googleTokenExpiryDate = new Date(newTokens.expiry_date);
+      }
+      try {
+        await User.findByIdAndUpdate(userId, updateData);
+        console.log('Refreshed Google tokens saved for user:', userId);
+      } catch (dbError) {
+        console.error('Error saving refreshed Google tokens for user:', userId, dbError);
+      }
+    });
 
-    const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
+    const calendar = google.calendar({ version: 'v3', auth: userSpecificOauth2Client }); // Use the request-specific client
     const eventsResponse = await calendar.events.list({
       calendarId: 'primary',
       timeMin: (new Date()).toISOString(),
