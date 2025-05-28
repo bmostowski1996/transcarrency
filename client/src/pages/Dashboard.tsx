@@ -1,12 +1,14 @@
  import { useState, useEffect } from 'react';
+ import { useNavigate } from 'react-router-dom';
 // import { useQuery } from '@apollo/client';
 
 // import SkillsList from '../components/SkillsList';
 // import SkillForm from '../components/SkillForm';
 
-// import { QUERY_SINGLE_PROFILE, QUERY_ME } from '../utils/queries';
+// Placeholder code while the login screen is still being put together
+import { LOGIN_USER } from '../utils/mutations';
 
-// import Auth from '../utils/auth';
+import Auth from '../utils/auth';
 
 // TODO: This page is intended for logged in users. We should redirect the user to the login page if they try to access
 // this page without being logged in
@@ -26,10 +28,17 @@ const Dashboard = () => {
 
   const [serviceReport, setServiceReport] = useState<ServiceReportData>({});
 
+  const navigate = useNavigate();
+
   // Dummy data for testing purposes
   useEffect(() => {
+    // Placeholder code: For the time being, we will automatically log in as a dummy user and then populate data from that dummy user
+
     // TODO: Check if the user is logged in. If they aren't, redirect them to the login page.
     // We should probably review past lessons on authentication with graphQL...
+    if (!Auth.loggedIn()) {
+      navigate('/login');
+    }
 
     setServiceReport({
       serviceDate: new Date(`2025-05-26`),
