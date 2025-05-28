@@ -187,14 +187,109 @@ router.get('/api/calendar/events', async (req: Request, res: Response) => {
         // You might want to clear the user's Google tokens and prompt for re-authentication
         await User.findByIdAndUpdate(userId, {
             $unset: { 
-                googleAccessToken: "", 
-                googleRefreshToken: "", 
-                googleTokenExpiryDate: "" 
+                googleAccessToken: 1, 
+                googleRefreshToken: 1, 
+                googleTokenExpiryDate: 1 
             }
         });
         return res.status(401).send('Google authentication error. Please re-authenticate with Google.');
     }
     res.status(500).send('Failed to fetch calendar events.');
+  }
+});
+
+// API route to CREATE a new calendar event
+router.post('/api/calendar/events', async (req: Request, res: Response) => {
+  const userId = (req.user as any)?.id;
+
+  if (!userId) {
+    return res.status(401).send('User not authenticated for this application.');
+  }
+
+  try {
+    const user = await User.findById(userId);
+    if (!user || !user.googleAccessToken || !user.googleRefreshToken) {
+      return res.status(403).send('Google Calendar not linked or tokens missing. Please re-authenticate with Google.');
+    }
+
+    const userSpecificOauth2Client = new google.auth.OAuth2(
+      googleApiConfig.clientId,
+      googleApiConfig.clientSecret,
+      googleApiConfig.redirectUri
+    );
+
+    userSpecificOauth2Client.setCredentials({
+      access_token: user.googleAccessToken,
+      refresh_token: user.googleRefreshToken,
+    });
+
+    // Listen for token refresh events (important for long-running operations or subsequent calls)
+    userSpecificOauth2Client.on('tokens', async (newTokens) => {
+      console.log('Google tokens were refreshed during event creation for user:', userId);
+      const updateData: any = { googleAccessToken: newTokens.access_token };
+      if (newTokens.refresh_token) {
+        updateData.googleRefreshToken = newTokens.refresh_token;
+      }
+      if (newTokens.expiry_date) {
+        updateData.googleTokenExpiryDate = new Date(newTokens.expiry_date);
+      }
+      try {
+        await User.findByIdAndUpdate(userId, updateData);
+        console.log('Refreshed Google tokens saved during event creation for user:', userId);
+      } catch (dbError) {
+        console.error('Error saving refreshed Google tokens during event creation:', dbError);
+      }
+    });
+
+    const calendar = google.calendar({ version: 'v3', auth: userSpecificOauth2Client });
+
+    const { summary, description, startTime, endTime, attendees, reminders } = req.body;
+
+    // Basic validation
+    if (!summary || !startTime || !endTime) {
+      return res.status(400).send('Missing required event fields: summary, startTime, endTime.');
+    }
+
+    const eventResource = {
+      summary: summary,
+      description: description,
+      start: {
+        dateTime: new Date(startTime).toISOString(), // Ensure ISO format e.g., '2025-06-01T10:00:00-07:00'
+        // timeZone: 'America/Los_Angeles', // Optional: Specify timezone
+      },
+      end: {
+        dateTime: new Date(endTime).toISOString(), // Ensure ISO format
+        // timeZone: 'America/Los_Angeles', // Optional: Specify timezone
+      },
+      attendees: attendees, // e.g., [{ email: 'user@example.com' }]
+      reminders: reminders // Frontend will construct this
+      // Example reminder structure:
+      // reminders: {
+      //   useDefault: false,
+      //   overrides: [
+      //     { method: 'email', minutes: 24 * 60 }, // 1 day before by email
+      //     { method: 'popup', minutes: 10 },      // 10 minutes before by popup
+      //   ],
+      // },
+    };
+
+    const createdEvent = await calendar.events.insert({
+      calendarId: 'primary',
+      requestBody: eventResource,
+    });
+
+    res.status(201).json(createdEvent.data);
+
+  } catch (error: any) {
+    console.error('Error creating Google Calendar event:', error.response?.data || error.message);
+    if (error.response && error.response.status === 401) {
+      // Clear tokens if auth fails (refresh token might be invalid)
+      await User.findByIdAndUpdate(userId, {
+        $unset: { googleAccessToken: 1, googleRefreshToken: 1, googleTokenExpiryDate: 1 }
+      });
+      return res.status(401).send('Google authentication error. Please re-authenticate with Google.');
+    }
+    res.status(500).send('Failed to create calendar event.');
   }
 });
 
