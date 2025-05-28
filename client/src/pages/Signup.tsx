@@ -7,18 +7,19 @@ import { ADD_PROFILE } from '../utils/mutations';
 import Auth from '../utils/auth';
 
 // You may need to adjust the import path for your logo
-// import logo from '../assets/logo.png'; // <-- Update this path as needed
+import logo from '../assets/tclogo_simple.png'; // <-- Update this path as needed
 
 const Signup = () => {
+  
   const [formState, setFormState] = useState({
     name: '',
     email: '',
     password: '',
   });
+
   const [addProfile, { error, data }] = useMutation(ADD_PROFILE);
   const navigate = useNavigate();
 
-  // Password validation checks
   const password = formState.password;
   const passwordChecks = [
     { label: 'Minimum 6 characters', valid: password.length >= 6 },
@@ -47,204 +48,213 @@ const Signup = () => {
     }
   };
 
-  // Placeholder for Google login
   const handleGoogleLogin = () => {
-    // Implement Google login logic here
     alert('Google login not implemented');
   };
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        background: 'linear-gradient(120deg, #0f2027, #2c5364 80%)',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-        padding: '40px 0',
-      }}
-    >
+    <div className= 'home-background' style={{    
+      minHeight: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      paddingTop: 40,
+      paddingBottom: 40,
+      position: 'relative',
+    }}>
       {/* Back Button */}
-      <button
-        onClick={() => navigate(-1)}
-        style={{
-          position: 'absolute',
-          top: 20,
-          left: 20,
-          background: 'none',
-          border: 'none',
-          color: '#fff',
-          fontSize: 18,
-          display: 'flex',
-          alignItems: 'center',
-          cursor: 'pointer',
-        }}
-      >
-        <span style={{ fontSize: 28, marginRight: 6 }}>←</span> Back
+      <button onClick={() => navigate(-1)} style={{
+        position: 'absolute',
+        top: 20,
+        left: 20,
+        background: 'none',
+        border: 'none',
+        color: '#fff',
+        fontSize: 18,
+        display: 'flex',
+        alignItems: 'center',
+        cursor: 'pointer',
+      }}>
+        <span style={{ fontSize: 28, marginRight: 6 }}>← Back </span>
       </button>
 
-      {/* Logo and App Name */}
-      <div style={{ textAlign: 'center', marginBottom: 16 }}>
-        <img src={logo} alt="TransCARrency Logo" style={{ width: 120, marginBottom: 8 }} />
-        <h1 style={{ color: '#fff', fontWeight: 700, fontSize: 32, margin: 0 }}>
-          Trans<span style={{ color: '#00e6e6' }}>Car</span>rency
+      {/* Logo and Title */}
+      <div style={{ textAlign: 'center', marginBottom: 12 }}>
+        <img src={logo} alt="TransCCarrency Logo" style={{ width: 550, marginBottom: 4 }} />
+        <h1 style={{ color: '#fff', fontWeight: 700, fontSize: '3em' }}>
+          {/* Trans<span style={{ color: '#00e6e6' }}>Carrency</span> */}
         </h1>
       </div>
 
       {/* Welcome Message */}
-      <div style={{ color: '#fff', textAlign: 'center', maxWidth: 500, marginBottom: 24, fontSize: 20 }}>
-        Welcome to TransCARrency! If this is your first time, please enter your email, choose a username, and a password, to continue.<br />
-        Alternatively, use your Google account to sign in.
+      <div style={{
+        color: '#fff',
+        textAlign: 'center',
+        maxWidth: 500,
+        marginBottom: 24,
+        fontSize: '2em',
+        lineHeight: 1.4,
+      }}>
+        Welcome to TransCarrency! If this is your first time, please enter your email, choose a username, and a password, to continue.
+        {/* <br />Alternatively, use your Google account to sign in. */}
       </div>
 
+      {/* Signup Box */}
       <div style={{
-        background: 'rgba(0,0,0,0.5)',
-        borderRadius: 16,
+        background: 'rgba(0, 0, 0, 0.6)',
+        borderRadius: 20,
         padding: 32,
-        width: 350,
-        boxShadow: '0 8px 32px 0 rgba(31,38,135,0.37)',
+        width: 360,
+        boxShadow: '0 10px 30px rgba(0, 0, 0, 0.4)',
+        backdropFilter: 'blur(6px)',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
+        fontSize: '1.2em',
       }}>
         {data ? (
           <p style={{ color: '#fff' }}>
             Success! You may now head <Link to="/">back to the homepage.</Link>
           </p>
         ) : (
-          <form onSubmit={handleFormSubmit} style={{ width: '100%' }}>
+          <form onSubmit={handleFormSubmit} style={{ width: '150%' }}>
             <input
-              className="form-input"
               placeholder="Username"
               name="name"
               type="text"
               value={formState.name}
               onChange={handleChange}
-              style={{
-                width: '100%',
-                padding: '14px 16px',
-                marginBottom: 16,
-                borderRadius: 10,
-                border: 'none',
-                fontSize: 18,
-                background: '#eaeaea',
-              }}
+              style={inputStyle}
+              
             />
             <input
-              className="form-input"
               placeholder="Email"
               name="email"
               type="email"
               value={formState.email}
               onChange={handleChange}
-              style={{
-                width: '100%',
-                padding: '14px 16px',
-                marginBottom: 16,
-                borderRadius: 10,
-                border: 'none',
-                fontSize: 18,
-                background: '#eaeaea',
-              }}
+              style={inputStyle}
+              
             />
             <input
-              className="form-input"
               placeholder="Password"
               name="password"
               type="password"
               value={formState.password}
               onChange={handleChange}
-              style={{
-                width: '100%',
-                padding: '14px 16px',
-                marginBottom: 12,
-                borderRadius: 10,
-                border: 'none',
-                fontSize: 18,
-                background: '#eaeaea',
-              }}
+              style={{ ...inputStyle, marginBottom: 12 }}
             />
-            {/* Password requirements */}
-            <ul style={{ color: '#fff', fontSize: 14, marginBottom: 20, listStyle: 'none', paddingLeft: 0 }}>
+            <input
+              placeholder="Confirm Password"
+              name="confirmPassword"
+              type="password"
+              value={formState.confirmPassword}
+              onChange={handleChange}
+              style={inputStyle}
+            />
+
+            {/* Password Requirements */}
+            <ul style={{
+              color: '#fff',
+              fontSize: '1.3em',
+              listStyle: 'none',
+              paddingLeft: 0,
+              marginBottom: 20,
+            }}>
               {passwordChecks.map((check, idx) => (
-                <li key={idx} style={{ marginBottom: 4, display: 'flex', alignItems: 'center' }}>
-                  <span
-                    style={{
-                      display: 'inline-block',
-                      width: 10,
-                      height: 10,
-                      borderRadius: '50%',
-                      background: check.valid ? '#00e6e6' : '#fff',
-                      border: '2px solid #00e6e6',
-                      marginRight: 8,
-                    }}
-                  ></span>
+                <li key={idx} style={{
+                  marginBottom: 4,
+                  display: 'flex',
+                  alignItems: 'center'
+                }}>
+                  <span style={{
+                    display: 'inline-block',
+                    width: 10,
+                    height: 10,
+                    borderRadius: '50%',
+                    background: check.valid ? '#00e6e6' : '#fff',
+                    border: '2px solid #00e6e6',
+                    marginRight: 8,
+                  }} />
                   {check.label}
                 </li>
               ))}
             </ul>
-            <button
-              className="btn btn-block btn-info"
-              style={{
-                width: '100%',
-                padding: '12px 0',
-                borderRadius: 8,
-                background: '#000',
-                color: '#fff',
-                fontWeight: 700,
-                fontSize: 22,
-                border: '2px solid #fff',
-                marginBottom: 18,
-                cursor: 'pointer',
-              }}
-              type="submit"
-            >
+
+            <button type="submit" style={{
+              width: '100%',
+              padding: '12px 0',
+              borderRadius: 8,
+              background: '#000',
+              color: '#fff',
+              fontWeight: 700,
+              fontSize: '1.8em',
+              border: '2px solid #fff',
+              cursor: 'pointer',
+              marginBottom: 16,
+            }}>
               Log In
             </button>
           </form>
         )}
 
         {error && (
-          <div className="my-3 p-3 bg-danger text-white" style={{ borderRadius: 8 }}>
+          <div style={{
+            backgroundColor: '#d9534f',
+            color: 'white',
+            padding: '10px 14px',
+            borderRadius: 8,
+            marginTop: 12,
+            fontSize: 14,
+          }}>
             {error.message}
           </div>
         )}
 
-        {/* Google Login Section */}
+        {/* Google Login
         <div style={{ width: '100%', marginTop: 10 }}>
-          <div style={{ color: '#fff', fontSize: 18, marginBottom: 8 }}>Log In With Google</div>
-          <button
-            onClick={handleGoogleLogin}
-            style={{
-              width: '100%',
-              background: '#fff',
-              color: '#444',
-              border: 'none',
-              borderRadius: 8,
-              padding: '12px 0',
-              fontSize: 20,
-              fontWeight: 500,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 12,
-              boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-              marginBottom: 0,
-              cursor: 'pointer',
-            }}
-          >
+          <div style={{ color: '#fff', fontSize: 18, marginBottom: 8 }}>
+            Log In With Google
+          </div>
+          <button onClick={handleGoogleLogin} style={{
+            width: '100%',
+            background: '#fff',
+            color: '#444',
+            border: 'none',
+            borderRadius: 8,
+            padding: '12px 0',
+            fontSize: 18,
+            fontWeight: 500,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 12,
+            boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+            cursor: 'pointer',
+          }}>
             <img
               src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
               alt="Google"
-              style={{ width: 28, height: 28, marginRight: 8 }}
+              style={{ width: 24, height: 24 }}
             />
             Google Login
           </button>
-        </div>
+        </div> */}
       </div>
     </div>
   );
+};
+
+// 💅 Input field style
+const inputStyle: React.CSSProperties = {
+  
+  width: '100%',
+  padding: '20px 18px',
+  marginBottom: 16,
+  borderRadius: 10,
+  border: 'none',
+  fontSize: 24,
+  background: '#e0e0e0',
 };
 
 export default Signup;
