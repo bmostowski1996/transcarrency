@@ -1,6 +1,10 @@
 import db from '../config/connection.js';
-import { Profile } from '../models/index_temp.js';
-import profileSeeds from './profileData.json' assert { type: "json" };
+import { User } from '../models/index.js';
+import { Vehicle } from '../models/index.js';
+import { ServiceRecord } from '../models/ServiceRecord.js';
+import userSeeds from './userData.json' with { type: 'json' };
+import vehicleSeeds from './vehiclesData.json' with { type: 'json' };
+import serviceRecordSeeds from './vehiclesData.json' with { type: 'json' };
 import cleanDB from './cleanDB.js';
 
 const seedDatabase = async (): Promise<void> => {
@@ -8,7 +12,9 @@ const seedDatabase = async (): Promise<void> => {
     await db();
     await cleanDB();
 
-    await Profile.insertMany(profileSeeds);
+    await User.insertMany(userSeeds);
+    await Vehicle.insertMany(vehicleSeeds);
+    await ServiceRecord.insertMany(serviceRecordSeeds);
 
     console.log('Seeding completed successfully!');
     process.exit(0);
@@ -23,3 +29,4 @@ const seedDatabase = async (): Promise<void> => {
 };
 
 seedDatabase();
+
