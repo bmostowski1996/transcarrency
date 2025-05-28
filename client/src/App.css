@@ -52,6 +52,11 @@ h3 {
   align-items: center;
 }
 
+.service-report-text {
+  font-size: 32px;
+  color:#000;
+}
+
 .font-dashboard {
   font-size: 48px;
   font-weight: 500;
