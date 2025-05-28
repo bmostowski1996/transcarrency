@@ -120,14 +120,13 @@ const Login = () => {
 
   return (
     <div
-      className="login-background"
+      className="home-background"
       style={{
         minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'linear-gradient(to bottom right, #00bcd4, #000)',
         padding: '1em',
         color: '#fff',
         textAlign: 'center',
@@ -147,7 +146,7 @@ const Login = () => {
           cursor: 'pointer',
         }}
       >
-        <span style={{ fontSize: '2rem', marginRight: '8px' }}>←</span> Back
+        <span style={{ fontSize: '2rem', marginRight: '8px' }}>← Back </span>
       </button>
 
       <img
@@ -157,7 +156,7 @@ const Login = () => {
         style={{ width: '50vh', marginBottom: '1rem'}}
       />
 
-      <h2 className="login-title" style={{ fontWeight: 'bold', fontSize: '1.2rem', marginBottom: '1rem' }}>
+      <h2 className="login-title" style={{ fontWeight: 'bold', fontSize: '3rem', marginBottom: '1rem' }}>
         Welcome to TransCARrency! Please enter your username or email to login.
       </h2>
 
@@ -191,7 +190,7 @@ const Login = () => {
               padding: '0.75em',
               borderRadius: '8px',
               border: 'none',
-              fontSize: '1em',
+              fontSize: '2em',
             }}
           />
           <input
@@ -207,7 +206,7 @@ const Login = () => {
               padding: '0.75em',
               borderRadius: '8px',
               border: 'none',
-              fontSize: '1em',
+              fontSize: '2em',
             }}
           />
           <button
@@ -223,6 +222,7 @@ const Login = () => {
               borderRadius: '12px',
               border: 'none',
               cursor: 'pointer',
+              fontSize: '2em',
             }}
           >
             Log In
@@ -231,16 +231,16 @@ const Login = () => {
       )}
 
       {error && (
-        <div className="login-error" style={{ color: 'red', marginTop: '1em' }}>
+        <div className="login-error" style={{ color: 'red', marginTop: '2em' }}>
           {error.message}
         </div>
       )}
 
-      <div className="login-google-label" style={{ marginTop: '2em', fontWeight: 'bold' }}>
+      <div className="login-google-label" style={{ marginTop: '3em', fontWeight: 'bold' }}>
         Log In With Google
       </div>
 
-      <button
+      {/* <button
         className="google-btn"
         type="button"
         style={{
@@ -254,19 +254,19 @@ const Login = () => {
           border: 'none',
           cursor: 'pointer',
           marginTop: '0.5em',
-          fontSize: '1em',
+          fontSize: '2em',
         }}
       >
         <img
           src={gicon}
           alt="Google"
           className="google-icon"
-          style={{ width: '24px', height: '24px', marginRight: '8px' }}
+          style={{ width: '24px', height: '24px', marginRight: '8px', fontSize: '2em' }}
         />{' '}
         Google Login
-      </button>
+      </button> */}
 
-      <footer style={{ marginTop: '2rem', fontSize: '0.9em' }}>
+      <footer style={{ marginTop: '2rem', fontSize: '2em' }}>
         © 2025 - TransCARrency
       </footer>
     </div>
