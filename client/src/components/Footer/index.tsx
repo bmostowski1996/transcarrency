@@ -18,12 +18,18 @@ const Footer: React.FC = () => {
           <button
             className="btn btn-dark mb-3"
             onClick={handleGoBack}
+            style={{ fontSize: '2rem', padding: '10px 20px' }}
           >
             &larr; Go Back
           </button>
         )}
         <h4>&copy; {new Date().getFullYear()} - TransCARrency</h4>
       </div>
+      {/* <style>
+        footer {
+          background: linear-gradient(to bottom right, #00bcd4, #000);
+        }
+      </style> */}
     </footer>
   );
 };
