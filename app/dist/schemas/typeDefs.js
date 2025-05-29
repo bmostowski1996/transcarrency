@@ -1,7 +1,5 @@
-// typeDef.ts
-import { gql } from 'apollo-server-express';
 // GraphQL schema definitions
-export const typeDefs = gql `
+export const typeDefs = `
   # A single maintenance service record for a vehicle
   type ServiceRecord {
     _id: ID!

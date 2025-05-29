@@ -1,8 +1,8 @@
 // file for user model
-import { Schema, model, Document } from 'mongoose';
+import { Schema, model, Document, ObjectId } from 'mongoose';
 import bycrypt from 'bcrypt';
-import { google } from 'googleapis';
-import { OAuth2Client } from 'google-auth-library';
+// import { google } from 'googleapis';
+// import { OAuth2Client } from 'google-auth-library';
 
 // user interface
 interface IUser extends Document {
@@ -13,6 +13,7 @@ interface IUser extends Document {
   googleAccessToken?: string;
   googleRefreshToken?: string;
   googleTokenExpiryDate?: Date | null;
+  vehicles?: ObjectId[]; // Added vehicles field
 }
 
 // user schema
@@ -35,6 +36,7 @@ const userSchema = new Schema<IUser>(
       required: false,
       default: null,
     },
+    vehicles: [{ type: Schema.Types.ObjectId, ref: 'Vehicle' }], // Added vehicles field
   },
   { timestamps: true }
 );

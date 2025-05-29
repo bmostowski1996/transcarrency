@@ -20,6 +20,7 @@ const userSchema = new Schema({
         required: false,
         default: null,
     },
+    vehicles: [{ type: Schema.Types.ObjectId, ref: 'Vehicle' }], // Added vehicles field
 }, { timestamps: true });
 // hash password before saving
 userSchema.pre('save', async function (next) {

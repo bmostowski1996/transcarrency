@@ -1,8 +1,11 @@
+// resolver.ts
+import { User } from '../models/index.js';
+// import { signToken } from '../utils/auth.js';
 import { getVehicleParts } from '../utils/nhtsaApi.js'; // Import the new function
-import { User } from '../models/User.js';
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { AuthenticationError } from 'apollo-server-express'; // Fix import for AuthError
+import { AuthenticationError } from '../utils/auth.js';
+; // Fix import for AuthError
 const resolvers = {
     Query: {
         // Fetch all users
@@ -50,6 +53,7 @@ const resolvers = {
                 email,
                 password: hashedPassword,
             });
+            // ../utils/auth.ts has a `signToken` function. Why is that not being used here?
             const token = jwt.sign({ _id: newUser._id }, process.env.JWT_SECRET, {
                 expiresIn: '1h',
             });
