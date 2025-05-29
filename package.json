@@ -19,6 +19,8 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/react": "^19.1.6",
+    "@types/react-dom": "^19.1.5",
     "concurrently": "^8.2.2",
     "tailwindcss": "^4.1.7",
     "wait-on": "^7.2.0"
