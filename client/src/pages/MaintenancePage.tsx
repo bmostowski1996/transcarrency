@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import ServiceEventModal from '../components/ServiceEventModal'; // Adjust path if your components folder is different
+import ServiceEventModal from '../components/ServiceCalendar/ServiceEventModal'; // Adjust path if your components folder is different
 import { format, parseISO } from 'date-fns';
 
 const MaintenancePage: React.FC = () => { // Renamed component function
