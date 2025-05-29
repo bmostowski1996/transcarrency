@@ -1,25 +1,23 @@
 import React, { useState } from 'react';
-import ServiceEventModal from '../components/ServiceEventModal'; // Adjust path as needed
+import ServiceEventModal from '../components/ServiceEventModal'; // Adjust path if your components folder is different
 import { format, parseISO } from 'date-fns';
 
-const ServiceBookingPage: React.FC = () => {
+const MaintenancePage: React.FC = () => { // Renamed component function
   const [isModalOpen, setIsModalOpen] = useState(false);
-  // Initialize with a valid Date object or undefined
-  const [selectedServiceDate, setSelectedServiceDate] = useState<Date | undefined>(new Date());
-  const [serviceTitleForEvent, setServiceTitleForEvent] = useState("Vehicle Maintenance"); // Example title
+  const [selectedMaintenanceDate, setSelectedMaintenanceDate] = useState<Date | undefined>(new Date()); // Renamed state variable for clarity
+  const [maintenanceTitleForEvent, setMaintenanceTitleForEvent] = useState("Vehicle Maintenance Reminder"); // Renamed state variable
 
   const handleOpenModal = (dateToSet?: Date) => {
-    setSelectedServiceDate(dateToSet || new Date());
+    setSelectedMaintenanceDate(dateToSet || new Date());
     // You can dynamically set the title based on context if needed
-    // setServiceTitleForEvent("Service for specific item");
+    // setMaintenanceTitleForEvent(`Maintenance for ${someVehicleData.plate}`);
     setIsModalOpen(true);
   };
 
   const handleEventCreated = (eventData: any) => {
     console.log('Google Calendar Event Created:', eventData);
-    alert(`Event "${eventData.summary}" created in Google Calendar!`);
-    // Here you might want to update your application's state,
-    // for example, linking eventData.id to a service record in your database.
+    alert(`Event "${eventData.summary}" (ID: ${eventData.id}) created in Google Calendar!`);
+    // Potentially update your application's state here
   };
 
   return (
@@ -46,16 +44,21 @@ const ServiceBookingPage: React.FC = () => {
         <label htmlFor="customerName">Customer Name:</label>
         <input type="text" id="customerName" style={{ marginLeft: '5px', marginBottom: '10px' }} />
       </div>
-      <div>
-        <button type="submit">Submit Booking (App Only)</button>
-      </div>
 
+      <div style={{ marginTop: '30px' }}>
+        <button
+          type="submit"
+          style={{ padding: '10px 20px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+        >
+          Submit Maintenance Request (App Only) {/* Updated button text */}
+        </button>
+      </div>
 
       <ServiceEventModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        initialDate={selectedServiceDate}
-        serviceTitle={serviceTitleForEvent}
+        initialDate={selectedMaintenanceDate}
+        serviceTitle={maintenanceTitleForEvent} // Pass the renamed state variable
         onEventCreated={handleEventCreated}
       />
 
@@ -145,4 +148,4 @@ const ServiceBookingPage: React.FC = () => {
   );
 };
 
-export default ServiceBookingPage;
+export default MaintenancePage; // Updated export
