@@ -4,15 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node server/dist/server.js",
-    "start:dev": "concurrently \"cd server && npm run watch\" \"wait-on tcp:3001 && cd client && npm run dev\"",
-    "server": "cd server && npm start",
-    "server:dev": "cd server && npm run dev",
-    "install": "cd server && npm i && cd ../client && npm i",
+    "start": "node app/dist/server.js",
+    "start:dev": "concurrently \"cd app && npm run watch\" \"wait-on tcp:3001 && cd client && npm run dev\"",
+    "server": "cd app && npm start",
+    "server:dev": "cd app && npm run dev",
+    "install": "cd app && npm i && cd ../client && npm i",
     "client:build": "cd client && npm run build",
     "client:dev": "cd client && npm run dev",
-    "seed": "cd server && npm run seed",
-    "build": "concurrently \"cd server && npm run build\" \"cd client && npm run build\"",
+    "seed": "cd app && npm run seed",
+    "build": "concurrently \"cd app && npm run build\" \"cd client && npm run build\"",
     "render-build": "npm install && npm run build"
   },
   "keywords": [],
@@ -20,6 +20,7 @@
   "license": "ISC",
   "devDependencies": {
     "concurrently": "^8.2.2",
+    "tailwindcss": "^4.1.7",
     "wait-on": "^7.2.0"
   },
   "dependencies": {
