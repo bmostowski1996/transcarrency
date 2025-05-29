@@ -1,0 +1,52 @@
+[
+    {
+        "name": "Alex Johnson",
+        "email": "alex.johnson@transcarrency.dev",
+        "password": "password01"
+    },
+    {
+        "name": "Morgan Lee",
+        "email": "morgan.lee@transcarrency.dev",
+        "password": "password02"
+    },
+    {
+        "name": "Jamie Rivera",
+        "email": "jamie.rivera@transcarrency.dev",
+        "password": "password03"
+    },
+    {
+        "name": "Taylor Kim",
+        "email": "taylor.kim@transcarrency.dev",
+        "password": "password04"
+    },
+    {
+        "name": "Jordan Blake",
+        "email": "jordan.blake@transcarrency.dev",
+        "password": "password05"
+    },
+    {
+        "name": "Casey Morgan",
+        "email": "casey.morgan@transcarrency.dev",
+        "password": "password06"
+    },
+    {
+        "name": "Riley Thompson",
+        "email": "riley.thompson@transcarrency.dev",
+        "password": "password07"
+    },
+    {
+        "name": "Avery Patel",
+        "email": "avery.patel@transcarrency.dev",
+        "password": "password08"
+    },
+    {
+        "name": "Drew Carter",
+        "email": "drew.carter@transcarrency.dev",
+        "password": "password09"
+    },
+    {
+        "name": "Skylar Nguyen",
+        "email": "skylar.nguyen@transcarrency.dev",
+        "password": "password10"
+    }
+]
