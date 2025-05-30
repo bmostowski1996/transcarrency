@@ -6,7 +6,7 @@ import userSeeds from './userData.json' with { type: 'json' };
 import vehicleSeeds from './vehiclesData.json' with { type: 'json' };
 // import serviceRecordSeeds from './vehiclesData.json' with { type: 'json' };
 import cleanDB from './cleanDB.js';
-import { ObjectId } from 'mongoose';
+import { Types } from 'mongoose';
 
 const seedDatabase = async (): Promise<void> => {
   try {
@@ -26,7 +26,15 @@ const seedDatabase = async (): Promise<void> => {
 
       // Again query all users but only fetch one offset by our random #
       const user = await User.findOne().skip(random).limit(-1);
-      user?.vehicles?.push(vehicle._id as ObjectId);
+
+      // Add the vehicle to the user's list of owned vehicles
+      user?.vehicles?.push(vehicle._id as Types.ObjectId);
+
+      // Identify the user as the vehicle's owner in the vehicle object
+      vehicle.owner = user?._id as Types.ObjectId;
+
+      await vehicle.save();
+      await user?.save();
     }
 
     console.log('Seeding completed successfully!');

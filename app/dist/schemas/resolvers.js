@@ -5,7 +5,6 @@ import { getVehicleParts } from '../utils/nhtsaApi.js'; // Import the new functi
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { AuthenticationError } from '../utils/auth.js';
-; // Fix import for AuthError
 const resolvers = {
     Query: {
         // Fetch all users
