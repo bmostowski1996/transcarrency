@@ -23,13 +23,13 @@ const resolvers = {
     },
     Mutation: {
         registerUser: async (_, { input }) => {
-            const { name, email, password } = input;
+            const { firstName, lastName, email, password } = input;
             const existingUser = await User.findOne({ email });
             if (existingUser)
                 throw new Error('User already exists');
             const hashedPassword = await bcrypt.hash(password, 10);
-            const newUser = await User.create({ name, email, password: hashedPassword });
-            const token = jwt.sign({ _id: newUser._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+            const newUser = await User.create({ firstName, lastName, email, password: hashedPassword });
+            const token = jwt.sign({ _id: newUser._id }, process.env.JWT_SECRET_KEY, { expiresIn: '1h' });
             return { token, user: newUser };
         },
         login: async (_, { email, password }) => {
@@ -39,7 +39,7 @@ const resolvers = {
             const valid = await bcrypt.compare(password, user.password);
             if (!valid)
                 throw new AuthenticationError('Invalid credentials');
-            const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+            const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET_KEY, { expiresIn: '1h' });
             return { token, user };
         },
         updateUser: async (_, { userId, input }) => await User.findByIdAndUpdate(userId, input, { new: true }),

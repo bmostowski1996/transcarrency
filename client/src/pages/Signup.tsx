@@ -12,13 +12,14 @@ import logo from '../assets/tclogo_simple.png'; // <-- Update this path as neede
 const Signup = () => {
   
   const [formState, setFormState] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    // confirmPassword: '',
   });
 
-  const [addProfile, { error, data }] = useMutation(REGISTER_USER);
+  const [registerUser, { error, data }] = useMutation(REGISTER_USER);
   const navigate = useNavigate();
 
   const password = formState.password;
@@ -40,10 +41,10 @@ const Signup = () => {
   const handleFormSubmit = async (event: FormEvent) => {
     event.preventDefault();
     try {
-      const { data } = await addProfile({
+      const { data } = await registerUser({
         variables: { input: { ...formState } },
       });
-      Auth.login(data.addProfile.token);
+      Auth.login(data.registerUser.token);
     } catch (e) {
       console.error(e);
     }
@@ -119,11 +120,21 @@ const Signup = () => {
           </p>
         ) : (
           <form onSubmit={handleFormSubmit} style={{ width: '150%' }}>
+           
             <input
-              placeholder="Username"
-              name="name"
+              placeholder="First Name"
+              name="firstName"
               type="text"
-              value={formState.name}
+              value={formState.firstName}
+              onChange={handleChange}
+              style={inputStyle}
+              
+            />
+             <input
+              placeholder="Last Name"
+              name="lastName"
+              type="text"
+              value={formState.lastName}
               onChange={handleChange}
               style={inputStyle}
               
@@ -145,14 +156,14 @@ const Signup = () => {
               onChange={handleChange}
               style={{ ...inputStyle, marginBottom: 12 }}
             />
-            <input
+            {/* <input
               placeholder="Confirm Password"
               name="confirmPassword"
               type="password"
               value={formState.confirmPassword}
               onChange={handleChange}
               style={inputStyle}
-            />
+            /> */}
 
             {/* Password Requirements */}
             <ul style={{
