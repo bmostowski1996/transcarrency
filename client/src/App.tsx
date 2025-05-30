@@ -37,8 +37,9 @@ const authLink = setContext((_, { headers }) => {
 
 const router = createBrowserRouter([
   {
+    // Define routing for pages that *don't* use a header
     path: '/',
-    element: <LayoutNoHeader />, // Home route uses no-header layout
+    element: <LayoutNoHeader />,
     errorElement: <Error />,
     children: [
       { index: true, element: <Home /> },
@@ -47,8 +48,9 @@ const router = createBrowserRouter([
     ]
   },
   {
+    // Define routing for pages that *do* use a header
     path: '/',
-    element: <LayoutWithHeader />, // All other pages get the header
+    element: <LayoutWithHeader />,
     errorElement: <Error />,
     children: [
       { path: '/dashboard', element: <Dashboard /> }
