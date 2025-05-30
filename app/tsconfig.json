@@ -27,6 +27,6 @@
     "useUnknownInCatchVariables": true /* Ensure 'unknown' is used for catch clause variables. */
   },
   "include": [
-    "src"
-, "../client/src/pages/MaintenancePage.tsx"  ]
+    "src" 
+  ]
 }

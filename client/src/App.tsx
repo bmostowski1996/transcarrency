@@ -58,7 +58,8 @@ const router = createBrowserRouter([
     errorElement: <Error />,
     children: [
       { path: '/dashboard', element: <Dashboard /> },
-      { path: '/addvehicle', element: <Addvehicle /> } // Reusing Dashboard for Add Vehicle for now
+      { path: '/addvehicle', element: <Addvehicle /> },
+      { path: '/maintanence', element: <MaintenancePage />} // Reusing Dashboard for Add Vehicle for now
     ]
   }
 ]);
