@@ -12,6 +12,8 @@ import Signup from './pages/Signup';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Error from './pages/Error';
+import MaintenancePage from './pages/MaintenancePage';
+
 
 import LayoutWithHeader from './layouts/LayoutHeader';
 import LayoutNoHeader from './layouts/LayoutNoHeader';
@@ -44,7 +46,8 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },
       { path: '/login', element: <Login />},
-      { path: '/signup', element: <Signup />}
+      { path: '/signup', element: <Signup />},
+      {path: '/maintenance', element: <MaintenancePage />}, // Maintenance page
     ]
   },
   {
