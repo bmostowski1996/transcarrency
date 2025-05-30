@@ -1,0 +1,62 @@
+[
+  {
+    "type": "Oil Change",
+    "description": "Changed engine oil and oil filter.",
+    "date": "2024-12-15",
+    "mileage": 10500
+  },
+  {
+    "type": "Tire Rotation",
+    "description": "Rotated all four tires for even wear.",
+    "date": "2025-01-10",
+    "mileage": 12000
+  },
+  {
+    "type": "Brake Inspection",
+    "description": "Inspected brake pads and rotors; no replacement needed.",
+    "date": "2025-03-05",
+    "mileage": 13500
+  },
+  {
+    "type": "Battery Replacement",
+    "description": "Replaced old battery with new high-performance battery.",
+    "date": "2025-04-01",
+    "mileage": 15000
+  },
+  {
+    "type": "Air Filter Replacement",
+    "description": "Replaced engine air filter and cleaned air intake.",
+    "date": "2025-04-28",
+    "mileage": 15800
+  },
+  {
+    "type": "Coolant Flush",
+    "description": "Flushed and replaced engine coolant.",
+    "date": "2025-05-10",
+    "mileage": 16250
+  },
+  {
+    "type": "Transmission Service",
+    "description": "Changed transmission fluid and filter.",
+    "date": "2025-05-15",
+    "mileage": 16500
+  },
+  {
+    "type": "Spark Plug Replacement",
+    "description": "Replaced all spark plugs for better performance.",
+    "date": "2025-05-20",
+    "mileage": 17000
+  },
+  {
+    "type": "Wheel Alignment",
+    "description": "Aligned all wheels after noticing uneven tire wear.",
+    "date": "2025-05-21",
+    "mileage": 17500
+  },
+  {
+    "type": "AC System Check",
+    "description": "Checked AC system performance and recharged refrigerant.",
+    "date": "2025-05-21",
+    "mileage": 17500
+  }
+]
