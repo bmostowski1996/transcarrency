@@ -193,6 +193,28 @@ input[type="text"], input[type="email"], input[type="password"] {
   font-size: 2rem;
 }
 
+/* Add Vehicle */
+.app-title {
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  letter-spacing: 1px;
+}
+
+.bg-dashboard {
+  background-color: #64C8D7;
+  border-radius: 25px;
+  font-family: "IBM Plex Sans", sans-serif;
+  align-items: center;
+}
+
+.service-report {
+  background-color: #DBFFE8;
+  border-radius: 10px;
+  font-family: "IBM Plex Sans", sans-serif;
+  align-items: center;
+}
+
 /* Responsive adjustments */
 @media (max-width: 600px) {
   .form-container, .button, .main-btn, .google-btn {
