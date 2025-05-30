@@ -32,6 +32,10 @@ const vehicleSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User',
     },
+    serviceRecords: [{
+            type: Schema.Types.ObjectId,
+            ref: 'ServiceRecord'
+        }]
 }, {
     timestamps: true,
 });

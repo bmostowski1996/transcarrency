@@ -1,5 +1,5 @@
 // models/ServiceRecord.ts
-import { Schema, model, Document } from 'mongoose';
+import { Schema, model, Document, Types} from 'mongoose';
 
 export interface IServiceRecord extends Document {
   date?: string;
@@ -9,6 +9,7 @@ export interface IServiceRecord extends Document {
   notes?: string;
   shop?: string;
   invoiceUrl?: string;
+  vehicle: Types.ObjectId;
 }
 
 const serviceRecordSchema = new Schema<IServiceRecord>(
@@ -35,6 +36,10 @@ const serviceRecordSchema = new Schema<IServiceRecord>(
     invoiceUrl: {
       type: String,
     },
+    vehicle: {
+      type: Schema.Types.ObjectId,
+      ref: 'Vehicle'
+    }
   },
   {
     timestamps: true,

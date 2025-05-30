@@ -1,9 +1,7 @@
-import { User } from '../models/User.js';
-import { Vehicle } from '../models/Vehicle.js';
-import { ServiceRecord } from '../models/ServiceRecord.js';
+import { User, Vehicle, ServiceRecord } from '../models/index.js'
 import { getVehicleParts } from '../utils/nhtsaApi.js';
 import { AuthenticationError } from '../utils/auth.js';
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 const resolvers = {

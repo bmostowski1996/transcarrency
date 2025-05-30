@@ -70,12 +70,8 @@ export const typeDefs = `
     # Search parts related to a vehicle
     vehicleParts(vin: String, make: String, model: String, year: Int, type: String): [VehiclePart]
 
-    # Get all user profiles (example placeholder)
-    profiles: [Profile]!
-    profile(profileId: ID!): Profile
-
     # Get currently logged-in user profile
-    me: Profile
+    me: User
 
     # Fetch all users
     users: [User]!
