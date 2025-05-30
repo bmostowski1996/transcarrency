@@ -1,53 +1,10 @@
-// resolver.ts
-import { Profile } from '../models/index.js';
-import { signToken } from '../utils/auth.js';
-import { getVehicleParts } from '../utils/nhtsaApi.js'; // Import the new function
 import { User } from '../models/User.js';
+import { Vehicle } from '../models/Vehicle.js';
+import { ServiceRecord } from '../models/ServiceRecord.js';
+import { getVehicleParts } from '../utils/nhtsaApi.js';
+import { AuthenticationError } from '../utils/auth.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { AuthenticationError } from 'apollo-server-express'; // Fix import for AuthError
-
-interface Profile {
-  _id: string;
-  name: string;
-  email: string;
-  password: string;
-  skills: string[];
-}
-
-interface ProfileArgs {
-  profileId: string;
-}
-
-interface AddProfileArgs {
-  input: {
-    name: string;
-    email: string;
-    password: string;
-  };
-}
-
-interface AddSkillArgs {
-  profileId: string;
-  skill: string;
-}
-
-interface RemoveSkillArgs {
-  profileId: string;
-  skill: string;
-}
-
-interface Context {
-  user?: Profile; // Optional user profile in context
-}
-
-interface VehiclePartsArgs {
-  vin?: string;
-  make?: string;
-  model?: string;
-  year?: number;
-  type?: string;
-}
 
 const resolvers = {
   Query: {
@@ -112,3 +69,15 @@ const resolvers = {
   },
 };
 export default resolvers;
+
+
+
+
+
+
+
+
+
+
+
+
