@@ -21,7 +21,12 @@ const seedDatabase = async () => {
             const random = Math.floor(Math.random() * count);
             // Again query all users but only fetch one offset by our random #
             const user = await User.findOne().skip(random).limit(-1);
+            // Add the vehicle to the user's list of owned vehicles
             user?.vehicles?.push(vehicle._id);
+            // Identify the user as the vehicle's owner in the vehicle object
+            vehicle.owner = user?._id;
+            await vehicle.save();
+            await user?.save();
         }
         console.log('Seeding completed successfully!');
         process.exit(0);
