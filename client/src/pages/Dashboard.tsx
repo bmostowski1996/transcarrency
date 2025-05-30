@@ -78,7 +78,7 @@ const Dashboard = () => {
           {serviceReportData.map(item => (
             <div className='flex flex-col items-center text-center'>
               <h3 className="service-report-text">{item.parameter}</h3>
-              <img src={item.icon} style={{height: '10vh'}}></img>
+              <img src={item.icon} style={{height: '15vh'}}></img>
               <p className="text-xl text-black">{item.value instanceof Date ? item.value.toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'}) : item.value}</p>
             </div>
           ))}

@@ -12,11 +12,14 @@ import Signup from './pages/Signup';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Error from './pages/Error';
+import MaintenancePage from './pages/MaintenancePage';
+
 
 import LayoutWithHeader from './layouts/LayoutHeader';
 import LayoutNoHeader from './layouts/LayoutNoHeader';
 
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import Addvehicle from './pages/Addvehicle';
 
 const httpLink = createHttpLink({
   uri: '/graphql',
@@ -44,7 +47,8 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },
       { path: '/login', element: <Login />},
-      { path: '/signup', element: <Signup />}
+      { path: '/signup', element: <Signup />},
+      {path: '/maintenance', element: <MaintenancePage />}, // Maintenance page
     ]
   },
   {
@@ -53,7 +57,8 @@ const router = createBrowserRouter([
     element: <LayoutWithHeader />,
     errorElement: <Error />,
     children: [
-      { path: '/dashboard', element: <Dashboard /> }
+      { path: '/dashboard', element: <Dashboard /> },
+      { path: '/addvehicle', element: <Addvehicle /> } // Reusing Dashboard for Add Vehicle for now
     ]
   }
 ]);
