@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import tclogo from '../../assets/tclogo_simple.png';
 import { type MouseEvent} from 'react';
 import Auth from '../../utils/auth';
 
@@ -8,38 +9,18 @@ const Header = () => {
     Auth.logout();
   };
   return (
-    <header className="bg-info text-dark mb-4 py-3 display-flex align-center">
-      <div className="container flex-column justify-space-between-lg justify-center align-center text-center">
-        <Link className="text-dark" to="/">
-          <h1 className="m-0" style={{ fontSize: '3rem' }}>
-            Tech Friends
-          </h1>
-        </Link>
-        <p className="m-0" style={{ fontSize: '1.75rem', fontWeight: '700' }}>
-          Meet your new programming pals.
-        </p>
-        <div>
-          {Auth.loggedIn() ? (
-            <>
-              <Link className="btn btn-lg btn-primary m-2" to="/me">
-                View My Profile
-              </Link>
-              <button className="btn btn-lg btn-light m-2" onClick={logout}>
-                Logout
-              </button>
-            </>
-          ) : (
-            <>
-              <Link className="btn btn-lg btn-primary m-2" to="/login">
-                Login
-              </Link>
-              <Link className="btn btn-lg btn-light m-2" to="/signup">
-                Signup
-              </Link>
-            </>
-          )}
-        </div>
+    <header className="bg-black shadow-md px-6 py-4 flex items-center justify-between">
+      {/* Logo */}
+      <div className="flex items-center gap-2">
+        <img src={tclogo} alt="TransCARrency Logo" style={{ width: '10vh' }} />
       </div>
+      
+      {/* Navigation */}
+      <nav className="flex gap-6 text-gray-700 font-medium">
+        <Link to="/" className="hover:text-blue-600 transition-colors">Home</Link>
+        <Link to="/dashboard" className="hover:text-blue-600 transition-colors">Dashboard</Link>
+        <Link to="/forum" className="hover:text-blue-600 transition-colors">Forum</Link>
+      </nav>
     </header>
   );
 };

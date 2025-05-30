@@ -1,5 +1,5 @@
 // models/ServiceRecord.ts
-import mongoose, { Schema, model, Document } from 'mongoose';
+import { Schema, model, Document } from 'mongoose';
 
 export interface IServiceRecord extends Document {
   date?: string;
@@ -41,5 +41,6 @@ const serviceRecordSchema = new Schema<IServiceRecord>(
   }
 );
 
-export const ServiceRecord = model<IServiceRecord>('ServiceRecord', serviceRecordSchema);
+const ServiceRecord = model<IServiceRecord>('ServiceRecord', serviceRecordSchema);
+export default ServiceRecord;
 

@@ -5,7 +5,11 @@ import { ApolloServer } from '@apollo/server'; // Note: Import from @apollo/serv
 import { expressMiddleware } from '@apollo/server/express4';
 import { typeDefs, resolvers } from './schemas/index.js';
 import { authenticateToken } from './utils/auth.js';
+<<<<<<< HEAD
 import { googleCalendarController } from './controllers/index.js';
+=======
+// import { googleCalendarController } from './controllers/index.js';
+>>>>>>> 1de7c13ffd7a164316ba7857ea756d5cbede448b
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -23,7 +27,12 @@ const startApolloServer = async () => {
     app.use('/graphql', expressMiddleware(server, {
         context: authenticateToken
     }));
+<<<<<<< HEAD
     app.use('/', googleCalendarController);
+=======
+    // We are not allowed 
+    // app.use('/', googleCalendarController);
+>>>>>>> 1de7c13ffd7a164316ba7857ea756d5cbede448b
     if (process.env.NODE_ENV === 'production') {
         app.use(express.static(path.join(__dirname, '../../client/dist')));
         app.get('*', (_req, res) => {

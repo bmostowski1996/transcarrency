@@ -1,10 +1,5 @@
-import { typeDefs } from './typeDefs'; // or typeDefs.js
-import resolversFromFile from './resolvers'; // or resolvers.js
+import typeDefs from './typeDefs.js';
+import resolvers from './resolvers.js';
 
-// Export typeDefs and the imported default resolver as 'resolvers'
-export { typeDefs, resolversFromFile as resolvers };
-
-// ...existing code...
-
-// index for schemas to be used in the server
+export { typeDefs, resolvers };
 

@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+=======
+// seeds/cleanDB.ts
+// import mongoose from 'mongoose';
+>>>>>>> 1de7c13ffd7a164316ba7857ea756d5cbede448b
 import { User, Vehicle, ServiceRecord } from '../models/index.js';
 import process from 'process';
 const cleanDB = async () => {

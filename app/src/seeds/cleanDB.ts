@@ -1,5 +1,5 @@
 // seeds/cleanDB.ts
-import mongoose from 'mongoose';
+// import mongoose from 'mongoose';
 import { User, Vehicle, ServiceRecord } from '../models/index.js';
 import process from 'process';
 

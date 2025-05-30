@@ -1,15 +1,26 @@
 [
     {
+<<<<<<< HEAD
         "name": "Alex Johnson",
+=======
+        "firstName": "Alex",
+        "lastName": "Johnson",
+>>>>>>> 1de7c13ffd7a164316ba7857ea756d5cbede448b
         "email": "alex.johnson@transcarrency.dev",
         "password": "password01"
     },
     {
+<<<<<<< HEAD
         "name": "Morgan Lee",
+=======
+        "firstName": "Morgan",
+        "lastName": "Lee",
+>>>>>>> 1de7c13ffd7a164316ba7857ea756d5cbede448b
         "email": "morgan.lee@transcarrency.dev",
         "password": "password02"
     },
     {
+<<<<<<< HEAD
         "name": "Jamie Rivera",
         "email": "jamie.rivera@transcarrency.dev",
         "password": "password03"
@@ -48,5 +59,11 @@
         "name": "Skylar Nguyen",
         "email": "skylar.nguyen@transcarrency.dev",
         "password": "password10"
+=======
+        "firstName": "Jamie",
+        "lastName": "Rivera",
+        "email": "jamie.rivera@transcarrency.dev",
+        "password": "password03"
+>>>>>>> 1de7c13ffd7a164316ba7857ea756d5cbede448b
     }
 ]
