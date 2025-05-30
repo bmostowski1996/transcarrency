@@ -16,7 +16,7 @@ const Header = () => {
       </div>
       
       {/* Navigation */}
-      <nav className="flex gap-6 text-gray-700 font-medium">
+      <nav className="flex gap-6 text-gray-700 font-bold text-3xl">
         <Link to="/" className="hover:text-blue-600 transition-colors">Home</Link>
         <Link to="/dashboard" className="hover:text-blue-600 transition-colors">Dashboard</Link>
         <Link to="/forum" className="hover:text-blue-600 transition-colors">Forum</Link>
