@@ -23,6 +23,10 @@ const serviceRecordSchema = new Schema({
     invoiceUrl: {
         type: String,
     },
+    vehicle: {
+        type: Schema.Types.ObjectId,
+        ref: 'Vehicle'
+    }
 }, {
     timestamps: true,
 });

@@ -1,10 +1,8 @@
 import db from '../config/connection.js';
-import { User } from '../models/index.js';
-import { Vehicle } from '../models/index.js';
-// import { ServiceRecord } from '../models/index.js';
+import { User, Vehicle, ServiceRecord } from '../models/index.js';
 import userSeeds from './userData.json' with { type: 'json' };
 import vehicleSeeds from './vehiclesData.json' with { type: 'json' };
-// import serviceRecordSeeds from './vehiclesData.json' with { type: 'json' };
+import serviceRecordSeeds from './ServiceRecordData.json' with { type: 'json' };
 import cleanDB from './cleanDB.js';
 const seedDatabase = async () => {
     try {
@@ -12,7 +10,23 @@ const seedDatabase = async () => {
         await cleanDB();
         await User.insertMany(userSeeds);
         await Vehicle.insertMany(vehicleSeeds);
-        // await ServiceRecord.insertMany(serviceRecordSeeds);
+        await ServiceRecord.insertMany(serviceRecordSeeds);
+        // For now, we've seeded, but we still need to associate service records with vehicles, and vehicles with users!
+        // First, let's associate service records with vehicles 
+        const serviceRecords = await ServiceRecord.find();
+        for (const serviceRecord of serviceRecords) {
+            // Assign the service record to a random user 
+            const count = await Vehicle.countDocuments();
+            const random = Math.floor(Math.random() * count);
+            // Again query all vehicles but only fetch one offset by our random #
+            const vehicle = await Vehicle.findOne().skip(random).limit(-1);
+            // Add the service record to the vehicle's list of service records
+            vehicle?.serviceRecords?.push(serviceRecord._id);
+            // Identify the vehicle that the service record was performed on
+            serviceRecord.vehicle = vehicle?._id;
+            await vehicle?.save();
+            await serviceRecord?.save();
+        }
         // For now, we have seeded Users and Vehicles, but we haven't actually assigned Vehicles to users yet...
         const vehicles = await Vehicle.find();
         for (const vehicle of vehicles) {
