@@ -2,7 +2,7 @@ import { useState, type FormEvent, type ChangeEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { useMutation } from '@apollo/client';
-import { ADD_PROFILE } from '../utils/mutations';
+import { REGISTER_USER } from '../utils/mutations';
 
 import Auth from '../utils/auth';
 
@@ -15,9 +15,10 @@ const Signup = () => {
     name: '',
     email: '',
     password: '',
+    confirmPassword: ''
   });
 
-  const [addProfile, { error, data }] = useMutation(ADD_PROFILE);
+  const [addProfile, { error, data }] = useMutation(REGISTER_USER);
   const navigate = useNavigate();
 
   const password = formState.password;
@@ -48,9 +49,9 @@ const Signup = () => {
     }
   };
 
-  const handleGoogleLogin = () => {
-    alert('Google login not implemented');
-  };
+  // const handleGoogleLogin = () => {
+  //   alert('Google login not implemented');
+  // };
 
   return (
     <div className= 'home-background' style={{    

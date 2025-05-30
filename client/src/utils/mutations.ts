@@ -21,6 +21,7 @@ export const LOGIN_USER = gql`
         _id
         name
         email
+        password
       }
     }
   }

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import DOS from '../assets/icons-two/2014.png'; // Adjust the path as necessary
+// import { useNavigate } from 'react-router-dom';
+// import DOS from '../assets/icons-two/2014.png'; // Adjust the path as necessary
 
 
 const Addvehicle: React.FC = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     serviceDate: '',
