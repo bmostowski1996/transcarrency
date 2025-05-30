@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DOS from '../assets/icons-two/2014.png'; // Adjust the path as necessary
 
+
 const Addvehicle: React.FC = () => {
   const navigate = useNavigate();
 
@@ -39,7 +40,8 @@ const Addvehicle: React.FC = () => {
 
 
 return (
-    <div className="min-h-screen bg-gradient-to-b from-sky-100 to-green-100 p-8 flex flex-col items-center justify-center">
+   <div className='bg-dashboard mx-auto w-7/8 items-center p-6'>
+    <div className=" gap-6 min-h-screen bg-gradient-to-b from-sky-100 to-green-100 p-8 flex flex-col items-center justify-center">
       <div className="w-full max-w-5xl bg-white shadow-2xl rounded-2xl p-10">
         <div className="text-center text-4xl font-bold text-black mb-10">Add Vehicle</div>
         <div className="flex justify-between items-center mb-8">
@@ -115,6 +117,7 @@ return (
             </button>
           </div>
         </form>
+      </div>
       </div>
     </div>
   );
