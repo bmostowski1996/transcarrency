@@ -16,6 +16,7 @@ import carServiceIcon from '../assets/service_icons/car_service_icon.png';
 import moneyIcon from '../assets/service_icons/money_icon.png';
 import ford_mustang from '../assets/ford_mustang.png';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 interface ServiceReportData {
   serviceDate: Date | null;
@@ -27,7 +28,7 @@ interface ServiceReportData {
 }
 
 const Dashboard = () => {
-
+  const navigate = useNavigate();
   const [serviceReport, setServiceReport] = useState<ServiceReportData>({
     serviceDate: null,
     serviceType: null,
@@ -35,9 +36,8 @@ const Dashboard = () => {
     notes: null,
     cost: null,
     shopName: null
-  });
 
-  // const navigate = useNavigate();
+  });
 
   const serviceReportData = [
     {parameter: 'Date of Service', icon: calendarIcon, value: serviceReport.serviceDate},
