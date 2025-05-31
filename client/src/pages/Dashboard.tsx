@@ -85,8 +85,11 @@ const Dashboard = () => {
       {/* TODO: Add arrows which let you move between vehicles */}
       <h2 className='font-dashboard'>Dashboard</h2>
       <h3 className='font-dashboard-h3'>My Vehicles</h3>
-      <div className="flex justify-center mb-4">
+      <div className="flex justify-center mb-4 gap-2">
       <button className='bg-green-100 text-black p-2 rounded-lg hover:bg-mint-200' onClick={() => navigate('/addvehicle')}>Add Vehicle</button>
+      <button className='bg-green-100 text-black p-2 rounded-lg hover:bg-mint-200' onClick={() => edit('/addvehicle')}>Edit Vehicle</button>
+      {/* <button className='bg-green-100 text-black p-2 rounded-lg hover:bg-mint-200' onClick={() => deleteVehicle()}>Delete Vehicle</button>
+       */}
       </div>
       <div className="flex items-center justify-center mb-6 gap-10">
       <button
@@ -120,8 +123,22 @@ const Dashboard = () => {
               <p className="text-xl text-black">{item.value instanceof Date ? item.value.toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'}) : item.value}</p>
             </div>
           ))}
+          
         </div>
+        
       </div>
+      <div className="col-span-full flex justify-center mt-4">
+           <button
+            className='bg-red-500 text-black p-2 rounded-lg hover:bg-red-200'
+            onClick={() => {
+            if (window.confirm('Are you sure you wish to delete this vehicle?')) {
+             deleteVehicle();
+              }
+             }}
+             >
+            Delete Vehicle
+            </button>
+          </div>
     </div>
   );
 };
