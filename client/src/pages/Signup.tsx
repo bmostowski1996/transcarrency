@@ -50,9 +50,9 @@ const Signup = () => {
     }
   };
 
-  const handleGoogleLogin = () => {
-    alert('Google login not implemented');
-  };
+  // const handleGoogleLogin = () => {
+  //   alert('Google login not implemented');
+  // };
 
   return (
     <div className= 'home-background' style={{    
@@ -205,7 +205,7 @@ const Signup = () => {
               cursor: 'pointer',
               marginBottom: 16,
             }}>
-              Log In
+              Sign Up
             </button>
           </form>
         )}

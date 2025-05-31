@@ -4,9 +4,14 @@ import { useMutation } from '@apollo/client';
 import { LOGIN_USER } from '../utils/mutations';
 import Auth from '../utils/auth';
 import tclogo from '../assets/tclogo_transparent.png';
-import gicon from '../assets/gi-transparent.png'; // Adjust the path as necessary
+// import gicon from '../assets/gi-transparent.png'; // Adjust the path as necessary
 
 
+// As a baseline test, our goal is to do the following:
+// 1. Start the client and server
+// 2. Log in as a seeded user
+
+// Current iss
 const Login = () => {
   const [formState, setFormState] = useState({ email: '', password: '' });
   const [login, { error, data }] = useMutation(LOGIN_USER);
@@ -19,10 +24,12 @@ const Login = () => {
       [name]: value,
     });
   };
-
+  
+  // Right now, this is just starter code...
   const handleFormSubmit = async (event: FormEvent) => {
     event.preventDefault();
     try {
+      // What does the login function look like?
       const { data } = await login({
         variables: { ...formState },
       });

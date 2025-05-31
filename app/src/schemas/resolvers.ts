@@ -27,8 +27,7 @@ const resolvers = {
       const { firstName, lastName, email, password } = input;
       const existingUser = await User.findOne({ email });
       if (existingUser) throw new Error('User already exists');
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const newUser = await User.create({ firstName, lastName, email, password: hashedPassword });
+      const newUser = await User.create({ firstName, lastName, email, password });
       const token = jwt.sign({ _id: newUser._id }, process.env.JWT_SECRET_KEY!, { expiresIn: '1h' });
       return { token, user: newUser };
     },

@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useQuery } from '@apollo/client';
+// import { useNavigate } from 'react-router-dom';
+// import { useQuery } from '@apollo/client';
 
 // Placeholder code while the login screen is still being put together
-import { LOGIN_USER } from '../utils/mutations';
+// import { LOGIN_USER } from '../utils/mutations';
 
-import Auth from '../utils/auth';
+// import Auth from '../utils/auth';
 
 // Import icons
 import calendarIcon from '../assets/service_icons/calendar_icon.png';
@@ -18,19 +18,26 @@ import moneyIcon from '../assets/service_icons/money_icon.png';
 import ford_mustang from '../assets/ford_mustang.png';
 
 interface ServiceReportData {
-  serviceDate: Date;
-  serviceType: 'Oil Change' | 'Brake Replacement' | 'Tire Rotation' | 'Battery Replacement' | 'Inspection' | 'Other';
-  mileage: number;
-  notes: string;
-  cost: number;
+  serviceDate: Date | null;
+  serviceType: null | 'Oil Change' | 'Brake Replacement' | 'Tire Rotation' | 'Battery Replacement' | 'Inspection' | 'Other';
+  mileage: null | number;
+  notes: null | string;
+  cost: null | number;
   shopName: string | null;
 }
 
 const Dashboard = () => {
 
-  const [serviceReport, setServiceReport] = useState<ServiceReportData>({});
+  const [serviceReport, setServiceReport] = useState<ServiceReportData>({
+    serviceDate: null,
+    serviceType: null,
+    mileage: null,
+    notes: null,
+    cost: null,
+    shopName: null
+  });
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const serviceReportData = [
     {parameter: 'Service Date', icon: calendarIcon, value: serviceReport.serviceDate},

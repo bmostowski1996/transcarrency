@@ -3,7 +3,7 @@ import { setContext } from '@apollo/client/link/context';
 
 // Link to your GraphQL server
 const httpLink = createHttpLink({
-  uri: 'http://localhost:3001/graphql',
+  uri: '/graphql',
 });
 
 // Attach JWT token to every request (if logged in)
