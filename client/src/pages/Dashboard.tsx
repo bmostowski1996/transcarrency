@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useQuery } from '@apollo/client';
+// import { useNavigate } from 'react-router-dom';
+// import { useQuery } from '@apollo/client';
 
 // Placeholder code while the login screen is still being put together
-import { LOGIN_USER } from '../utils/mutations';
+// import { LOGIN_USER } from '../utils/mutations';
 
-import Auth from '../utils/auth';
+// import Auth from '../utils/auth';
 
 // Import icons
 import calendarIcon from '../assets/service_icons/calendar_icon.png';
@@ -14,26 +14,33 @@ import speedometerIcon from '../assets/service_icons/speedometer_icon.png';
 import clipboardIcon from '../assets/service_icons/notes_icon.png';
 import carServiceIcon from '../assets/service_icons/car_service_icon.png';
 import moneyIcon from '../assets/service_icons/money_icon.png';
-
 import ford_mustang from '../assets/ford_mustang.png';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 interface ServiceReportData {
-  serviceDate: Date;
-  serviceType: 'Oil Change' | 'Brake Replacement' | 'Tire Rotation' | 'Battery Replacement' | 'Inspection' | 'Other';
-  mileage: number;
-  notes: string;
-  cost: number;
+  serviceDate: Date | null;
+  serviceType: null | 'Oil Change' | 'Brake Replacement' | 'Tire Rotation' | 'Battery Replacement' | 'Inspection' | 'Other';
+  mileage: null | number;
+  notes: null | string;
+  cost: null | number;
   shopName: string | null;
 }
 
 const Dashboard = () => {
-
-  const [serviceReport, setServiceReport] = useState<ServiceReportData>({});
-
   const navigate = useNavigate();
+  const [serviceReport, setServiceReport] = useState<ServiceReportData>({
+    serviceDate: null,
+    serviceType: null,
+    mileage: null,
+    notes: null,
+    cost: null,
+    shopName: null
+
+  });
 
   const serviceReportData = [
-    {parameter: 'Service Date', icon: calendarIcon, value: serviceReport.serviceDate},
+    {parameter: 'Date of Service', icon: calendarIcon, value: serviceReport.serviceDate},
     {parameter: 'Service Type', icon: serviceIcon, value: serviceReport.serviceType},
     {parameter: 'Mileage', icon: speedometerIcon, value: serviceReport.mileage},
     {parameter: 'Notes', icon: clipboardIcon, value: serviceReport.notes},
@@ -60,13 +67,47 @@ const Dashboard = () => {
     });
   },[]);
 
+  function handlePrevVehicle(event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
+    // Placeholder: In a real app, this would update the selected vehicle index/state
+    // For now, just log to console
+    console.log('Previous vehicle button clicked');
+  }
+
+  function handleNextVehicle(event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
+    // Placeholder: In a real app, this would update the selected vehicle index/state
+    // For now, just log to console
+    console.log('Next vehicle button clicked');
+  }
+
   return (
     <div className='bg-dashboard mx-auto w-7/8 items-center p-6'>
       {/* Displays current vehicles */}
       {/* TODO: Add arrows which let you move between vehicles */}
       <h2 className='font-dashboard'>Dashboard</h2>
       <h3 className='font-dashboard-h3'>My Vehicles</h3>
-      <img src={ford_mustang} alt="Ford Mustang" className="w-[25vh] mx-auto" />
+      <div className="flex justify-center mb-4 gap-2">
+      <button className='bg-green-100 text-black p-2 rounded-lg hover:bg-mint-200' onClick={() => navigate('/addvehicle')}>Add Vehicle</button>
+      <button className='bg-green-100 text-black p-2 rounded-lg hover:bg-mint-200' onClick={() => edit('/addvehicle')}>Edit Vehicle</button>
+      {/* <button className='bg-green-100 text-black p-2 rounded-lg hover:bg-mint-200' onClick={() => deleteVehicle()}>Delete Vehicle</button>
+       */}
+      </div>
+      <div className="flex items-center justify-center mb-6 gap-10">
+      <button
+        className="p-2 rounded-full bg-gray-500 hover:bg-gray-300"
+        aria-label="Previous Vehicle"
+        onClick={handlePrevVehicle} // implement this function
+      >
+        <FaChevronLeft size={32} />
+      </button>
+      <img src={ford_mustang} alt="Ford Mustang" className="w-[25vh] " />
+      <button
+        className="p-2 rounded-full bg-gray-500 hover:bg-gray-300"
+        aria-label="Next Vehicle"
+        onClick={handleNextVehicle} // implement this function
+      >
+        <FaChevronRight size={32} />
+      </button>
+    </div>
       <h3 className='font-dashboard-h3'>1971 Ford Mustang</h3>
       
       {/* Displays the most recent service report recorded for the vehicle */}
@@ -78,12 +119,26 @@ const Dashboard = () => {
           {serviceReportData.map(item => (
             <div className='flex flex-col items-center text-center'>
               <h3 className="service-report-text">{item.parameter}</h3>
-              <img src={item.icon} style={{height: '10vh'}}></img>
+              <img src={item.icon} style={{height: '15vh'}}></img>
               <p className="text-xl text-black">{item.value instanceof Date ? item.value.toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'}) : item.value}</p>
             </div>
           ))}
+          
         </div>
+        
       </div>
+      <div className="col-span-full flex justify-center mt-4">
+           <button
+            className='bg-red-500 text-black p-2 rounded-lg hover:bg-red-200'
+            onClick={() => {
+            if (window.confirm('Are you sure you wish to delete this vehicle?')) {
+             deleteVehicle();
+              }
+             }}
+             >
+            Delete Vehicle
+            </button>
+          </div>
     </div>
   );
 };

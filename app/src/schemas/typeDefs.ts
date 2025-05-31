@@ -1,8 +1,5 @@
-// typeDef.ts
-import { gql } from 'apollo-server-express';
-
 // GraphQL schema definitions
-export const typeDefs = gql`
+export const typeDefs = `
   # A single maintenance service record for a vehicle
   type ServiceRecord {
     _id: ID!
@@ -69,12 +66,9 @@ export const typeDefs = gql`
     # Search parts related to a vehicle
     vehicleParts(vin: String, make: String, model: String, year: Int, type: String): [VehiclePart]
 
-    # Get all user profiles (example placeholder)
-    profiles: [Profile]!
-    profile(profileId: ID!): Profile
-
     # Get currently logged-in user profile
-    me: Profile
+
+    Front-End
     me: User
 
     # Fetch all users
@@ -91,7 +85,8 @@ export const typeDefs = gql`
 
   # Input for registering or updating a user
   input UserInput {
-    name: String!
+    firstName: String!
+    lastName: String!
     email: String!
     password: String!
   }
@@ -99,7 +94,8 @@ export const typeDefs = gql`
   # User type definition
   type User {
     _id: ID
-    name: String
+    firstName: String
+    lastName: String
     email: String
     password: String
   }
@@ -134,8 +130,6 @@ export const typeDefs = gql`
     uploadInvoice(vehicleId: ID!, recordId: ID!, invoiceUrl: String!): Vehicle
   }
 `;
-
-
 
 export default typeDefs;
 

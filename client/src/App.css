@@ -39,7 +39,7 @@ h3 {
 }
 
 .bg-dashboard {
-  background-color: #64C6D7;
+  background-color: #64C8D7;
   border-radius: 25px;
   font-family: "IBM Plex Sans", sans-serif;
   align-items: center;
@@ -191,6 +191,28 @@ input[type="text"], input[type="email"], input[type="password"] {
 .back-btn svg, .back-btn-icon {
   margin-right: 8px;
   font-size: 2rem;
+}
+
+/* Add Vehicle */
+.app-title {
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  letter-spacing: 1px;
+}
+
+.bg-dashboard {
+  background-color: #64C8D7;
+  border-radius: 25px;
+  font-family: "IBM Plex Sans", sans-serif;
+  align-items: center;
+}
+
+.service-report {
+  background-color: #DBFFE8;
+  border-radius: 10px;
+  font-family: "IBM Plex Sans", sans-serif;
+  align-items: center;
 }
 
 /* Responsive adjustments */
