@@ -34,7 +34,7 @@ const Login = () => {
         variables: { email: formState.email, password: formState.password },
       });
       Auth.login(data.login.token);
-      navigate('/dashboard');
+      navigate('/dashboard'); // Redirect to the dashboard after successful login
     } catch (e) {
       console.error(e);
     }
