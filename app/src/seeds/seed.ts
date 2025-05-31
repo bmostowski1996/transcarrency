@@ -1,4 +1,5 @@
 import db from '../config/connection.js';
+import bcrypt from 'bcrypt';
 import { User, Vehicle, ServiceRecord } from '../models/index.js';
 import userSeeds from './userData.json' with { type: 'json' };
 import vehicleSeeds from './vehiclesData.json' with { type: 'json' };
@@ -11,7 +12,14 @@ const seedDatabase = async (): Promise<void> => {
     await db();
     await cleanDB();
     
-    await User.insertMany(userSeeds);
+    const usersWithHashedPasswords = await Promise.all(
+    userSeeds.map(async user => {
+      const hashedPassword = await bcrypt.hash(user.password, 10);
+      return { ...user, password: hashedPassword };
+    })
+    );
+
+    await User.insertMany(usersWithHashedPasswords);
     await Vehicle.insertMany(vehicleSeeds);
     await ServiceRecord.insertMany(serviceRecordSeeds);
 

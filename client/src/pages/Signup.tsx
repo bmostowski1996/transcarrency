@@ -205,7 +205,7 @@ const Signup = () => {
               cursor: 'pointer',
               marginBottom: 16,
             }}>
-              Log In
+              Sign Up
             </button>
           </form>
         )}
