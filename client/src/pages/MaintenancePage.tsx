@@ -9,17 +9,13 @@ interface ReminderOverride {
   minutes: number;
 }
 
-interface MaintenanceDetailsData {
-  vehicleType: string; // This can serve as a manual fallback
-  maintenanceDate: string; // Store as 'yyyy-MM-dd' string
-}
-
 interface CalendarEventDetailsData {
   summary: string;
   description: string;
   eventDate: string;
   startTimeStr: string;
   endTimeStr: string;
+  vehicleType: string; // ADDED for manual entry in calendar form
 }
 
 interface Vehicle {
@@ -30,19 +26,15 @@ interface Vehicle {
 }
 
 const MaintenancePage: React.FC = () => {
-  const initialMaintenanceDate = format(new Date(), 'yyyy-MM-dd');
-
-  const [maintenanceDetails, setMaintenanceDetails] = useState<MaintenanceDetailsData>({
-    vehicleType: '',
-    maintenanceDate: initialMaintenanceDate,
-  });
+  const initialCalendarDate = format(new Date(), 'yyyy-MM-dd');
 
   const [calendarEventDetails, setCalendarEventDetails] = useState<CalendarEventDetailsData>({
-    summary: 'Schedule Maintenance',
+    summary: 'Example: Oil Change for Toyota Camry', // UPDATED default summary
     description: '',
-    eventDate: initialMaintenanceDate,
+    eventDate: initialCalendarDate, // UPDATED to use initialCalendarDate directly
     startTimeStr: '09:00',
     endTimeStr: '10:00',
+    vehicleType: '', // ADDED
   });
 
   const [selectedVehicleId, setSelectedVehicleId] = useState<string>('');
@@ -56,16 +48,15 @@ const MaintenancePage: React.FC = () => {
 
   // Effect to update calendar event summary based on selected vehicle, manual vehicle type, and date
   useEffect(() => {
-    let newSummary = 'Schedule Maintenance'; // Default summary
+    let newSummary = 'Example: Oil Change for Toyota Camry'; // UPDATED default summary
     const selectedVehicle = vehiclesData?.myVehicles?.find((v: Vehicle) => v._id === selectedVehicleId);
     
-    // Use calendarEventDetails.eventDate if available, otherwise fallback to maintenanceDetails.maintenanceDate
-    const dateForSummary = calendarEventDetails.eventDate || maintenanceDetails.maintenanceDate;
+    const dateForSummary = calendarEventDetails.eventDate; // SIMPLIFIED: directly use calendarEventDetails.eventDate
 
     if (selectedVehicle) {
       newSummary = `Maintenance for ${selectedVehicle.year} ${selectedVehicle.make} ${selectedVehicle.model}`;
-    } else if (maintenanceDetails.vehicleType) { // Fallback to manually entered vehicle type
-      newSummary = `Maintenance for ${maintenanceDetails.vehicleType}`;
+    } else if (calendarEventDetails.vehicleType) { // Fallback to manually entered vehicle type FROM CALENDAR DETAILS
+      newSummary = `Maintenance for ${calendarEventDetails.vehicleType}`;
     }
 
     if (dateForSummary) {
@@ -80,29 +71,11 @@ const MaintenancePage: React.FC = () => {
     setCalendarEventDetails((prev: CalendarEventDetailsData) => ({
       ...prev,
       summary: newSummary,
-      // Ensure eventDate in calendar form is also updated if maintenanceDate was the source
-      eventDate: dateForSummary 
+      // eventDate: dateForSummary // No longer needed to sync from a different source here
     }));
 
-  }, [selectedVehicleId, vehiclesData, calendarEventDetails.eventDate, maintenanceDetails.maintenanceDate, maintenanceDetails.vehicleType]);
+  }, [selectedVehicleId, vehiclesData, calendarEventDetails.eventDate, calendarEventDetails.vehicleType]); // UPDATED dependency array
 
-
-  // Effect to specifically sync maintenanceDate from the first form to the calendarEventDetails.eventDate
-  // This helps if the user changes the date in the first form, the second form's date field should also update.
-  useEffect(() => {
-    if (maintenanceDetails.maintenanceDate && maintenanceDetails.maintenanceDate !== calendarEventDetails.eventDate) {
-      setCalendarEventDetails((prev: CalendarEventDetailsData) => ({
-        ...prev,
-        eventDate: maintenanceDetails.maintenanceDate,
-      }));
-    }
-  }, [maintenanceDetails.maintenanceDate]);
-
-
-  const handleMaintenanceChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setMaintenanceDetails((prev: MaintenanceDetailsData) => ({ ...prev, [name]: value }));
-  };
 
   const handleCalendarEventChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -209,36 +182,24 @@ const MaintenancePage: React.FC = () => {
     }
   };
 
-  const handleMaintenanceFormSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Submitting maintenance details:", maintenanceDetails);
-    // Mock submission
-    setSuccessMessage("Maintenance details submitted to application (mock).");
-    // Reset form or provide other feedback as needed
-  };
-
   const inputClasses = "w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm";
   const labelClasses = "block text-sm font-medium text-gray-700 mb-1";
-  const buttonPrimaryClasses = "w-full px-4 py-2 bg-blue-600 text-white font-semibold rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50";
-  const buttonSecondaryClasses = "px-3 py-2 bg-green-600 text-white font-semibold rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50";
-  const buttonDangerClasses = "px-3 py-1 bg-red-500 text-white text-xs font-medium rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1";
-  const buttonNeutralClasses = "px-3 py-2 bg-gray-500 text-white text-sm font-medium rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-1";
+  const buttonPrimaryClasses = "w-full px-4 py-2 bg-blue-600 text-black font-semibold rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50";
+  const buttonSecondaryClasses = "px-3 py-2 bg-green-600 text-black font-semibold rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50";
+  const buttonDangerClasses = "px-3 py-1 bg-red-500 text-black text-xs font-medium rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1";
+  const buttonNeutralClasses = "px-3 py-2 bg-gray-500 text-black text-sm font-medium rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-1";
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-100 to-green-100 p-4 md:p-8 flex flex-col items-center">
-      <div className="w-full max-w-4xl bg-white shadow-2xl rounded-xl p-6 md:p-8">
+      <div className="w-full max-w-2xl bg-white shadow-2xl rounded-xl p-6 md:p-8"> {/* Adjusted max-w-4xl to max-w-2xl for single column */} 
         <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-8 text-center">Schedule Maintenance & Set Calendar Reminder</h1>
         
-        <div className="grid md:grid-cols-2 gap-8">
+        {/* <div className="grid md:grid-cols-2 gap-8"> */}
+        <div className="flex flex-col items-center"> {/* Changed grid to flex for single centered column */} 
           
-          <section>
+          {/* <section> // REMOVED Maintenance Details Section
             <form onSubmit={handleMaintenanceFormSubmit} className="space-y-6 p-6 bg-gray-50 rounded-lg shadow-md">
               <h2 className="text-xl md:text-2xl font-semibold text-gray-700 mb-6 border-b pb-3">Maintenance Details</h2>
-              
-              <div>
-                <label htmlFor="vehicleType" className={labelClasses}>Vehicle Type (Manual Entry):</label>
-                <input type="text" id="vehicleType" name="vehicleType" value={maintenanceDetails.vehicleType} onChange={handleMaintenanceChange} placeholder="e.g., Sedan, SUV" className={inputClasses} />
-              </div>
               
               <div>
                 <label htmlFor="maintenanceDate" className={labelClasses}>Maintenance Date:</label>
@@ -249,14 +210,14 @@ const MaintenancePage: React.FC = () => {
                 Submit Maintenance Request (App Only)
               </button>
             </form>
-          </section>
+          </section> */} 
 
-          <section>
+          <section className="w-full"> {/* Ensure the calendar form takes full width of its container */} 
             <form onSubmit={handleCalendarSubmit} className="space-y-6 p-6 bg-gray-50 rounded-lg shadow-md">
               <h2 className="text-xl md:text-2xl font-semibold text-gray-700 mb-6 border-b pb-3">Set Google Calendar Reminder</h2>
 
               {vehiclesLoading && <p className="text-sm text-gray-500">Loading your vehicles...</p>}
-              {vehiclesError && <p className="text-sm text-red-600">Error loading vehicles: {vehiclesError.message}</p>}
+              {vehiclesError && <p className="text-sm text-red-600">Could not load your vehicles at this time. Please try again later.</p>} {/* UPDATED error message */}
               
               {vehiclesData?.myVehicles && vehiclesData.myVehicles.length > 0 && (
                 <div>
@@ -272,13 +233,19 @@ const MaintenancePage: React.FC = () => {
                 </div>
               )}
               {vehiclesData && vehiclesData.myVehicles && vehiclesData.myVehicles.length === 0 && !vehiclesLoading && (
-                  <p className="text-sm text-gray-500">No vehicles found. You can add vehicles to your profile or use the manual entry above.</p>
+                  <p className="text-sm text-gray-500">No vehicles found. You can add vehicles to your profile or use the manual entry below.</p>
               )}
+
+              <div>
+                <label htmlFor="vehicleType" className={labelClasses}>Vehicle Type (Manual Entry if not listed):</label>
+                <input type="text" id="vehicleType" name="vehicleType" value={calendarEventDetails.vehicleType} onChange={handleCalendarEventChange} placeholder="e.g., Sedan, SUV, Motorcycle" className={inputClasses} />
+                <p className="text-xs text-gray-500 mt-1">Use this if your vehicle isn't in the dropdown or if you prefer manual entry for the calendar event.</p>
+              </div>
               
               <p className="text-xs text-gray-600 pt-2">Fill in the details below to add this maintenance appointment to your Google Calendar.</p>
 
               <div>
-                <label htmlFor="summary" className={labelClasses}>Event Summary (Title):</label>
+                <label htmlFor="summary" className={labelClasses}>Title:</label> {/* UPDATED label */}
                 <input type="text" id="summary" name="summary" value={calendarEventDetails.summary} onChange={handleCalendarEventChange} required className={inputClasses}/>
               </div>
 
@@ -287,7 +254,7 @@ const MaintenancePage: React.FC = () => {
                 <textarea id="description" name="description" value={calendarEventDetails.description} onChange={handleCalendarEventChange} className={`${inputClasses} min-h-[80px]`}/>
               </div>
               
-              <div className="grid sm:grid-cols-3 gap-4">
+              <div className="grid sm:grid-cols-3 gap-4 text-black">
                   <div>
                       <label htmlFor="eventDate" className={labelClasses}>Event Date:</label>
                       <input type="date" id="eventDate" name="eventDate" value={calendarEventDetails.eventDate} onChange={handleCalendarEventChange} required className={inputClasses}/>
@@ -313,7 +280,7 @@ const MaintenancePage: React.FC = () => {
                 {!useDefaultReminders && (
                   <div className="space-y-3">
                     {reminderOverrides.map((reminder, index) => (
-                      <div key={index} className="flex flex-wrap items-center gap-2 p-3 border border-gray-200 rounded-md bg-white">
+                      <div key={index} className="flex flex-wrap items-center gap-2 p-3 border border-gray-200 rounded-md bg-white text-black">
                         <select value={reminder.method} onChange={(e) => handleReminderChange(index, 'method', e.target.value)} className="p-2 border border-gray-300 rounded-md shadow-sm text-xs flex-grow sm:flex-grow-0">
                           <option value="popup">Popup</option>
                           <option value="email">Email</option>
@@ -337,7 +304,7 @@ const MaintenancePage: React.FC = () => {
 
               <div className="mt-6">
                 <button type="submit" disabled={isLoading || vehiclesLoading} className={`${buttonSecondaryClasses} w-full`}>
-                  {isLoading ? 'Saving to Calendar...' : (vehiclesLoading ? 'Loading Vehicles...' : 'Save to Google Calendar')}
+                  {isLoading ? 'Saving...' : (vehiclesLoading ? 'Loading Vehicles...' : 'Save')} {/* UPDATED button text */}
                 </button>
               </div>
             </form>
