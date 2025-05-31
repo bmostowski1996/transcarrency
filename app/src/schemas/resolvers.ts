@@ -1,8 +1,7 @@
 import { User, Vehicle, ServiceRecord } from '../models/index.js';
 import { getVehicleParts } from '../utils/nhtsaApi.js';
-import { AuthenticationError } from '../utils/auth.js';
+import { AuthenticationError, signToken } from '../utils/auth.js';
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
 
 // TODO: Right now, this file abuses the use of "any", which is not a best practice.
 // We need to rectify this matter...
@@ -18,12 +17,20 @@ const resolvers = {
     user: async (_: any, { userId }: { userId: string }) => await User.findById(userId),
 
     // Fetch the currently logged-in user
-    me: async (_: any, __: any, context: any) => {
+    me: async (_parent: unknown, _args: unknown, context: any) => {
+      console.log(context.user);
       if (!context.user) throw new AuthenticationError('Not logged in');
-      return await User.findById(context.user._id);
+      return await User.findById(context.user._id).populate({
+        path: 'vehicles',
+        populate: {
+          path: 'serviceRecords',
+          model: 'ServiceRecord'
+        }
+      });
     },
 
     // VEHICLE QUERIES
+    getVehicles: async () => await Vehicle.find(),
 
     // Fetch a vehicle by ID
     getVehicleById: async (_: any, { id }: { id: string }) => await Vehicle.findById(id),
@@ -59,14 +66,12 @@ const resolvers = {
       if (existingUser) throw new Error('User already exists');
 
       // Create a new user
-      const newUser = await User.create({ firstName, lastName, email, password });
+      const user = await User.create({ firstName, lastName, email, password, vehicles: [] });
 
       // Generate a JWT token
-      const token = jwt.sign({ _id: newUser._id }, process.env.JWT_SECRET_KEY!, {
-        expiresIn: '1h',
-      });
+      const token = signToken(user.firstName, user.lastName, user.email, user._id);
 
-      return { token, user: newUser };
+      return { token, user };
     },
 
     // Login an existing user
@@ -79,9 +84,7 @@ const resolvers = {
       if (!valid) throw new AuthenticationError('Invalid credentials');
 
       // Generate a JWT token
-      const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET_KEY!, {
-        expiresIn: '1h',
-      });
+      const token = signToken(user.firstName, user.lastName, user.email, user._id);
 
       return { token, user };
     },
@@ -111,9 +114,14 @@ const resolvers = {
     // Register a new vehicle under the logged in user
     registerVehicle: async (_: any, { input }: any, context: any) => {
       if (!context.user) throw new AuthenticationError('Not logged in');
+      
       const newVehicle = await Vehicle.create({ ...input, owner: context.user._id });
 
-      return newVehicle;
+      // Make sure it is understood that the user owns the vehicle!
+      return await User.findByIdAndUpdate(context.user._id, 
+        { $push: { vehicles: newVehicle._id } },
+        { new: true } // optional: returns the updated document, { new: true }),
+      );
     },
     
     // For adding vehicles to arbitrary users

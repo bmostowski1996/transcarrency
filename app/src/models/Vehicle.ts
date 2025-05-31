@@ -4,7 +4,6 @@ const vehicleSchema = new Schema(
   {
     vin: {
       type: String,
-      required: true,
       unique: true,
       trim: true,
     },

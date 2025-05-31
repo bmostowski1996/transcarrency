@@ -31,9 +31,10 @@ const Login = () => {
     try {
       // What does the login function look like?
       const { data } = await login({
-        variables: { ...formState },
+        variables: { email: formState.email, password: formState.password },
       });
       Auth.login(data.login.token);
+      navigate('/dashboard'); // Redirect to the dashboard after successful login
     } catch (e) {
       console.error(e);
     }
