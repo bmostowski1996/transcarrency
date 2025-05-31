@@ -16,16 +16,9 @@ const resolvers = {
             console.log(context.user);
             if (!context.user)
                 throw new AuthenticationError('Not logged in');
-            return await User.findById(context.user._id).populate({
-                path: 'vehicles',
-                populate: {
-                    path: 'serviceRecords',
-                    model: 'ServiceRecord'
-                }
-            });
+            return await User.findById(context.user._id);
         },
         // VEHICLE QUERIES
-        getVehicles: async () => await Vehicle.find(),
         // Fetch a vehicle by ID
         getVehicleById: async (_, { id }) => await Vehicle.findById(id),
         // Fetch all vehicles owned by an arbitrary user
@@ -54,7 +47,7 @@ const resolvers = {
             if (existingUser)
                 throw new Error('User already exists');
             // Create a new user
-            const user = await User.create({ firstName, lastName, email, password, vehicles: [] });
+            const user = await User.create({ firstName, lastName, email, password });
             // Generate a JWT token
             const token = signToken(user.firstName, user.lastName, user.email, user._id);
             return { token, user };
@@ -95,9 +88,7 @@ const resolvers = {
             if (!context.user)
                 throw new AuthenticationError('Not logged in');
             const newVehicle = await Vehicle.create({ ...input, owner: context.user._id });
-            // Make sure it is understood that the user owns the vehicle!
-            return await User.findByIdAndUpdate(context.user._id, { $push: { vehicles: newVehicle._id } }, { new: true } // optional: returns the updated document, { new: true }),
-            );
+            return newVehicle;
         },
         // For adding vehicles to arbitrary users
         addVehicle: async (_, { ownerId, input }) => {

@@ -13,29 +13,30 @@ dotenv.config({
 export const authenticateToken = ({ req }) => {
     // Allows token to be sent via req.body, req.query, or headers
     let token = req.body.token || req.query.token || req.headers.authorization;
-    // console.log("GOT TO HERE");
-    // console.log(token);
+    console.log("GOT TO HERE");
+    console.log(token);
     // If the token is sent in the authorization header, extract the token from the header
     if (req.headers.authorization) {
         token = token.split(' ').pop().trim();
     }
     // If no token is provided, return the request object as is
     if (!token) {
-        return req;
+        return { user: null };
     }
     // Try to verify the token
     try {
         const { data } = jwt.verify(token, process.env.JWT_SECRET_KEY || '', { maxAge: '2hr' });
         // If the token is valid, attach the user data to the request object
-        req.user = data;
+        return { user: data };
     }
     catch (err) {
         // If the token is invalid, log an error message
         console.log(`SECRET KEY: ${process.env.JWT_SECRET_KEY}`);
         console.log('Invalid token');
+        return { user: null };
     }
     // Return the request object
-    return req;
+    // return req;
 };
 export const signToken = (firstName, lastName, email, _id) => {
     // Create a payload with the user information
