@@ -6,7 +6,8 @@ export const REGISTER_USER = gql`
       token
       user {
         _id
-        name
+        firstName
+        lastName
         email
       }
     }
