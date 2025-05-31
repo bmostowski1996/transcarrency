@@ -48,7 +48,7 @@ const MaintenancePage: React.FC = () => {
   });
 
   const [selectedVehicleId, setSelectedVehicleId] = useState<string>('');
-  const { data: vehiclesData, loading: vehiclesLoading, error: vehiclesError } = useQuery(QUERY_MY_VEHICLES);
+  const { data: vehiclesData, loading: vehiclesLoading, error: vehiclesError } = useQuery<{ myVehicles: Vehicle[] }>(QUERY_MY_VEHICLES);
 
   // Other state variables
   const [useDefaultReminders, setUseDefaultReminders] = useState(false);
@@ -80,7 +80,7 @@ const MaintenancePage: React.FC = () => {
       }
     }
     
-    setCalendarEventDetails(prev => ({
+    setCalendarEventDetails((prev: CalendarEventDetailsData) => ({
       ...prev,
       summary: newSummary,
       // Ensure eventDate in calendar form is also updated if maintenanceDate was the source
@@ -94,7 +94,7 @@ const MaintenancePage: React.FC = () => {
   // This helps if the user changes the date in the first form, the second form's date field should also update.
   useEffect(() => {
     if (maintenanceDetails.maintenanceDate && maintenanceDetails.maintenanceDate !== calendarEventDetails.eventDate) {
-      setCalendarEventDetails(prev => ({
+      setCalendarEventDetails((prev: CalendarEventDetailsData) => ({
         ...prev,
         eventDate: maintenanceDetails.maintenanceDate,
       }));
@@ -104,7 +104,7 @@ const MaintenancePage: React.FC = () => {
 
   const handleMaintenanceChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setMaintenanceDetails(prev => ({ ...prev, [name]: value }));
+    setMaintenanceDetails((prev: MaintenanceDetailsData) => ({ ...prev, [name]: value }));
   };
 
   const handleCalendarEventChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -112,12 +112,12 @@ const MaintenancePage: React.FC = () => {
     if (name === "selectedVehicle") {
       setSelectedVehicleId(value);
     } else {
-      setCalendarEventDetails(prev => ({ ...prev, [name]: value }));
+      setCalendarEventDetails((prev: CalendarEventDetailsData) => ({ ...prev, [name]: value }));
     }
   };
 
   const handleAddReminder = () => {
-    setReminderOverrides(prev => [...prev, { method: 'popup', minutes: 30 }]);
+    setReminderOverrides((prev: ReminderOverride[]) => [...prev, { method: 'popup', minutes: 30 }]);
   };
 
   const handleReminderChange = (index: number, field: keyof ReminderOverride, value: string | number) => {
@@ -131,7 +131,7 @@ const MaintenancePage: React.FC = () => {
   };
 
   const handleRemoveReminder = (index: number) => {
-    setReminderOverrides(prev => prev.filter((_, i) => i !== index));
+    setReminderOverrides((prev: ReminderOverride[]) => prev.filter((_: ReminderOverride, i: number) => i !== index));
   };
 
   const handleCalendarSubmit = async (e: React.FormEvent) => {
@@ -344,7 +344,7 @@ const MaintenancePage: React.FC = () => {
             <input
               type="checkbox"
               checked={useDefaultReminders}
-              onChange={e => setUseDefaultReminders(e.target.checked)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUseDefaultReminders(e.target.checked)}
               style={{ marginRight: '8px' }}
             />
             Use Google Calendar default reminders
@@ -352,11 +352,11 @@ const MaintenancePage: React.FC = () => {
         </div>
         {!useDefaultReminders && (
           <>
-            {reminderOverrides.map((reminder, index) => (
+            {reminderOverrides.map((reminder: ReminderOverride, index: number) => (
               <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px', padding: '10px', border: '1px solid #eee', borderRadius: '4px' }}>
                 <select
                   value={reminder.method}
-                  onChange={e => handleReminderChange(index, 'method', e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => handleReminderChange(index, 'method', e.target.value)}
                   style={{ padding: '8px', borderRadius: '4px' }}
                 >
                   <option value="popup">Popup</option>
@@ -365,7 +365,7 @@ const MaintenancePage: React.FC = () => {
                 <input
                   type="number"
                   value={reminder.minutes}
-                  onChange={e => handleReminderChange(index, 'minutes', e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleReminderChange(index, 'minutes', e.target.value)}
                   min="0"
                   style={{ padding: '8px', borderRadius: '4px', width: '80px' }}
                 /> minutes before
