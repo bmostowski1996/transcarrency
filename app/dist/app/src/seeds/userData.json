@@ -1,0 +1,20 @@
+[
+    {
+        "firstName": "Alex",
+        "lastName": "Johnson",
+        "email": "alex.johnson@transcarrency.dev",
+        "password": "password01"
+    },
+    {
+        "firstName": "Morgan",
+        "lastName": "Lee",
+        "email": "morgan.lee@transcarrency.dev",
+        "password": "password02"
+    },
+    {
+        "firstName": "Jamie",
+        "lastName": "Rivera",
+        "email": "jamie.rivera@transcarrency.dev",
+        "password": "password03"
+    }
+]

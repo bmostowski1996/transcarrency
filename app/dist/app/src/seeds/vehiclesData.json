@@ -1,0 +1,37 @@
+[
+    {
+        "make": "Toyota",
+        "model": "Camry",
+        "year": 2015,
+        "vin": "1HGCM82633A004352",
+        "mileage": 85000
+    },
+    {
+        "make": "Ford",
+        "model": "F-150",
+        "year": 2018,
+        "vin": "1FTFW1EG9JFA12345",
+        "mileage": 67000
+    },
+    {
+        "make": "Tesla",
+        "model": "Model 3",
+        "year": 2020,
+        "vin": "5YJ3E1EA7LF000000",
+        "mileage": 42000
+    },
+    {
+        "make": "Honda",
+        "model": "Civic",
+        "year": 2012,
+        "vin": "2HGFG3B58CH512345",
+        "mileage": 102000
+    },
+    {
+        "make": "Chevrolet",
+        "model": "Silverado",
+        "year": 2019,
+        "vin": "3GCUKREC9JG123456",
+        "mileage": 56000
+    }
+]
