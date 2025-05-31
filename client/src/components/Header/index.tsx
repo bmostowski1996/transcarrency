@@ -1,13 +1,14 @@
 import { Link } from 'react-router-dom';
 import tclogo from '../../assets/tclogo_simple.png';
-import { type MouseEvent} from 'react';
-import Auth from '../../utils/auth';
+// import { type MouseEvent} from 'react';
+// import Auth from '../../utils/auth';
 
 const Header = () => {
-  const logout = (event: MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    Auth.logout();
-  };
+  // This needs to get implemented at some point, but not right now...
+  // const logout = (event: MouseEvent<HTMLButtonElement>) => {
+  //   event.preventDefault();
+  //   Auth.logout();
+  // };
   return (
     <header className="bg-black shadow-md px-6 py-4 flex items-center justify-between">
       {/* Logo */}
