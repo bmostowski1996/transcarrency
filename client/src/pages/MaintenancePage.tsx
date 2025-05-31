@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { format, parseISO, setHours, setMinutes, setSeconds, setMilliseconds } from 'date-fns';
-import { useQuery } from '@apollo/client'; // gql removed
-import { QUERY_MY_VEHICLES } from '../utils/auth'; // Added import for the query
+import { format, setHours, setMinutes, setSeconds, setMilliseconds } from 'date-fns';
+import { useQuery } from '@apollo/client';
+import { QUERY_MY_VEHICLES } from '../utils/auth';
 
-// Interfaces (can be in a separate types.ts)
+// Interfaces
 interface ReminderOverride {
   method: 'email' | 'popup';
   minutes: number;
 }
 
 interface MaintenanceDetailsData {
-  customerName: string;
   vehicleType: string; // This can serve as a manual fallback
   maintenanceDate: string; // Store as 'yyyy-MM-dd' string
 }
@@ -18,12 +17,12 @@ interface MaintenanceDetailsData {
 interface CalendarEventDetailsData {
   summary: string;
   description: string;
-  eventDate: string; // Store as 'yyyy-MM-dd' string
+  eventDate: string;
   startTimeStr: string;
   endTimeStr: string;
 }
 
-interface Vehicle { // For typing the fetched vehicle data
+interface Vehicle {
   _id: string;
   make: string;
   model: string;
@@ -34,13 +33,12 @@ const MaintenancePage: React.FC = () => {
   const initialMaintenanceDate = format(new Date(), 'yyyy-MM-dd');
 
   const [maintenanceDetails, setMaintenanceDetails] = useState<MaintenanceDetailsData>({
-    customerName: '',
     vehicleType: '',
     maintenanceDate: initialMaintenanceDate,
   });
 
   const [calendarEventDetails, setCalendarEventDetails] = useState<CalendarEventDetailsData>({
-    summary: 'Schedule Maintenance', // Initial generic summary
+    summary: 'Schedule Maintenance',
     description: '',
     eventDate: initialMaintenanceDate,
     startTimeStr: '09:00',
@@ -50,7 +48,6 @@ const MaintenancePage: React.FC = () => {
   const [selectedVehicleId, setSelectedVehicleId] = useState<string>('');
   const { data: vehiclesData, loading: vehiclesLoading, error: vehiclesError } = useQuery<{ myVehicles: Vehicle[] }>(QUERY_MY_VEHICLES);
 
-  // Other state variables
   const [useDefaultReminders, setUseDefaultReminders] = useState(false);
   const [reminderOverrides, setReminderOverrides] = useState<ReminderOverride[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -73,7 +70,7 @@ const MaintenancePage: React.FC = () => {
 
     if (dateForSummary) {
       try {
-        newSummary += ` on ${format(parseISO(dateForSummary), 'MM/dd/yyyy')}`;
+        newSummary += ` on ${format(new Date(dateForSummary), 'MM/dd/yyyy')}`;
       } catch (e) {
         console.warn("Invalid date format for summary:", dateForSummary);
         // Keep newSummary as is if date is invalid
@@ -149,7 +146,7 @@ const MaintenancePage: React.FC = () => {
     }
 
     try {
-      const baseDate = parseISO(eventDate);
+      const baseDate = new Date(eventDate); // Replaced parseISO
       const [startHour, startMinute] = startTimeStr.split(':').map(Number);
       const [endHour, endMinute] = endTimeStr.split(':').map(Number);
 
@@ -215,186 +212,138 @@ const MaintenancePage: React.FC = () => {
   const handleMaintenanceFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Submitting maintenance details:", maintenanceDetails);
-    alert("Maintenance details submitted to application (mock).");
+    // Mock submission
+    setSuccessMessage("Maintenance details submitted to application (mock).");
+    // Reset form or provide other feedback as needed
   };
 
+  const inputClasses = "w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm";
+  const labelClasses = "block text-sm font-medium text-gray-700 mb-1";
+  const buttonPrimaryClasses = "w-full px-4 py-2 bg-blue-600 text-white font-semibold rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50";
+  const buttonSecondaryClasses = "px-3 py-2 bg-green-600 text-white font-semibold rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50";
+  const buttonDangerClasses = "px-3 py-1 bg-red-500 text-white text-xs font-medium rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1";
+  const buttonNeutralClasses = "px-3 py-2 bg-gray-500 text-white text-sm font-medium rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-1";
+
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', maxWidth: '800px', margin: '0 auto' }}>
-      <h1>Schedule Maintenance & Set Calendar Reminder</h1>
-      
-      <form onSubmit={handleMaintenanceFormSubmit} style={{ marginBottom: '40px', padding: '20px', border: '1px solid #ccc', borderRadius: '8px' }}>
-        <h2>Maintenance Details</h2>
-        <div style={{ marginBottom: '15px' }}>
-          <label htmlFor="customerName" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Customer Name:</label>
-          <input
-            type="text"
-            id="customerName"
-            name="customerName"
-            value={maintenanceDetails.customerName}
-            onChange={handleMaintenanceChange}
-            placeholder="Enter customer name"
-            style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
-          />
-        </div>
-        <div style={{ marginBottom: '15px' }}>
-          <label htmlFor="vehicleType" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Vehicle Type (Manual Entry):</label>
-          <input
-            type="text"
-            id="vehicleType"
-            name="vehicleType"
-            value={maintenanceDetails.vehicleType}
-            onChange={handleMaintenanceChange}
-            placeholder="e.g., Sedan, SUV (if not selecting from list)"
-            style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
-          />
-        </div>
-        <div style={{ marginBottom: '15px' }}>
-          <label htmlFor="maintenanceDate" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Maintenance Date:</label>
-          <input
-            type="date"
-            id="maintenanceDate"
-            name="maintenanceDate"
-            value={maintenanceDetails.maintenanceDate}
-            onChange={handleMaintenanceChange}
-            style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
-          />
-        </div>
-        <button
-          type="submit"
-          style={{ padding: '10px 20px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-        >
-          Submit Maintenance Request (App Only)
-        </button>
-      </form>
-
-      <form onSubmit={handleCalendarSubmit} style={{ padding: '20px', border: '1px solid #28a745', borderRadius: '8px' }}>
-        <h2>Set Google Calendar Reminder</h2>
-
-        {vehiclesLoading && <p>Loading your vehicles...</p>}
-        {vehiclesError && <p style={{color: 'red'}}>Error loading vehicles: {vehiclesError.message}</p>}
+    <div className="min-h-screen bg-gradient-to-b from-sky-100 to-green-100 p-4 md:p-8 flex flex-col items-center">
+      <div className="w-full max-w-4xl bg-white shadow-2xl rounded-xl p-6 md:p-8">
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-8 text-center">Schedule Maintenance & Set Calendar Reminder</h1>
         
-        {vehiclesData?.myVehicles && vehiclesData.myVehicles.length > 0 && (
-          <div style={{ marginBottom: '15px' }}>
-            <label htmlFor="selectedVehicle" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Select Your Vehicle:</label>
-            <select
-              id="selectedVehicle"
-              name="selectedVehicle" // Important for the handler
-              value={selectedVehicleId}
-              onChange={handleCalendarEventChange}
-              style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
-            >
-              <option value="">-- Select a Vehicle --</option>
-              {vehiclesData.myVehicles.map((vehicle: Vehicle) => (
-                <option key={vehicle._id} value={vehicle._id}>
-                  {vehicle.year} {vehicle.make} {vehicle.model}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
-        {/* Optional: Message if user has no vehicles */}
-        {vehiclesData && vehiclesData.myVehicles && vehiclesData.myVehicles.length === 0 && !vehiclesLoading && (
-            <p style={{ marginBottom: '15px' }}>No vehicles found. You can add vehicles to your profile or use the manual entry above.</p>
-        )}
-        
-        <p>Fill in the details below to add this maintenance appointment to your Google Calendar.</p>
+        <div className="grid md:grid-cols-2 gap-8">
+          
+          <section>
+            <form onSubmit={handleMaintenanceFormSubmit} className="space-y-6 p-6 bg-gray-50 rounded-lg shadow-md">
+              <h2 className="text-xl md:text-2xl font-semibold text-gray-700 mb-6 border-b pb-3">Maintenance Details</h2>
+              
+              <div>
+                <label htmlFor="vehicleType" className={labelClasses}>Vehicle Type (Manual Entry):</label>
+                <input type="text" id="vehicleType" name="vehicleType" value={maintenanceDetails.vehicleType} onChange={handleMaintenanceChange} placeholder="e.g., Sedan, SUV" className={inputClasses} />
+              </div>
+              
+              <div>
+                <label htmlFor="maintenanceDate" className={labelClasses}>Maintenance Date:</label>
+                <input type="date" id="maintenanceDate" name="maintenanceDate" value={maintenanceDetails.maintenanceDate} onChange={handleMaintenanceChange} className={inputClasses} />
+              </div>
+              
+              <button type="submit" className={buttonPrimaryClasses}>
+                Submit Maintenance Request (App Only)
+              </button>
+            </form>
+          </section>
 
-        <div style={{ marginBottom: '15px' }}>
-          <label htmlFor="summary" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Event Summary (Title):</label>
-          <input 
-            type="text" id="summary" name="summary" 
-            value={calendarEventDetails.summary} onChange={handleCalendarEventChange} required 
-            style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}/>
-        </div>
+          <section>
+            <form onSubmit={handleCalendarSubmit} className="space-y-6 p-6 bg-gray-50 rounded-lg shadow-md">
+              <h2 className="text-xl md:text-2xl font-semibold text-gray-700 mb-6 border-b pb-3">Set Google Calendar Reminder</h2>
 
-        <div style={{ marginBottom: '15px' }}>
-          <label htmlFor="description" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Description (Optional):</label>
-          <textarea 
-            id="description" name="description" 
-            value={calendarEventDetails.description} onChange={handleCalendarEventChange} 
-            style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc', minHeight: '80px' }}/>
-        </div>
-        <div style={{ display: 'flex', gap: '20px', marginBottom: '15px' }}>
-            <div style={{flex: 1}}>
-                <label htmlFor="eventDate" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Event Date:</label>
-                <input 
-                  type="date" id="eventDate" name="eventDate" 
-                  value={calendarEventDetails.eventDate} onChange={handleCalendarEventChange} required 
-                  style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}/>
-            </div>
-            <div style={{flex: 1}}>
-                <label htmlFor="startTimeStr" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Start Time:</label>
-                <input 
-                  type="time" id="startTimeStr" name="startTimeStr" 
-                  value={calendarEventDetails.startTimeStr} onChange={handleCalendarEventChange} required 
-                  style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}/>
-            </div>
-            <div style={{flex: 1}}>
-                <label htmlFor="endTimeStr" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>End Time:</label>
-                <input 
-                  type="time" id="endTimeStr" name="endTimeStr" 
-                  value={calendarEventDetails.endTimeStr} onChange={handleCalendarEventChange} required 
-                  style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}/>
-            </div>
-        </div>
+              {vehiclesLoading && <p className="text-sm text-gray-500">Loading your vehicles...</p>}
+              {vehiclesError && <p className="text-sm text-red-600">Error loading vehicles: {vehiclesError.message}</p>}
+              
+              {vehiclesData?.myVehicles && vehiclesData.myVehicles.length > 0 && (
+                <div>
+                  <label htmlFor="selectedVehicle" className={labelClasses}>Select Your Vehicle:</label>
+                  <select id="selectedVehicle" name="selectedVehicle" value={selectedVehicleId} onChange={handleCalendarEventChange} className={inputClasses}>
+                    <option value="">-- Select a Vehicle --</option>
+                    {vehiclesData.myVehicles.map((vehicle: Vehicle) => (
+                      <option key={vehicle._id} value={vehicle._id}>
+                        {vehicle.year} {vehicle.make} {vehicle.model}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+              {vehiclesData && vehiclesData.myVehicles && vehiclesData.myVehicles.length === 0 && !vehiclesLoading && (
+                  <p className="text-sm text-gray-500">No vehicles found. You can add vehicles to your profile or use the manual entry above.</p>
+              )}
+              
+              <p className="text-xs text-gray-600 pt-2">Fill in the details below to add this maintenance appointment to your Google Calendar.</p>
 
-        <h4 style={{ marginTop: '20px', marginBottom: '10px', fontWeight: 'bold' }}>Reminders:</h4>
-        <div style={{ marginBottom: '10px' }}>
-          <label>
-            <input
-              type="checkbox"
-              checked={useDefaultReminders}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUseDefaultReminders(e.target.checked)}
-              style={{ marginRight: '8px' }}
-            />
-            Use Google Calendar default reminders
-          </label>
-        </div>
-        {!useDefaultReminders && (
-          <>
-            {reminderOverrides.map((reminder: ReminderOverride, index: number) => (
-              <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px', padding: '10px', border: '1px solid #eee', borderRadius: '4px' }}>
-                <select
-                  value={reminder.method}
-                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => handleReminderChange(index, 'method', e.target.value)}
-                  style={{ padding: '8px', borderRadius: '4px' }}
-                >
-                  <option value="popup">Popup</option>
-                  <option value="email">Email</option>
-                </select>
-                <input
-                  type="number"
-                  value={reminder.minutes}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleReminderChange(index, 'minutes', e.target.value)}
-                  min="0"
-                  style={{ padding: '8px', borderRadius: '4px', width: '80px' }}
-                /> minutes before
-                <button type="button" onClick={() => handleRemoveReminder(index)} 
-                        style={{ padding: '6px 10px', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
-                  Remove
+              <div>
+                <label htmlFor="summary" className={labelClasses}>Event Summary (Title):</label>
+                <input type="text" id="summary" name="summary" value={calendarEventDetails.summary} onChange={handleCalendarEventChange} required className={inputClasses}/>
+              </div>
+
+              <div>
+                <label htmlFor="description" className={labelClasses}>Description (Optional):</label>
+                <textarea id="description" name="description" value={calendarEventDetails.description} onChange={handleCalendarEventChange} className={`${inputClasses} min-h-[80px]`}/>
+              </div>
+              
+              <div className="grid sm:grid-cols-3 gap-4">
+                  <div>
+                      <label htmlFor="eventDate" className={labelClasses}>Event Date:</label>
+                      <input type="date" id="eventDate" name="eventDate" value={calendarEventDetails.eventDate} onChange={handleCalendarEventChange} required className={inputClasses}/>
+                  </div>
+                  <div>
+                      <label htmlFor="startTimeStr" className={labelClasses}>Start Time:</label>
+                      <input type="time" id="startTimeStr" name="startTimeStr" value={calendarEventDetails.startTimeStr} onChange={handleCalendarEventChange} required className={inputClasses}/>
+                  </div>
+                  <div>
+                      <label htmlFor="endTimeStr" className={labelClasses}>End Time:</label>
+                      <input type="time" id="endTimeStr" name="endTimeStr" value={calendarEventDetails.endTimeStr} onChange={handleCalendarEventChange} required className={inputClasses}/>
+                  </div>
+              </div>
+
+              <div>
+                <h4 className="text-md font-semibold text-gray-700 mt-2 mb-2">Reminders:</h4>
+                <div className="mb-3">
+                  <label className="flex items-center text-sm text-gray-700">
+                    <input type="checkbox" checked={useDefaultReminders} onChange={(e) => setUseDefaultReminders(e.target.checked)} className="mr-2 h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"/>
+                    Use Google Calendar default reminders
+                  </label>
+                </div>
+                {!useDefaultReminders && (
+                  <div className="space-y-3">
+                    {reminderOverrides.map((reminder, index) => (
+                      <div key={index} className="flex flex-wrap items-center gap-2 p-3 border border-gray-200 rounded-md bg-white">
+                        <select value={reminder.method} onChange={(e) => handleReminderChange(index, 'method', e.target.value)} className="p-2 border border-gray-300 rounded-md shadow-sm text-xs flex-grow sm:flex-grow-0">
+                          <option value="popup">Popup</option>
+                          <option value="email">Email</option>
+                        </select>
+                        <input type="number" value={reminder.minutes} onChange={(e) => handleReminderChange(index, 'minutes', e.target.value)} min="0" className="p-2 border border-gray-300 rounded-md shadow-sm text-xs w-20 flex-grow sm:flex-grow-0"/>
+                        <span className="text-xs text-gray-600">minutes before</span>
+                        <button type="button" onClick={() => handleRemoveReminder(index)} className={`${buttonDangerClasses} ml-auto`}>
+                          Remove
+                        </button>
+                      </div>
+                    ))}
+                    <button type="button" onClick={handleAddReminder} className={`${buttonNeutralClasses} text-xs`}>
+                      Add Custom Reminder
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {error && <p className="mt-4 text-sm font-semibold text-red-600">Error: {error}</p>}
+              {successMessage && <p className="mt-4 text-sm font-semibold text-green-600">{successMessage}</p>}
+
+              <div className="mt-6">
+                <button type="submit" disabled={isLoading || vehiclesLoading} className={`${buttonSecondaryClasses} w-full`}>
+                  {isLoading ? 'Saving to Calendar...' : (vehiclesLoading ? 'Loading Vehicles...' : 'Save to Google Calendar')}
                 </button>
               </div>
-            ))}
-            <button type="button" onClick={handleAddReminder} 
-                    style={{ padding: '8px 15px', backgroundColor: '#6c757d', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', marginTop: '5px' }}>
-              Add Custom Reminder
-            </button>
-          </>
-        )}
-
-        {error && <p style={{color: 'red', marginTop: '15px', fontWeight: 'bold'}}>Error: {error}</p>}
-        {successMessage && <p style={{color: 'green', marginTop: '15px', fontWeight: 'bold'}}>{successMessage}</p>}
-
-        <div style={{ marginTop: '25px' }}>
-          <button 
-            type="submit" 
-            disabled={isLoading || vehiclesLoading} // Disable button if vehicles are loading too
-            style={{ padding: '12px 25px', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '16px' }}
-          >
-            {isLoading ? 'Saving to Calendar...' : (vehiclesLoading ? 'Loading Vehicles...' : 'Save to Google Calendar')}
-          </button>
+            </form>
+          </section>
         </div>
-      </form>
+      </div>
     </div>
   );
 };
