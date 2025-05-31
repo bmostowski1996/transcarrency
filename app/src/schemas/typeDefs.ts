@@ -60,10 +60,15 @@ export const typeDefs = `
     # Get all vehicles owned by a specific user
     getVehiclesByUser(ownerId: ID!): [Vehicle]
 
+    # Get all vehicles owned by the currently logged-in user
+    myVehicles: [Vehicle]
+
     # Search parts related to a vehicle
     vehicleParts(vin: String, make: String, model: String, year: Int, type: String): [VehiclePart]
 
     # Get currently logged-in user profile
+
+    Front-End
     me: User
 
     # Fetch all users
