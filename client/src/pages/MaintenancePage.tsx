@@ -1,23 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { format, parseISO, setHours, setMinutes, setSeconds, setMilliseconds } from 'date-fns';
-import { useQuery } from '@apollo/client'; // Import useQuery
-import { QUERY_MY_VEHICLES } from '../utils/queries'; // Adjust path if necessary
+import { useQuery } from '@apollo/client'; // gql removed
+import { QUERY_MY_VEHICLES } from '../utils/auth'; // Added import for the query
 
-// Interfaces
+// Interfaces (can be in a separate types.ts)
 interface ReminderOverride {
   method: 'email' | 'popup';
   minutes: number;
 }
 
+interface MaintenanceDetailsData {
+  customerName: string;
+  vehicleType: string; // This can serve as a manual fallback
+  maintenanceDate: string; // Store as 'yyyy-MM-dd' string
+}
+
 interface CalendarEventDetailsData {
   summary: string;
   description: string;
-  eventDate: string;
+  eventDate: string; // Store as 'yyyy-MM-dd' string
   startTimeStr: string;
   endTimeStr: string;
 }
 
-interface UserVehicle { // Interface for the vehicle data
+interface Vehicle { // For typing the fetched vehicle data
   _id: string;
   make: string;
   model: string;
@@ -25,56 +31,81 @@ interface UserVehicle { // Interface for the vehicle data
 }
 
 const MaintenancePage: React.FC = () => {
-  const initialEventDate = format(new Date(), 'yyyy-MM-dd');
+  const initialMaintenanceDate = format(new Date(), 'yyyy-MM-dd');
+
+  const [maintenanceDetails, setMaintenanceDetails] = useState<MaintenanceDetailsData>({
+    customerName: '',
+    vehicleType: '',
+    maintenanceDate: initialMaintenanceDate,
+  });
 
   const [calendarEventDetails, setCalendarEventDetails] = useState<CalendarEventDetailsData>({
-    summary: '', // Initial summary will be set by useEffect
+    summary: 'Schedule Maintenance', // Initial generic summary
     description: '',
-    eventDate: initialEventDate,
+    eventDate: initialMaintenanceDate,
     startTimeStr: '09:00',
     endTimeStr: '10:00',
   });
 
-  const [userVehicles, setUserVehicles] = useState<UserVehicle[]>([]);
   const [selectedVehicleId, setSelectedVehicleId] = useState<string>('');
+  const { data: vehiclesData, loading: vehiclesLoading, error: vehiclesError } = useQuery(QUERY_MY_VEHICLES);
 
   // Other state variables
   const [useDefaultReminders, setUseDefaultReminders] = useState(false);
   const [reminderOverrides, setReminderOverrides] = useState<ReminderOverride[]>([]);
-  const [isLoading, setIsLoading] = useState(false); // For calendar submission
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  // Fetch user's vehicles
-  const { loading: vehiclesLoading, error: vehiclesError, data: vehiclesData } = useQuery(QUERY_MY_VEHICLES);
-
+  // Effect to update calendar event summary based on selected vehicle, manual vehicle type, and date
   useEffect(() => {
-    if (vehiclesData && vehiclesData.myVehicles) {
-      const fetchedVehicles: UserVehicle[] = vehiclesData.myVehicles;
-      setUserVehicles(fetchedVehicles);
-      if (fetchedVehicles.length > 0) {
-        // Auto-select the first vehicle by default
-        setSelectedVehicleId(fetchedVehicles[0]._id);
-      } else {
-        setSelectedVehicleId(''); // No vehicle to select
-      }
-    }
-  }, [vehiclesData]);
-
-  // Effect to update summary when eventDate or selectedVehicleId changes
-  useEffect(() => {
-    const selectedVehicle = userVehicles.find(vehicle => vehicle._id === selectedVehicleId);
-    let vehicleInfo = "Car"; // Default if no vehicle is selected or found
+    let newSummary = 'Schedule Maintenance'; // Default summary
+    const selectedVehicle = vehiclesData?.myVehicles?.find((v: Vehicle) => v._id === selectedVehicleId);
+    
+    // Use calendarEventDetails.eventDate if available, otherwise fallback to maintenanceDetails.maintenanceDate
+    const dateForSummary = calendarEventDetails.eventDate || maintenanceDetails.maintenanceDate;
 
     if (selectedVehicle) {
-      vehicleInfo = `${selectedVehicle.year} ${selectedVehicle.make} ${selectedVehicle.model}`;
+      newSummary = `Maintenance for ${selectedVehicle.year} ${selectedVehicle.make} ${selectedVehicle.model}`;
+    } else if (maintenanceDetails.vehicleType) { // Fallback to manually entered vehicle type
+      newSummary = `Maintenance for ${maintenanceDetails.vehicleType}`;
     }
 
+    if (dateForSummary) {
+      try {
+        newSummary += ` on ${format(parseISO(dateForSummary), 'MM/dd/yyyy')}`;
+      } catch (e) {
+        console.warn("Invalid date format for summary:", dateForSummary);
+        // Keep newSummary as is if date is invalid
+      }
+    }
+    
     setCalendarEventDetails(prev => ({
       ...prev,
-      summary: `${vehicleInfo} Service on ${prev.eventDate ? format(parseISO(prev.eventDate), 'MM/dd/yyyy') : 'selected date'}`
+      summary: newSummary,
+      // Ensure eventDate in calendar form is also updated if maintenanceDate was the source
+      eventDate: dateForSummary 
     }));
-  }, [calendarEventDetails.eventDate, selectedVehicleId, userVehicles]);
+
+  }, [selectedVehicleId, vehiclesData, calendarEventDetails.eventDate, maintenanceDetails.maintenanceDate, maintenanceDetails.vehicleType]);
+
+
+  // Effect to specifically sync maintenanceDate from the first form to the calendarEventDetails.eventDate
+  // This helps if the user changes the date in the first form, the second form's date field should also update.
+  useEffect(() => {
+    if (maintenanceDetails.maintenanceDate && maintenanceDetails.maintenanceDate !== calendarEventDetails.eventDate) {
+      setCalendarEventDetails(prev => ({
+        ...prev,
+        eventDate: maintenanceDetails.maintenanceDate,
+      }));
+    }
+  }, [maintenanceDetails.maintenanceDate]);
+
+
+  const handleMaintenanceChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setMaintenanceDetails(prev => ({ ...prev, [name]: value }));
+  };
 
   const handleCalendarEventChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -109,12 +140,6 @@ const MaintenancePage: React.FC = () => {
     setError(null);
     setSuccessMessage(null);
 
-    if (!selectedVehicleId && userVehicles.length > 0) {
-        setError("Please select a vehicle.");
-        setIsLoading(false);
-        return;
-    }
-
     const { summary, description, eventDate, startTimeStr, endTimeStr } = calendarEventDetails;
 
     if (!summary || !eventDate || !startTimeStr || !endTimeStr) {
@@ -122,7 +147,7 @@ const MaintenancePage: React.FC = () => {
       setIsLoading(false);
       return;
     }
-    // ... (rest of handleCalendarSubmit logic remains the same)
+
     try {
       const baseDate = parseISO(eventDate);
       const [startHour, startMinute] = startTimeStr.split(':').map(Number);
@@ -146,7 +171,7 @@ const MaintenancePage: React.FC = () => {
 
       const payload = {
         summary,
-        description: `${description}\nVehicle ID: ${selectedVehicleId || 'N/A'}`, // Optionally add vehicle ID to description
+        description,
         startTime: startDateTime.toISOString(),
         endTime: endDateTime.toISOString(),
         reminders: {
@@ -155,13 +180,13 @@ const MaintenancePage: React.FC = () => {
         },
       };
 
-      const appAuthToken = localStorage.getItem('yourAppAuthToken'); 
+      const appAuthToken = localStorage.getItem('id_token'); // Using 'id_token'
       const headers: HeadersInit = { 'Content-Type': 'application/json' };
       if (appAuthToken) {
         headers['Authorization'] = `Bearer ${appAuthToken}`;
       }
 
-      const response = await fetch('/api/calendar/events', { 
+      const response = await fetch('/api/calendar/events', {
         method: 'POST',
         headers: headers,
         body: JSON.stringify(payload),
@@ -175,9 +200,10 @@ const MaintenancePage: React.FC = () => {
 
       const createdEvent = await response.json();
       setSuccessMessage(`Event "${createdEvent.summary}" (ID: ${createdEvent.id}) created in Google Calendar!`);
+      // Optionally reset parts of the form or redirect
 
     } catch (err: any) {
-      if (!error) { 
+      if (!error) {
         setError(err.message || 'An unexpected error occurred while creating the calendar event.');
       }
       console.error("Error in handleCalendarSubmit:", err);
@@ -186,34 +212,79 @@ const MaintenancePage: React.FC = () => {
     }
   };
 
+  const handleMaintenanceFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("Submitting maintenance details:", maintenanceDetails);
+    alert("Maintenance details submitted to application (mock).");
+  };
+
   return (
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', maxWidth: '800px', margin: '0 auto' }}>
-      <h1>Set Google Calendar Reminder</h1>
+      <h1>Schedule Maintenance & Set Calendar Reminder</h1>
       
+      <form onSubmit={handleMaintenanceFormSubmit} style={{ marginBottom: '40px', padding: '20px', border: '1px solid #ccc', borderRadius: '8px' }}>
+        <h2>Maintenance Details</h2>
+        <div style={{ marginBottom: '15px' }}>
+          <label htmlFor="customerName" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Customer Name:</label>
+          <input
+            type="text"
+            id="customerName"
+            name="customerName"
+            value={maintenanceDetails.customerName}
+            onChange={handleMaintenanceChange}
+            placeholder="Enter customer name"
+            style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
+          />
+        </div>
+        <div style={{ marginBottom: '15px' }}>
+          <label htmlFor="vehicleType" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Vehicle Type (Manual Entry):</label>
+          <input
+            type="text"
+            id="vehicleType"
+            name="vehicleType"
+            value={maintenanceDetails.vehicleType}
+            onChange={handleMaintenanceChange}
+            placeholder="e.g., Sedan, SUV (if not selecting from list)"
+            style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
+          />
+        </div>
+        <div style={{ marginBottom: '15px' }}>
+          <label htmlFor="maintenanceDate" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Maintenance Date:</label>
+          <input
+            type="date"
+            id="maintenanceDate"
+            name="maintenanceDate"
+            value={maintenanceDetails.maintenanceDate}
+            onChange={handleMaintenanceChange}
+            style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
+          />
+        </div>
+        <button
+          type="submit"
+          style={{ padding: '10px 20px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+        >
+          Submit Maintenance Request (App Only)
+        </button>
+      </form>
+
       <form onSubmit={handleCalendarSubmit} style={{ padding: '20px', border: '1px solid #28a745', borderRadius: '8px' }}>
-        <p style={{ fontSize: '1.1em', marginBottom: '20px' }}>Fill in the details below to add an event to your Google Calendar.</p>
+        <h2>Set Google Calendar Reminder</h2>
 
-        {/* Vehicle Selection Dropdown */}
-        {vehiclesLoading && <p style={{ marginBottom: '20px' }}>Loading your vehicles...</p>}
-        {vehiclesError && <p style={{ color: 'red', marginBottom: '20px' }}>Error loading vehicles. Please ensure you are logged in and try again.</p>}
+        {vehiclesLoading && <p>Loading your vehicles...</p>}
+        {vehiclesError && <p style={{color: 'red'}}>Error loading vehicles: {vehiclesError.message}</p>}
         
-        {!vehiclesLoading && !vehiclesError && userVehicles.length === 0 && (
-          <p style={{ marginBottom: '20px', color: 'orange' }}>No vehicles found. Please add a vehicle to your profile first to schedule maintenance.</p>
-        )}
-
-        {userVehicles.length > 0 && (
-          <div style={{ marginBottom: '20px' }}>
-            <label htmlFor="selectedVehicle" style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', fontSize: '1.1em' }}>Select Vehicle:</label>
+        {vehiclesData?.myVehicles && vehiclesData.myVehicles.length > 0 && (
+          <div style={{ marginBottom: '15px' }}>
+            <label htmlFor="selectedVehicle" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Select Your Vehicle:</label>
             <select
               id="selectedVehicle"
-              name="selectedVehicle" // Name attribute for the handler
+              name="selectedVehicle" // Important for the handler
               value={selectedVehicleId}
-              onChange={handleCalendarEventChange} // Use the combined handler
-              required
-              style={{ width: '100%', padding: '12px', fontSize: '1em', borderRadius: '4px', border: '1px solid #ccc' }}
+              onChange={handleCalendarEventChange}
+              style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
             >
-              <option value="" disabled={selectedVehicleId !== ""}>-- Select a Vehicle --</option> {/* Added a default placeholder */}
-              {userVehicles.map(vehicle => (
+              <option value="">-- Select a Vehicle --</option>
+              {vehiclesData.myVehicles.map((vehicle: Vehicle) => (
                 <option key={vehicle._id} value={vehicle._id}>
                   {vehicle.year} {vehicle.make} {vehicle.model}
                 </option>
@@ -221,13 +292,111 @@ const MaintenancePage: React.FC = () => {
             </select>
           </div>
         )}
+        {/* Optional: Message if user has no vehicles */}
+        {vehiclesData && vehiclesData.myVehicles && vehiclesData.myVehicles.length === 0 && !vehiclesLoading && (
+            <p style={{ marginBottom: '15px' }}>No vehicles found. You can add vehicles to your profile or use the manual entry above.</p>
+        )}
+        
+        <p>Fill in the details below to add this maintenance appointment to your Google Calendar.</p>
 
-        {/* Event Summary - now dynamically populated */}
-        <div style={{ marginBottom: '20px' }}>
-          <label htmlFor="summary" style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', fontSize: '1.1em' }}>Event Summary (Title):</label>
+        <div style={{ marginBottom: '15px' }}>
+          <label htmlFor="summary" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Event Summary (Title):</label>
           <input 
             type="text" id="summary" name="summary" 
-            value={calendarEventDetails.summary} 
-            onChange={handleCalendarEventChange} // Allow override if needed
-            required 
-            style={{ width: '100%', padding: '12px', fontSize: '1em', borderRadius: '4px', border: '1px solid #ccc' }}/>
+            value={calendarEventDetails.summary} onChange={handleCalendarEventChange} required 
+            style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}/>
+        </div>
+
+        <div style={{ marginBottom: '15px' }}>
+          <label htmlFor="description" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Description (Optional):</label>
+          <textarea 
+            id="description" name="description" 
+            value={calendarEventDetails.description} onChange={handleCalendarEventChange} 
+            style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc', minHeight: '80px' }}/>
+        </div>
+        <div style={{ display: 'flex', gap: '20px', marginBottom: '15px' }}>
+            <div style={{flex: 1}}>
+                <label htmlFor="eventDate" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Event Date:</label>
+                <input 
+                  type="date" id="eventDate" name="eventDate" 
+                  value={calendarEventDetails.eventDate} onChange={handleCalendarEventChange} required 
+                  style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}/>
+            </div>
+            <div style={{flex: 1}}>
+                <label htmlFor="startTimeStr" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Start Time:</label>
+                <input 
+                  type="time" id="startTimeStr" name="startTimeStr" 
+                  value={calendarEventDetails.startTimeStr} onChange={handleCalendarEventChange} required 
+                  style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}/>
+            </div>
+            <div style={{flex: 1}}>
+                <label htmlFor="endTimeStr" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>End Time:</label>
+                <input 
+                  type="time" id="endTimeStr" name="endTimeStr" 
+                  value={calendarEventDetails.endTimeStr} onChange={handleCalendarEventChange} required 
+                  style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}/>
+            </div>
+        </div>
+
+        <h4 style={{ marginTop: '20px', marginBottom: '10px', fontWeight: 'bold' }}>Reminders:</h4>
+        <div style={{ marginBottom: '10px' }}>
+          <label>
+            <input
+              type="checkbox"
+              checked={useDefaultReminders}
+              onChange={e => setUseDefaultReminders(e.target.checked)}
+              style={{ marginRight: '8px' }}
+            />
+            Use Google Calendar default reminders
+          </label>
+        </div>
+        {!useDefaultReminders && (
+          <>
+            {reminderOverrides.map((reminder, index) => (
+              <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px', padding: '10px', border: '1px solid #eee', borderRadius: '4px' }}>
+                <select
+                  value={reminder.method}
+                  onChange={e => handleReminderChange(index, 'method', e.target.value)}
+                  style={{ padding: '8px', borderRadius: '4px' }}
+                >
+                  <option value="popup">Popup</option>
+                  <option value="email">Email</option>
+                </select>
+                <input
+                  type="number"
+                  value={reminder.minutes}
+                  onChange={e => handleReminderChange(index, 'minutes', e.target.value)}
+                  min="0"
+                  style={{ padding: '8px', borderRadius: '4px', width: '80px' }}
+                /> minutes before
+                <button type="button" onClick={() => handleRemoveReminder(index)} 
+                        style={{ padding: '6px 10px', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+                  Remove
+                </button>
+              </div>
+            ))}
+            <button type="button" onClick={handleAddReminder} 
+                    style={{ padding: '8px 15px', backgroundColor: '#6c757d', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', marginTop: '5px' }}>
+              Add Custom Reminder
+            </button>
+          </>
+        )}
+
+        {error && <p style={{color: 'red', marginTop: '15px', fontWeight: 'bold'}}>Error: {error}</p>}
+        {successMessage && <p style={{color: 'green', marginTop: '15px', fontWeight: 'bold'}}>{successMessage}</p>}
+
+        <div style={{ marginTop: '25px' }}>
+          <button 
+            type="submit" 
+            disabled={isLoading || vehiclesLoading} // Disable button if vehicles are loading too
+            style={{ padding: '12px 25px', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '16px' }}
+          >
+            {isLoading ? 'Saving to Calendar...' : (vehiclesLoading ? 'Loading Vehicles...' : 'Save to Google Calendar')}
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+export default MaintenancePage;

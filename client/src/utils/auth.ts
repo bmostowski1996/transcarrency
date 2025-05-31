@@ -1,5 +1,18 @@
 // client/utils/auth.ts
 import { type JwtPayload, jwtDecode } from 'jwt-decode';
+import { gql } from '@apollo/client'; // Added import
+
+// Define QUERY_MY_VEHICLES
+export const QUERY_MY_VEHICLES = gql`
+  query GetMyVehicles {
+    myVehicles {
+      _id
+      make
+      model
+      year
+    }
+  }
+`;
 
 // Extend the base JWT payload to include your app-specific user data
 interface ExtendedJwt extends JwtPayload {
