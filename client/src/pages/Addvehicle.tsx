@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import DOS from '../assets/icons-two/2014.png'; // Adjust the path as necessary
+// import { useNavigate } from 'react-router-dom';
+// import DOS from '../assets/icons-two/2014.png'; // Adjust the path as necessary
 import calendarIcon from '../assets/service_icons/calendar_icon.png';
 import serviceIcon from '../assets/service_icons/service_icon.png';
 import speedometerIcon from '../assets/service_icons/speedometer_icon.png';
@@ -14,7 +14,7 @@ import vinIcon from '../assets/icons-two/Vehicle Insurance.png'; // Adjust the p
 
 
 const Addvehicle: React.FC = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     serviceDate: '',

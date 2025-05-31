@@ -1,8 +1,8 @@
 // file for user model
-import { Schema, model, Document } from 'mongoose';
-import bycrypt from 'bcrypt';
-import { google } from 'googleapis';
-import { OAuth2Client } from 'google-auth-library';
+import { Schema, model, Document, Types } from 'mongoose';
+import bcrypt from 'bcrypt';
+// import { google } from 'googleapis';
+// import { OAuth2Client } from 'google-auth-library';
 
 // user interface
 interface IUser extends Document {
@@ -13,6 +13,7 @@ interface IUser extends Document {
   googleAccessToken?: string;
   googleRefreshToken?: string;
   googleTokenExpiryDate?: Date | null;
+  vehicles?: Types.ObjectId[]; // Added vehicles field
 }
 
 // user schema
@@ -35,6 +36,7 @@ const userSchema = new Schema<IUser>(
       required: false,
       default: null,
     },
+    vehicles: [{ type: Schema.Types.ObjectId, ref: 'Vehicle' }], // Added vehicles field
   },
   { timestamps: true }
 );
@@ -42,8 +44,8 @@ const userSchema = new Schema<IUser>(
 // hash password before saving
 userSchema.pre<IUser>('save', async function (next) {
   if (this.isModified('password')) {
-    const salt = await bycrypt.genSalt(10);
-    this.password = await bycrypt.hash(this.password, salt);
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
   }
   next();
 });
@@ -53,7 +55,7 @@ userSchema.methods.comparePassword = async function (
   this: IUser,
   candidatePassword: string
 ): Promise<boolean> {
-  return await bycrypt.compare(candidatePassword, this.password);
+  return await bcrypt.compare(candidatePassword, this.password);
 }
 // create user model
 const User = model<IUser>('User', userSchema);

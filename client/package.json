@@ -10,9 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@apollo/client": "^3.7.14",
+    "@apollo/client": "^3.13.8",
     "@tailwindcss/vite": "^4.1.7",
-    "graphql": "^16.6.0",
+    "date-fns": "^4.1.0",
+    "graphql": "^16.11.0",
     "jwt-decode": "^4.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -20,7 +21,7 @@
     "react-router-dom": "^6.23.1"
   },
   "devDependencies": {
-    "@types/react": "^18.2.66",
+    "@types/react": "^18.3.23",
     "@types/react-dom": "^18.2.22",
     "@typescript-eslint/eslint-plugin": "^7.2.0",
     "@typescript-eslint/parser": "^7.2.0",
