@@ -54,17 +54,11 @@ export const typeDefs = `
 
   # Queries available in the API
   type Query {
-    # Get all vehicles
-    getVehicles: [Vehicle]
-
     # Get a vehicle by its unique ID
     getVehicleById(id: ID!): Vehicle
 
     # Get all vehicles owned by a specific user
     getVehiclesByUser(ownerId: ID!): [Vehicle]
-
-    # Get all vehicles owned by the logged in user
-    getVehiclesOwned: User
 
     # Search parts related to a vehicle
     vehicleParts(vin: String, make: String, model: String, year: Int, type: String): [VehiclePart]
@@ -99,7 +93,6 @@ export const typeDefs = `
     lastName: String
     email: String
     password: String
-    vehicles: [Vehicle]
   }
 
   # Mutations available in the API
@@ -116,20 +109,11 @@ export const typeDefs = `
     # Delete a user by ID
     deleteUser(userId: ID!): User
 
-    # Register a new vehicle to the logged in user
-    registerVehicle(input: VehicleInput!): User
-
-    # Register a vehicle to an arbitrary user
-    addVehicle(ownerId: ID!, input: VehicleInput!): Vehicle
-
-    # Update a vehicle
-    updateVehicle(vehicleId: ID!, input: VehicleInput!): Vehicle
+    # Register a new vehicle to a user
+    registerVehicle(ownerId: ID!, input: VehicleInput!): Vehicle
 
     # Transfer a vehicle to a new owner
     transferOwnership(vehicleId: ID!, newOwnerId: ID!): Vehicle
-
-    # Delete vehicle
-    deleteVehicle(vehicleId: ID!): Vehicle
 
     # Add a new service record to a vehicle
     addServiceRecord(vehicleId: ID!, record: ServiceRecordInput!): Vehicle
