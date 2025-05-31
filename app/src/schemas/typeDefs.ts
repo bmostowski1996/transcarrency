@@ -80,7 +80,8 @@ export const typeDefs = `
 
   # Input for registering or updating a user
   input UserInput {
-    name: String!
+    firstName: String!
+    lastName: String!
     email: String!
     password: String!
   }
@@ -88,7 +89,8 @@ export const typeDefs = `
   # User type definition
   type User {
     _id: ID
-    name: String
+    firstName: String
+    lastName: String
     email: String
     password: String
   }
