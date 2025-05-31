@@ -1,69 +1,20 @@
 [
     {
-<<<<<<< HEAD
-        "name": "Alex Johnson",
-=======
         "firstName": "Alex",
         "lastName": "Johnson",
->>>>>>> 1de7c13ffd7a164316ba7857ea756d5cbede448b
         "email": "alex.johnson@transcarrency.dev",
         "password": "password01"
     },
     {
-<<<<<<< HEAD
-        "name": "Morgan Lee",
-=======
         "firstName": "Morgan",
         "lastName": "Lee",
->>>>>>> 1de7c13ffd7a164316ba7857ea756d5cbede448b
         "email": "morgan.lee@transcarrency.dev",
         "password": "password02"
     },
     {
-<<<<<<< HEAD
-        "name": "Jamie Rivera",
-        "email": "jamie.rivera@transcarrency.dev",
-        "password": "password03"
-    },
-    {
-        "name": "Taylor Kim",
-        "email": "taylor.kim@transcarrency.dev",
-        "password": "password04"
-    },
-    {
-        "name": "Jordan Blake",
-        "email": "jordan.blake@transcarrency.dev",
-        "password": "password05"
-    },
-    {
-        "name": "Casey Morgan",
-        "email": "casey.morgan@transcarrency.dev",
-        "password": "password06"
-    },
-    {
-        "name": "Riley Thompson",
-        "email": "riley.thompson@transcarrency.dev",
-        "password": "password07"
-    },
-    {
-        "name": "Avery Patel",
-        "email": "avery.patel@transcarrency.dev",
-        "password": "password08"
-    },
-    {
-        "name": "Drew Carter",
-        "email": "drew.carter@transcarrency.dev",
-        "password": "password09"
-    },
-    {
-        "name": "Skylar Nguyen",
-        "email": "skylar.nguyen@transcarrency.dev",
-        "password": "password10"
-=======
         "firstName": "Jamie",
         "lastName": "Rivera",
         "email": "jamie.rivera@transcarrency.dev",
         "password": "password03"
->>>>>>> 1de7c13ffd7a164316ba7857ea756d5cbede448b
     }
 ]

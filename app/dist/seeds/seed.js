@@ -1,24 +1,8 @@
 import db from '../config/connection.js';
-<<<<<<< HEAD
-import { User } from '../models/index.js';
-import { Vehicle } from '../models/index.js';
-<<<<<<< HEAD
-import { ServiceRecord } from '../models/ServiceRecord.js';
-import userSeeds from './userData.json' with { type: 'json' };
-import vehicleSeeds from './vehiclesData.json' with { type: 'json' };
-import serviceRecordSeeds from './vehiclesData.json' with { type: 'json' };
-=======
-// import { ServiceRecord } from '../models/index.js';
-import userSeeds from './userData.json' with { type: 'json' };
-import vehicleSeeds from './vehiclesData.json' with { type: 'json' };
-// import serviceRecordSeeds from './vehiclesData.json' with { type: 'json' };
->>>>>>> 1de7c13ffd7a164316ba7857ea756d5cbede448b
-=======
 import { User, Vehicle, ServiceRecord } from '../models/index.js';
 import userSeeds from './userData.json' with { type: 'json' };
 import vehicleSeeds from './vehiclesData.json' with { type: 'json' };
 import serviceRecordSeeds from './ServiceRecordData.json' with { type: 'json' };
->>>>>>> 86dc3cec905128a3801a52b1d30c3aef5ee03c9e
 import cleanDB from './cleanDB.js';
 const seedDatabase = async () => {
     try {
@@ -26,12 +10,6 @@ const seedDatabase = async () => {
         await cleanDB();
         await User.insertMany(userSeeds);
         await Vehicle.insertMany(vehicleSeeds);
-<<<<<<< HEAD
-<<<<<<< HEAD
-        await ServiceRecord.insertMany(serviceRecordSeeds);
-=======
-        // await ServiceRecord.insertMany(serviceRecordSeeds);
-=======
         await ServiceRecord.insertMany(serviceRecordSeeds);
         // For now, we've seeded, but we still need to associate service records with vehicles, and vehicles with users!
         // First, let's associate service records with vehicles 
@@ -49,7 +27,6 @@ const seedDatabase = async () => {
             await vehicle?.save();
             await serviceRecord?.save();
         }
->>>>>>> 86dc3cec905128a3801a52b1d30c3aef5ee03c9e
         // For now, we have seeded Users and Vehicles, but we haven't actually assigned Vehicles to users yet...
         const vehicles = await Vehicle.find();
         for (const vehicle of vehicles) {
@@ -65,7 +42,6 @@ const seedDatabase = async () => {
             await vehicle.save();
             await user?.save();
         }
->>>>>>> 1de7c13ffd7a164316ba7857ea756d5cbede448b
         console.log('Seeding completed successfully!');
         process.exit(0);
     }

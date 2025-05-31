@@ -39,9 +39,5 @@ const vehicleSchema = new Schema({
 }, {
     timestamps: true,
 });
-<<<<<<< HEAD
-export const Vehicle = model('Vehicle', vehicleSchema);
-=======
 const Vehicle = model('Vehicle', vehicleSchema);
 export default Vehicle;
->>>>>>> 1de7c13ffd7a164316ba7857ea756d5cbede448b

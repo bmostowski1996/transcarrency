@@ -1,12 +1,6 @@
-<<<<<<< HEAD
-// Controler for handling vehicle-related operations/ export to routes
-import {Request, Response} from 'express';
-import Vehicle from '../models/Vehicle';
-=======
 // // Controler for handling vehicle-related operations/ export to routes
 // import {Request, Response} from 'express';
 // import {Vehicle} from '../models/Vehicle';
->>>>>>> 1de7c13ffd7a164316ba7857ea756d5cbede448b
 
 // export const getAllVehicles = async (req: Request, res: Response) => {
 //     try{

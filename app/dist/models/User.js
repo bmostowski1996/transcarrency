@@ -1,10 +1,6 @@
 // file for user model
-<<<<<<< HEAD
-import { Schema } from 'mongoose';
-=======
 import { Schema, model } from 'mongoose';
 import bycrypt from 'bcrypt';
->>>>>>> 1de7c13ffd7a164316ba7857ea756d5cbede448b
 // user schema
 const userSchema = new Schema({
     email: { type: String, required: true, unique: true },
@@ -27,9 +23,6 @@ const userSchema = new Schema({
     vehicles: [{ type: Schema.Types.ObjectId, ref: 'Vehicle' }], // Added vehicles field
 }, { timestamps: true });
 // hash password before saving
-<<<<<<< HEAD
-userSchema.pre < IUser;
-=======
 userSchema.pre('save', async function (next) {
     if (this.isModified('password')) {
         const salt = await bycrypt.genSalt(10);
@@ -44,4 +37,3 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
 // create user model
 const User = model('User', userSchema);
 export default User;
->>>>>>> 1de7c13ffd7a164316ba7857ea756d5cbede448b
