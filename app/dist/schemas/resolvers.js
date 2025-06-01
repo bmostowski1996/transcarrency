@@ -25,7 +25,7 @@ const resolvers = {
             });
         },
         // VEHICLE QUERIES
-        getVehicles: async () => await Vehicle.find(),
+        getVehicles: async () => await Vehicle.find().populate('serviceRecords'),
         // Fetch a vehicle by ID
         getVehicleById: async (_, { id }) => await Vehicle.findById(id),
         // Fetch all vehicles owned by an arbitrary user
