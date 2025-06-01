@@ -1,5 +1,6 @@
 
 import React, { useState, ChangeEvent } from 'react';
+import { useQuery, gql } from '@apollo/client';
 
 
 
@@ -23,6 +24,18 @@ const ServiceReport: React.FC = () => {
     shopName: null,
     receipt: null,
   });
+
+  const { loading, error, data } = useQuery(QUERY_ME);
+   
+  if (!loading) {
+    console.log(data.me.vehicles);
+  }
+
+  const [selectedVehicleId, setSelectedVehicleId] = useState<string>('');
+
+  const handleVehicleChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    setSelectedVehicleId(e.target.value);
+  };
 
   const [customServiceType, setCustomServiceType] = useState('');
 
@@ -106,13 +119,53 @@ const ServiceReport: React.FC = () => {
     }
   };
 
+  const [selectedVehicleId, setSelectedVehicleId] = useState<string>('683bc9d84e75b038d3cec82c');
+  const [selectedVehicleId, setSelectedVehicleId] = useState<string>('683bc9d84e75b038d3cec82d');
 
   return (
     <div className='bg-dashboard mx-auto w-7/8 items-center p-6'>
-    <form onSubmit={handleSubmit} className="max-w-xl mx-auto p-6 bg-gradient-to-b from-white to-green-300 shadow-lg rounded-lg space-y-4">
-      <h2 className="text-xl font-bold text-center bg-yellow-400 text-black py-2 px-4 rounded w-fit mx-auto mt-6">
+        <h2 className="text-xl font-bold text-center bg-cyan-200 text-black py-2 px-4 rounded w-fit mx-auto mt-6">
   Service Reports
 </h2>
+    <div>
+        <label className="block mb-1 font-medium text-black">Select Vehicle</label>
+        <select
+        value={selectedVehicleId}
+        onChange={handleVehicleChange}
+        className="w-full border p-2 rounded text-black"
+        required
+        disabled={loading || error}
+      >
+        <option value="">Select a vehicle</option>
+          {!loading && !error && data?.me?.vehicles?.map((vehicle: any) => (
+           <option key={vehicle._id} value={vehicle._id}>
+             {vehicle.year} {vehicle.make} {vehicle.model}
+             {vehicle._id === '683bc9d84e75b038d3cec82c' ? ' (Default)' : ''}
+             {vehicle._id === '683bc9d84e75b038d3cec82d' ? ' (Default)' : ''}
+           </option>
+           ))}
+          </select>
+         {loading && <p className="text-gray-500 text-sm mt-1">Loading vehicles...</p>}
+         {error && <p className="text-red-500 text-sm mt-1">Failed to load vehicles.</p>}
+       </div>
+      <div>
+          <label className="block mb-1 font-medium text-black">Select Vehicle</label>
+          <select
+            value={selectedVehicleId}
+            onChange={handleVehicleChange}
+            className="w-full border p-2 rounded text-black"
+            required
+            disabled={loading || error}
+          >
+            <option value="">Select a vehicle</option>
+            {!loading && !error && data?.me?.vehicles?.map((vehicle: any) => (
+              <option key={vehicle._id} value={vehicle._id}>
+                {vehicle.year} {vehicle.make} {vehicle.model}
+              </option>
+            ))}
+          </select>
+          {error && <p className="text-red-500 text-sm mt-1">Failed to load vehicles.</p>}
+        </div>
       
      <div className="flex justify-center items-center flex-col mb-6">
        <label className="block font-medium mb-2">Upload Image of Vehicle</label>
@@ -120,24 +173,11 @@ const ServiceReport: React.FC = () => {
            <input type="file" accept="image/*" onChange={() => {}} className="hidden" id="vehicleImage" />
               <label htmlFor="vehicleImage" className="text-center text-gray-700 cursor-pointer">
                <i className="fas fa-image text-4xl mb-2"></i>
-                 <p>Upload Image of Vehicle</p>
+                 <p>Select from your Vehicles</p>
               </label>
          </div>
     </div>
 
-      <div className="bg-white p-4 rounded shadow mb-6 border border-gray-300 text-bold">
-      <h4 className="font-bold text-sm mb-2 text-black">Vehicle/Owner Information</h4>
-       <div className="grid grid-cols-2 gap-4">
-        <input type="text" placeholder="Owner Name" className="border p-2 rounded text-black" />
-        <input type="text" placeholder="Owner Phone Number" className="border p-2 rounded text-black" />
-        <input type="email" placeholder="Owner Email" className="border p-2 rounded text-black" />
-        <input type="text" placeholder="Car Model" className="border p-2 rounded text-black" />
-        <input type="text" placeholder="Car Make" className="border p-2 rounded text-black" />
-        <input type="text" placeholder="Car Year" className="border p-2 rounded text-black" />
-        <input type="text" placeholder="Vehicle Registration Number" className="border p-2 rounded text-black" />
-        <input type="text" placeholder="VIN" className="border p-2 rounded text-black" />
-       </div>
-      </div>
 
     <div className="bg-white p-4 rounded shadow mb-6 border border-gray-300 text-bold">
       <div>
@@ -189,20 +229,7 @@ const ServiceReport: React.FC = () => {
           className="w-full border p-2 rounded text-black"
         />
       </div>
-      <div className=" block mb-1grid grid-cols-2 gap-4">
-       <input type="text" placeholder="Employee Name" name="employeeName" className="border p-2 rounded text-black" />
-       <input type="text" placeholder="Parts Used" name="partsUsed" className="border p-2 rounded text-black" />
-       <input type="text" placeholder="Services Performed" name="servicesPerformed" className="border p-2 rounded text-black" />
-       <div className="relative">
-         <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500">$</span>
-           <input
-             type="number"
-             placeholder="Labor Costs"
-             name="laborCost"
-             className="border p-2 pl-6 rounded text-black w-full"
-             />
-        </div>
-      </div>
+      
 
       <input
         type="date"
@@ -262,8 +289,9 @@ const ServiceReport: React.FC = () => {
         )}
       </div>
 
-      
-<button className="flex justify-center bg-black text-white py-2 px-4 rounded mt-2">Add To Reminders</button>
+      {/* <div className="flex justify-center space-x-9 mt-4">
+        <button className="flex justify-center bg-black text-white py-2 px-4 rounded mt-2">Add To Reminders</button>
+      </div> */}
 
     <div className="flex justify-center space-x-9 mt-4">
       <button
