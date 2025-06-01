@@ -7,14 +7,14 @@ import Signup from './pages/Signup';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Error from './pages/Error';
-// import MaintenancePage from './pages/MaintenancePage';
+import MaintenancePage from './pages/MaintenancePage';
 
 
 import LayoutWithHeader from './layouts/LayoutHeader';
 import LayoutNoHeader from './layouts/LayoutNoHeader';
 
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import Addvehicle from './pages/Addvehicle';
+import AddVehicle from './pages/Addvehicle';
 
 const router = createBrowserRouter([
   {
@@ -37,7 +37,7 @@ const router = createBrowserRouter([
     errorElement: <Error />,
     children: [
       { path: '/dashboard', element: <Dashboard /> },
-      { path: '/addvehicle', element: <Addvehicle /> },
+      { path: '/addvehicle', element: <AddVehicle /> },
       // { path: '/maintanence', element: <MaintenancePage />} // Reusing Dashboard for Add Vehicle for now
     ]
   }

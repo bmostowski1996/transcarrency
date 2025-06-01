@@ -2,7 +2,8 @@ describe('Vehicle API Tests', () => {
     beforeEach(() => {
       // Load mock data from fixtures
       cy.fixture('mockUsers').as('users');
-    });
+                });
+          });
 
     it('should fetch all vehicles', function () {
         // Mock the API response
