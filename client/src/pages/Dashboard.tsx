@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 // import { useNavigate } from 'react-router-dom';
-// import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 
 // Placeholder code while the login screen is still being put together
 // import { LOGIN_USER } from '../utils/mutations';
+import { QUERY_ME } from '../utils/queries'
 
-// import Auth from '../utils/auth';
+import Auth from '../utils/auth';
 
 // Import icons
 import calendarIcon from '../assets/service_icons/calendar_icon.png';
@@ -28,7 +29,20 @@ interface ServiceReportData {
 }
 
 const Dashboard = () => {
+
+  const { loading, error, data } = useQuery(QUERY_ME);
+
+  if (!loading) {
+    console.log(data.me.vehicles);
+  }
+
+  // We are going to slowly and slowly phase out dummy data for proper data
+  // TODO: Modify seeding so that one user *always* gets multiple vehicles for testing purposes
+
   const navigate = useNavigate();
+
+  // Determines the current vehicle to display in the dashboard
+  const [vehicleIndex, setVehicleIndex] = useState<number>(0);
   const [serviceReport, setServiceReport] = useState<ServiceReportData>({
     serviceDate: null,
     serviceType: null,
@@ -52,10 +66,11 @@ const Dashboard = () => {
   useEffect(() => {
 
     // Check if the user is logged in. If they aren't, redirect them to the login page.
-    // For now, this is commented out because server isn't up and running yet and I need to test *something*
-    // if (!Auth.loggedIn()) {
-    //   navigate('/login');
-    // }
+    if (!Auth.loggedIn()) {
+      navigate('/login');
+    };
+
+    // Now that we've verified that the user is logged in, let's retrieve information about them...
 
     setServiceReport({
       serviceDate: new Date(`2025-05-26`),
@@ -67,17 +82,29 @@ const Dashboard = () => {
     });
   },[]);
 
-  function handlePrevVehicle(event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
-    // Placeholder: In a real app, this would update the selected vehicle index/state
-    // For now, just log to console
-    console.log('Previous vehicle button clicked');
+  const getVehicleName = () => {
+    const vehicle = data.me.vehicles[vehicleIndex]
+    return `${vehicle.year} ${vehicle.make} ${vehicle.model}`;
+  };
+
+  function handlePrevVehicle(_event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
+    let val = vehicleIndex - 1;
+    if (val < 0) {
+      val = data.me.vehicles.length - 1;
+    }
+    setVehicleIndex(val);
   }
 
-  function handleNextVehicle(event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
-    // Placeholder: In a real app, this would update the selected vehicle index/state
-    // For now, just log to console
-    console.log('Next vehicle button clicked');
+  function handleNextVehicle(_event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
+    let val = vehicleIndex + 1;
+    if (val >= data.me.vehicles.length) {
+      val = 0;
+    }
+    setVehicleIndex(val);
   }
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
 
   return (
     <div className='bg-dashboard mx-auto w-7/8 items-center p-6'>
@@ -108,7 +135,7 @@ const Dashboard = () => {
         <FaChevronRight size={32} />
       </button>
     </div>
-      <h3 className='font-dashboard-h3'>1971 Ford Mustang</h3>
+      <h3 className='font-dashboard-h3'>{getVehicleName()}</h3>
       
       {/* Displays the most recent service report recorded for the vehicle */}
       <div className='service-report mx-auto w-7/8'>

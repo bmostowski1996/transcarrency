@@ -70,8 +70,6 @@ export const typeDefs = `
     vehicleParts(vin: String, make: String, model: String, year: Int, type: String): [VehiclePart]
 
     # Get currently logged-in user profile
-
-    Front-End
     me: User
 
     # Fetch all users

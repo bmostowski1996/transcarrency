@@ -62,33 +62,49 @@ export const QUERY_ME = gql`
   query me {
     me {
       _id
-      name
+      firstName
+      lastName
       email
       vehicles {
         _id
         make
-        model
+        model 
         year
-        vin
-        licensePlate
-        mileage
-        serviceRecords {
-          date
-          type
-          cost
-          mileage
-          notes
-          shop
-          recommendedPrice
-        }
       }
     }
   }
 `;
 
+//   query me {
+//     me {
+//       _id
+//       firstName
+//       lastName
+//       email
+//       vehicles {
+//         _id
+//         make
+//         model
+//         year
+//         vin
+//         licensePlate
+//         mileage
+//         serviceRecords {
+//           date
+//           type
+//           cost
+//           mileage
+//           notes
+//           shop
+//           recommendedPrice
+//         }
+//       }
+//     }
+//   }
+// `;
 export const QUERY_VEHICLES_BY_USER = gql`
   query getVehiclesByUser($ownerId: ID!) {
-    user(userId: $ownerId) { {
+    user(userId: $ownerId) { 
       _id
       vehicles {
         _id
