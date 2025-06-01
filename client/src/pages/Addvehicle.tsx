@@ -155,6 +155,26 @@ return (
             </button>
           </div>
         </form>
+
+        <div className="bg-white p-4 mt-10 rounded shadow">
+  <h3 className="font-bold text-lg mb-4">Previous Reports</h3>
+  <div className="space-y-4">
+    <div className="flex items-center space-x-4">
+      <img src="/mustang.jpg" alt="1970 Ford Mustang" className="w-20 h-14 object-cover rounded" />
+      <div>
+        <p className="font-bold">1970 Ford Mustang</p>
+        <button className="text-blue-600 hover:underline">View Report</button>
+      </div>
+    </div>
+    <div className="flex items-center space-x-4">
+      <img src="/vwbeetle.jpg" alt="1971 VW Beetle" className="w-20 h-14 object-cover rounded" />
+      <div>
+        <p className="font-bold">1971 VW Beetle</p>
+        <button className="text-blue-600 hover:underline">View Report</button>
+      </div>
+    </div>
+  </div>
+</div>
       </div>
       </div>
     </div>
