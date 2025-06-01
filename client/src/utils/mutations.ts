@@ -1,5 +1,6 @@
 import { gql } from '@apollo/client';
 
+// This mutation works
 export const REGISTER_USER = gql`
   mutation registerUser($input: UserInput!) {
     registerUser(input: $input) {
@@ -14,6 +15,7 @@ export const REGISTER_USER = gql`
   }
 `;
 
+// This mutation works
 export const LOGIN_USER = gql`
   mutation login($email: String!, $password: String!) {
     login(email: $email, password: $password) {
@@ -28,6 +30,7 @@ export const LOGIN_USER = gql`
   }
 `;
 
+// Haven't tested this, will probably not have time
 export const UPDATE_USER = gql`
   mutation updateUser($userId: ID!, $input: UserInput!) {
     updateUser(userId: $userId, input: $input) {
@@ -38,6 +41,7 @@ export const UPDATE_USER = gql`
   }
 `;
 
+// Haven't test this, will probably not have time
 export const DELETE_USER = gql`
   mutation deleteUser($userId: ID!) {
     deleteUser(userId: $userId) {
@@ -47,6 +51,14 @@ export const DELETE_USER = gql`
   }
 `;
 
+
+export const DELETE_VEHICLE = gql`
+  mutation deleteVehicle($vehicleId: ID!) {
+    deleteVehicle(vehicleId: $vehicleId) {
+      _id
+    }
+  }
+`
 // How does this mutation work?
 // I don't think our code uses it right now...
 export const REGISTER_VEHICLE = gql`
