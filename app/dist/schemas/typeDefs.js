@@ -21,7 +21,7 @@ export const typeDefs = `
     year: Int!           # Year of manufacture
     vin: String          # Vehicle Identification Number
     mileage: Int         # Current mileage of the vehicle
-    serviceHistory: [ServiceRecord]  # List of service records for this vehicle
+    serviceRecords: [ServiceRecord]  # List of service records for this vehicle
   }
 
   # Input type for creating or updating a service record

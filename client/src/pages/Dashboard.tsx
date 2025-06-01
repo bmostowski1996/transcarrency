@@ -20,8 +20,8 @@ import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
 interface ServiceReportData {
-  serviceDate: Date | null;
-  serviceType: null | 'Oil Change' | 'Brake Replacement' | 'Tire Rotation' | 'Battery Replacement' | 'Inspection' | 'Other';
+  date: Date | null;
+  type: null | 'Oil Change' | 'Brake Replacement' | 'Tire Rotation' | 'Battery Replacement' | 'Inspection' | 'Other';
   mileage: null | number;
   notes: null | string;
   cost: null | number;
@@ -44,8 +44,8 @@ const Dashboard = () => {
   // Determines the current vehicle to display in the dashboard
   const [vehicleIndex, setVehicleIndex] = useState<number>(0);
   const [serviceReport, setServiceReport] = useState<ServiceReportData>({
-    serviceDate: null,
-    serviceType: null,
+    date: null,
+    type: null,
     mileage: null,
     notes: null,
     cost: null,
@@ -54,36 +54,50 @@ const Dashboard = () => {
   });
 
   const serviceReportData = [
-    {parameter: 'Date of Service', icon: calendarIcon, value: serviceReport.serviceDate},
-    {parameter: 'Service Type', icon: serviceIcon, value: serviceReport.serviceType},
+    {parameter: 'Date of Service', icon: calendarIcon, value: serviceReport.date},
+    {parameter: 'Service Type', icon: serviceIcon, value: serviceReport.type},
     {parameter: 'Mileage', icon: speedometerIcon, value: serviceReport.mileage},
     {parameter: 'Notes', icon: clipboardIcon, value: serviceReport.notes},
     {parameter: 'Cost', icon: moneyIcon, value: serviceReport.cost},
     {parameter: 'Shop Name', icon: carServiceIcon, value: serviceReport.shopName}
   ]
 
+  // Whenever the vehicle index is changed, we *also* need to update the most recent service report too!
+  useEffect(() => {
+    if (loading || error || !data) return;
+    const vehicle = data.me.vehicles[vehicleIndex];
+    const serviceReports = vehicle.serviceRecords;
+    
+    const mostRecent = serviceReports.reduce((latest: any, current: any) => {
+      const parseDate = (str: string) => {
+        const [day, month, year] = str.split('-').map(Number);
+        return new Date(year, month - 1, day); // months are 0-based
+      };
+
+      return parseDate(current.date) > parseDate(latest.date) ? current : latest;
+    });
+
+    console.log(mostRecent);
+    setServiceReport(mostRecent);
+
+  }, [vehicleIndex, data, loading, error]);
+
   // Dummy data for testing purposes
   useEffect(() => {
 
     // Check if the user is logged in. If they aren't, redirect them to the login page.
-    if (!Auth.loggedIn()) {
+    if (!Auth.loggedIn() || Auth.isTokenExpired(Auth.getToken())) {
+      console.log('User is not logged in!');
       navigate('/login');
     };
 
     // Now that we've verified that the user is logged in, let's retrieve information about them...
 
-    setServiceReport({
-      serviceDate: new Date(`2025-05-26`),
-      mileage: 20000,
-      serviceType: 'Oil Change',
-      notes: 'Car owner drinks way too much Pepsi',
-      cost: 115,
-      shopName: null
-    });
+    setVehicleIndex(0);
   },[]);
-
+  
   const getVehicleName = () => {
-    const vehicle = data.me.vehicles[vehicleIndex]
+    const vehicle = data.me.vehicles[vehicleIndex];
     return `${vehicle.year} ${vehicle.make} ${vehicle.model}`;
   };
 
@@ -103,6 +117,10 @@ const Dashboard = () => {
     setVehicleIndex(val);
   }
 
+  const deleteVehicle = () => {
+
+  };
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
@@ -114,7 +132,7 @@ const Dashboard = () => {
       <h3 className='font-dashboard-h3'>My Vehicles</h3>
       <div className="flex justify-center mb-4 gap-2">
       <button className='bg-green-100 text-black p-2 rounded-lg hover:bg-mint-200' onClick={() => navigate('/addvehicle')}>Add Vehicle</button>
-      <button className='bg-green-100 text-black p-2 rounded-lg hover:bg-mint-200' onClick={() => edit('/addvehicle')}>Edit Vehicle</button>
+      <button className='bg-green-100 text-black p-2 rounded-lg hover:bg-mint-200' onClick={() => navigate('/addvehicle')}>Edit Vehicle</button>
       {/* <button className='bg-green-100 text-black p-2 rounded-lg hover:bg-mint-200' onClick={() => deleteVehicle()}>Delete Vehicle</button>
        */}
       </div>

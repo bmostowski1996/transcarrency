@@ -70,6 +70,16 @@ export const QUERY_ME = gql`
         make
         model 
         year
+        serviceRecords {
+          _id
+          date
+          type
+          cost
+          mileage
+          notes
+          shop
+          invoiceUrl
+        }
       }
     }
   }
