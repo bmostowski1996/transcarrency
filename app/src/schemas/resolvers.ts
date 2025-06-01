@@ -30,7 +30,7 @@ const resolvers = {
     },
 
     // VEHICLE QUERIES
-    getVehicles: async () => await Vehicle.find(),
+    getVehicles: async () => await Vehicle.find().populate('serviceRecords'),
 
     // Fetch a vehicle by ID
     getVehicleById: async (_: any, { id }: { id: string }) => await Vehicle.findById(id),

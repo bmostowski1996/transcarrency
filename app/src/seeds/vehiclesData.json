@@ -33,5 +33,11 @@
     "year": 2019,
     "vin": "3GCUKREC9JG123456",
     "mileage": 56000
+  },
+  {
+    "make": "Ford",
+    "model": "Pinto",
+    "year": 1970,
+    "mileage": 69000
   }
 ]

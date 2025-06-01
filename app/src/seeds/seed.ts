@@ -28,7 +28,7 @@ const seedDatabase = async (): Promise<void> => {
     // First, let's associate service records with vehicles 
     const serviceRecords = await ServiceRecord.find();
     for (const serviceRecord of serviceRecords) {
-      // Assign the service record to a random user 
+      // Assign the service record to a random vehicle
       const count = await Vehicle.countDocuments();
       const random = Math.floor(Math.random() * count);
       
