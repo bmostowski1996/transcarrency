@@ -9,12 +9,12 @@ import { QUERY_ME } from '../utils/queries'
 import Auth from '../utils/auth';
 
 // Import icons
-import calendarIcon from '../assets/service_icons/calendar_icon.png';
-import serviceIcon from '../assets/service_icons/service_icon.png';
-import speedometerIcon from '../assets/service_icons/speedometer_icon.png';
-import clipboardIcon from '../assets/service_icons/notes_icon.png';
-import carServiceIcon from '../assets/service_icons/car_service_icon.png';
-import moneyIcon from '../assets/service_icons/money_icon.png';
+import calendarIcon from '../assets/icons-two/calendar_icon.png';
+import serviceIcon from '../assets/icons-two/service_icon.png';
+import speedometerIcon from '../assets/icons-two/speedometer_icon.png';
+import clipboardIcon from '../assets/icons-two/notes_icon.png';
+import carServiceIcon from '../assets/icons-two/car_service_icon.png';
+import moneyIcon from '../assets/icons-two/money_icon.png';
 import ford_mustang from '../assets/ford_mustang.png';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
