@@ -2,6 +2,7 @@
 import React, { useState, ChangeEvent } from 'react';
 
 
+
 interface ServiceReportData {
   serviceDate: Date | null;
   serviceType: null | 'Oil Change' | 'Brake Replacement' | 'Tire Rotation' | 'Battery Replacement' | 'Inspection' | 'Other';
@@ -23,13 +24,52 @@ const ServiceReport: React.FC = () => {
     receipt: null,
   });
 
+  const [customServiceType, setCustomServiceType] = useState('');
+
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
 
-    setFormData(prev => ({
-      ...prev,
-      [name]: name === 'mileage' || name === 'cost' ? Number(value) : value,
-    }));
+    if (name === 'serviceType') {
+      setFormData(prev => ({
+        ...prev,
+        serviceType: value as ServiceReportData['serviceType'],
+      }));
+      // Reset custom service type if not "Other"
+      if (value !== 'Other') setCustomServiceType('');
+    } else if (name === 'mileage' || name === 'cost') {
+      setFormData(prev => ({
+        ...prev,
+        [name]: Number(value),
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+  };
+
+  const Header: React.FC = () => (
+  <div className="bg-black text-white flex items-center justify-between p-4">
+    <div className="flex items-center">
+      <img src="/logo.png" alt="Logo" className="h-10 mr-4" />
+      <h1 className="text-lg font-bold">TransCarney</h1>
+    </div>
+    <nav className="space-x-6">
+      <a href="#" className="hover:underline">Dashboard</a>
+      <a href="#" className="hover:underline">My Vehicles</a>
+      <a href="#" className="hover:underline font-bold">Service Reports</a>
+    </nav>
+    <button className="text-white">
+      <i className="fas fa-bars"></i>
+    </button>
+  </div>
+);
+
+
+  // Handle custom service type input
+  const handleCustomServiceTypeChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setCustomServiceType(e.target.value);
   };
 
   const handleDateChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -49,14 +89,57 @@ const ServiceReport: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Submitted data:', formData);
+    // Use customServiceType if "Other" is selected
+    const dataToSubmit = {
+      ...formData,
+      serviceType: formData.serviceType === 'Other' ? customServiceType : formData.serviceType,
+    };
+    console.log('Submitted data:', dataToSubmit);
     // You can integrate backend submission logic here
   };
 
-  return (
-    <form onSubmit={handleSubmit} className="max-w-xl mx-auto p-6 bg-gradient-to-b from-white to-green-300 shadow-lg rounded-lg space-y-4">
-      <h2 className="text-2xl text-black font-bold mb-4">Service Report</h2>
+   const handleDelete = () => {
+    if (window.confirm("Are you sure you wish to eliminate this service report?")) {
+      // Add your delete logic here
+      console.log("Service report deleted.");
+      // Optionally, reset form or navigate away
+    }
+  };
 
+
+  return (
+    <div className='bg-dashboard mx-auto w-7/8 items-center p-6'>
+    <form onSubmit={handleSubmit} className="max-w-xl mx-auto p-6 bg-gradient-to-b from-white to-green-300 shadow-lg rounded-lg space-y-4">
+      <h2 className="text-xl font-bold text-center bg-yellow-400 text-black py-2 px-4 rounded w-fit mx-auto mt-6">
+  Service Reports
+</h2>
+      
+     <div className="flex justify-center items-center flex-col mb-6">
+       <label className="block font-medium mb-2">Upload Image of Vehicle</label>
+         <div className="w-40 h-40 border-2 border-dashed rounded cursor-pointer bg-gray-200 hover:bg-gray-300 transition-colors duration-200 flex justify-center items-center">
+           <input type="file" accept="image/*" onChange={() => {}} className="hidden" id="vehicleImage" />
+              <label htmlFor="vehicleImage" className="text-center text-gray-700 cursor-pointer">
+               <i className="fas fa-image text-4xl mb-2"></i>
+                 <p>Upload Image of Vehicle</p>
+              </label>
+         </div>
+    </div>
+
+      <div className="bg-white p-4 rounded shadow mb-6 border border-gray-300 text-bold">
+      <h4 className="font-bold text-sm mb-2 text-black">Vehicle/Owner Information</h4>
+       <div className="grid grid-cols-2 gap-4">
+        <input type="text" placeholder="Owner Name" className="border p-2 rounded text-black" />
+        <input type="text" placeholder="Owner Phone Number" className="border p-2 rounded text-black" />
+        <input type="email" placeholder="Owner Email" className="border p-2 rounded text-black" />
+        <input type="text" placeholder="Car Model" className="border p-2 rounded text-black" />
+        <input type="text" placeholder="Car Make" className="border p-2 rounded text-black" />
+        <input type="text" placeholder="Car Year" className="border p-2 rounded text-black" />
+        <input type="text" placeholder="Vehicle Registration Number" className="border p-2 rounded text-black" />
+        <input type="text" placeholder="VIN" className="border p-2 rounded text-black" />
+       </div>
+      </div>
+
+    <div className="bg-white p-4 rounded shadow mb-6 border border-gray-300 text-bold">
       <div>
         <label className="block mb-1 font-medium text-black">Service Date</label>
         <input
@@ -66,7 +149,7 @@ const ServiceReport: React.FC = () => {
           className="w-full border p-2 rounded text-black"
         />
       </div>
-
+      
       <div>
         <label className="block mb-1 font-medium text-black">Service Type</label>
         <select
@@ -83,7 +166,18 @@ const ServiceReport: React.FC = () => {
           <option value="Inspection">Inspection</option>
           <option value="Other">Other</option>
         </select>
+        {formData.serviceType === "Other" && (
+          <input
+            type="text"
+            maxLength={80}
+            placeholder="Enter custom service type"
+            value={customServiceType}
+            onChange={handleCustomServiceTypeChange}
+            className="mt-2 w-full border p-2 rounded text-black"
+          />
+        )}
       </div>
+      
 
       <div>
         <label className="block mb-1 font-medium text-black">Mileage</label>
@@ -95,7 +189,28 @@ const ServiceReport: React.FC = () => {
           className="w-full border p-2 rounded text-black"
         />
       </div>
+      <div className=" block mb-1grid grid-cols-2 gap-4">
+       <input type="text" placeholder="Employee Name" name="employeeName" className="border p-2 rounded text-black" />
+       <input type="text" placeholder="Parts Used" name="partsUsed" className="border p-2 rounded text-black" />
+       <input type="text" placeholder="Services Performed" name="servicesPerformed" className="border p-2 rounded text-black" />
+       <div className="relative">
+         <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+           <input
+             type="number"
+             placeholder="Labor Costs"
+             name="laborCost"
+             className="border p-2 pl-6 rounded text-black w-full"
+             />
+        </div>
+      </div>
 
+      <input
+        type="date"
+        name="nextServiceDate"
+        placeholder="Date Of Next Service"
+        className="w-full border p-2 rounded text-black"
+        />
+     </div>
       <div>
         <label className="block mb-1 font-medium text-black">Notes</label>
         <textarea
@@ -109,13 +224,18 @@ const ServiceReport: React.FC = () => {
 
       <div>
         <label className="block mb-1 font-medium text-black">Cost</label>
-        <input
-          type="number"
-          name="cost"
-          value={formData.cost ?? ''}
-          onChange={handleChange}
-          className="w-full border p-2 rounded text-black"
-        />
+        <div className="relative">
+          <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+          <input
+            type="number"
+            name="cost"
+            value={formData.cost ?? ''}
+            onChange={handleChange}
+            className="w-full border p-2 pl-5 rounded text-black"
+            min="0"
+            step="0.01"
+          />
+        </div>
       </div>
 
       <div>
@@ -142,13 +262,26 @@ const ServiceReport: React.FC = () => {
         )}
       </div>
 
+      
+<button className="flex justify-center bg-black text-white py-2 px-4 rounded mt-2">Add To Reminders</button>
+
+    <div className="flex justify-center space-x-9 mt-4">
       <button
         type="submit"
-        className="bg-blue-600 hover:bg-blue-700 text-black py-2 px-4 rounded"
+        className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded"
       >
         Submit Report
       </button>
+      <button
+          type="button"
+          className="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded"
+          onClick={handleDelete}
+        >
+          Delete Report
+      </button>
+      </div>
     </form>
+    </div>
   );
 };
 
