@@ -123,11 +123,12 @@ const ServiceReport: React.FC = () => {
   const [selectedVehicleId, setSelectedVehicleId] = useState<string>('683bc9d84e75b038d3cec82d');
 
   return (
-    <div className='bg-dashboard mx-auto w-7/8 items-center p-6'>
+    <form onSubmit={handleSubmit}>
+      <div className='bg-dashboard mx-auto w-7/8 items-center p-6'>
         <h2 className="text-xl font-bold text-center bg-cyan-200 text-black py-2 px-4 rounded w-fit mx-auto mt-6">
-  Service Reports
-</h2>
-    <div>
+        Service Reports
+        </h2>
+        <div>
         <label className="block mb-1 font-medium text-black">Select Vehicle</label>
         <select
         value={selectedVehicleId}
@@ -135,19 +136,19 @@ const ServiceReport: React.FC = () => {
         className="w-full border p-2 rounded text-black"
         required
         disabled={loading || error}
-      >
+        >
         <option value="">Select a vehicle</option>
-          {!loading && !error && data?.me?.vehicles?.map((vehicle: any) => (
-           <option key={vehicle._id} value={vehicle._id}>
-             {vehicle.year} {vehicle.make} {vehicle.model}
-             {vehicle._id === '683bc9d84e75b038d3cec82c' ? ' (Default)' : ''}
-             {vehicle._id === '683bc9d84e75b038d3cec82d' ? ' (Default)' : ''}
-           </option>
-           ))}
-          </select>
-         {loading && <p className="text-gray-500 text-sm mt-1">Loading vehicles...</p>}
-         {error && <p className="text-red-500 text-sm mt-1">Failed to load vehicles.</p>}
-       </div>
+            {!loading && !error && data?.me?.vehicles?.map((vehicle: any) => (
+            <option key={vehicle._id} value={vehicle._id}>
+                {vehicle.year} {vehicle.make} {vehicle.model}
+                {vehicle._id === '683bc9d84e75b038d3cec82c' ? ' (Default)' : ''}
+                {vehicle._id === '683bc9d84e75b038d3cec82d' ? ' (Default)' : ''}
+            </option>
+            ))}
+            </select>
+            {loading && <p className="text-gray-500 text-sm mt-1">Loading vehicles...</p>}
+            {error && <p className="text-red-500 text-sm mt-1">Failed to load vehicles.</p>}
+        </div>
       <div>
           <label className="block mb-1 font-medium text-black">Select Vehicle</label>
           <select
