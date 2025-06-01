@@ -15,6 +15,9 @@ import LayoutNoHeader from './layouts/LayoutNoHeader';
 
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Addvehicle from './pages/Addvehicle';
+import ServiceReport from './pages/Servicereport';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
 
 const router = createBrowserRouter([
   {
@@ -38,6 +41,7 @@ const router = createBrowserRouter([
     children: [
       { path: '/dashboard', element: <Dashboard /> },
       { path: '/addvehicle', element: <Addvehicle /> },
+      { path: '/servicereport', element: <ServiceReport /> },
       // { path: '/maintanence', element: <MaintenancePage />} // Reusing Dashboard for Add Vehicle for now
     ]
   }
