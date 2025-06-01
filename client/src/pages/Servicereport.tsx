@@ -1,7 +1,7 @@
 
 import React, { useState, ChangeEvent } from 'react';
 import { useQuery, gql } from '@apollo/client';
-
+import { QUERY_ME } from '../utils/queries'
 
 
 interface ServiceReportData {
@@ -63,21 +63,21 @@ const ServiceReport: React.FC = () => {
   };
 
   const Header: React.FC = () => (
-  <div className="bg-black text-white flex items-center justify-between p-4">
-    <div className="flex items-center">
-      <img src="/logo.png" alt="Logo" className="h-10 mr-4" />
-      <h1 className="text-lg font-bold">TransCarney</h1>
+    <div className="bg-black text-white flex items-center justify-between p-4">
+      <div className="flex items-center">
+        <img src="/logo.png" alt="Logo" className="h-10 mr-4" />
+        <h1 className="text-lg font-bold">TransCarney</h1>
+      </div>
+      <nav className="space-x-6">
+        <a href="#" className="hover:underline">Dashboard</a>
+        <a href="#" className="hover:underline">My Vehicles</a>
+        <a href="#" className="hover:underline font-bold">Service Reports</a>
+      </nav>
+      <button className="text-white">
+        <i className="fas fa-bars"></i>
+      </button>
     </div>
-    <nav className="space-x-6">
-      <a href="#" className="hover:underline">Dashboard</a>
-      <a href="#" className="hover:underline">My Vehicles</a>
-      <a href="#" className="hover:underline font-bold">Service Reports</a>
-    </nav>
-    <button className="text-white">
-      <i className="fas fa-bars"></i>
-    </button>
-  </div>
-);
+  );
 
 
   // Handle custom service type input
@@ -111,7 +111,7 @@ const ServiceReport: React.FC = () => {
     // You can integrate backend submission logic here
   };
 
-   const handleDelete = () => {
+  const handleDelete = () => {
     if (window.confirm("Are you sure you wish to eliminate this service report?")) {
       // Add your delete logic here
       console.log("Service report deleted.");
@@ -119,15 +119,16 @@ const ServiceReport: React.FC = () => {
     }
   };
 
-  const [selectedVehicleId, setSelectedVehicleId] = useState<string>('683bc9d84e75b038d3cec82c');
-  const [selectedVehicleId, setSelectedVehicleId] = useState<string>('683bc9d84e75b038d3cec82d');
+  // const [selectedVehicleId, setSelectedVehicleId] = useState<string>('683bc9d84e75b038d3cec82c');
+  // const [selectedVehicleId, setSelectedVehicleId] = useState<string>('683bc9d84e75b038d3cec82d');
 
   return (
     <div className='bg-dashboard mx-auto w-7/8 items-center p-6'>
-        <h2 className="text-xl font-bold text-center bg-cyan-200 text-black py-2 px-4 rounded w-fit mx-auto mt-6">
-  Service Reports
-</h2>
-    <div>
+      <h2 className="text-xl font-bold text-center bg-cyan-200 text-black py-2 px-4 rounded w-fit mx-auto mt-6">
+        Service Reports
+      </h2>
+
+      <div>
         <label className="block mb-1 font-medium text-black">Select Vehicle</label>
         <select
         value={selectedVehicleId}
@@ -135,7 +136,7 @@ const ServiceReport: React.FC = () => {
         className="w-full border p-2 rounded text-black"
         required
         disabled={loading || error}
-      >
+        >
         <option value="">Select a vehicle</option>
           {!loading && !error && data?.me?.vehicles?.map((vehicle: any) => (
            <option key={vehicle._id} value={vehicle._id}>
@@ -147,7 +148,8 @@ const ServiceReport: React.FC = () => {
           </select>
          {loading && <p className="text-gray-500 text-sm mt-1">Loading vehicles...</p>}
          {error && <p className="text-red-500 text-sm mt-1">Failed to load vehicles.</p>}
-       </div>
+      </div>
+
       <div>
           <label className="block mb-1 font-medium text-black">Select Vehicle</label>
           <select
@@ -178,7 +180,8 @@ const ServiceReport: React.FC = () => {
          </div>
     </div>
 
-
+          
+    <form>
     <div className="bg-white p-4 rounded shadow mb-6 border border-gray-300 text-bold">
       <div>
         <label className="block mb-1 font-medium text-black">Service Date</label>
@@ -308,7 +311,7 @@ const ServiceReport: React.FC = () => {
           Delete Report
       </button>
       </div>
-    </form>
+      </form>
     </div>
   );
 };
