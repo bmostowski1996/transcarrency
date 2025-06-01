@@ -8,20 +8,13 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Error from './pages/Error';
 import MaintenancePage from './pages/MaintenancePage';
-
+import ServiceReport from './pages/ServiceReport';
 
 import LayoutWithHeader from './layouts/LayoutHeader';
 import LayoutNoHeader from './layouts/LayoutNoHeader';
 
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-<<<<<<< HEAD
-import Addvehicle from './pages/Addvehicle';
-import ServiceReport from './pages/Servicereport';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-
-=======
 import AddVehicle from './pages/Addvehicle';
->>>>>>> 6e3c258b508a57c11f3a52fe64bcd14843080dc3
 
 const router = createBrowserRouter([
   {
@@ -33,7 +26,7 @@ const router = createBrowserRouter([
       { index: true, element: <Home /> },
       { path: '/login', element: <Login />},
       { path: '/signup', element: <Signup />},
-      {path: '/maintenance', element: <MaintenancePage />},
+      { path: '/maintenance', element: <MaintenancePage />},
     ]
   },
   {
@@ -43,12 +36,8 @@ const router = createBrowserRouter([
     errorElement: <Error />,
     children: [
       { path: '/dashboard', element: <Dashboard /> },
-<<<<<<< HEAD
-      { path: '/addvehicle', element: <Addvehicle /> },
-      { path: '/servicereport', element: <ServiceReport /> },
-=======
       { path: '/addvehicle', element: <AddVehicle /> },
->>>>>>> 6e3c258b508a57c11f3a52fe64bcd14843080dc3
+      { path: '/servicereport', element: <ServiceReport />}
       // { path: '/maintanence', element: <MaintenancePage />} // Reusing Dashboard for Add Vehicle for now
     ]
   }

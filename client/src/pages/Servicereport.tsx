@@ -123,21 +123,27 @@ const ServiceReport: React.FC = () => {
   // const [selectedVehicleId, setSelectedVehicleId] = useState<string>('683bc9d84e75b038d3cec82d');
 
   return (
+    
+    // This is a form
     <form onSubmit={handleSubmit}>
+
       <div className='bg-dashboard mx-auto w-7/8 items-center p-6'>
         <h2 className="text-xl font-bold text-center bg-cyan-200 text-black py-2 px-4 rounded w-fit mx-auto mt-6">
-        Service Reports
+          Service Reports
         </h2>
+
+        {/* Div block for selecting vehicles */}
         <div>
-        <label className="block mb-1 font-medium text-black">Select Vehicle</label>
-        <select
-        value={selectedVehicleId}
-        onChange={handleVehicleChange}
-        className="w-full border p-2 rounded text-black"
-        required
-        disabled={loading || error}
-        >
-        <option value="">Select a vehicle</option>
+          <label className="block mb-1 font-medium text-black">Select Vehicle</label>
+          <select
+            value={selectedVehicleId}
+            onChange={handleVehicleChange}
+            className="w-full border p-2 rounded text-black"
+            required
+            disabled={loading || !data}
+          >
+        
+            <option value="">Select a vehicle</option>
             {!loading && !error && data?.me?.vehicles?.map((vehicle: any) => (
             <option key={vehicle._id} value={vehicle._id}>
                 {vehicle.year} {vehicle.make} {vehicle.model}
@@ -145,173 +151,159 @@ const ServiceReport: React.FC = () => {
                 {vehicle._id === '683bc9d84e75b038d3cec82d' ? ' (Default)' : ''}
             </option>
             ))}
-            </select>
+          </select>
             {loading && <p className="text-gray-500 text-sm mt-1">Loading vehicles...</p>}
             {error && <p className="text-red-500 text-sm mt-1">Failed to load vehicles.</p>}
         </div>
-      <div>
-          <label className="block mb-1 font-medium text-black">Select Vehicle</label>
+      
+        {/* Uploading an image of a vehicle */}
+        <div className="flex justify-center items-center flex-col mb-6">
+        <label className="block font-medium mb-2">Upload Image of Vehicle</label>
+          <div className="w-40 h-40 border-2 border-dashed rounded cursor-pointer bg-gray-200 hover:bg-gray-300 transition-colors duration-200 flex justify-center items-center">
+            <input type="file" accept="image/*" onChange={() => {}} className="hidden" id="vehicleImage" />
+                <label htmlFor="vehicleImage" className="text-center text-gray-700 cursor-pointer">
+                <i className="fas fa-image text-4xl mb-2"></i>
+                  <p>Select from your Vehicles</p>
+                </label>
+          </div>
+        </div>
+        
+        {/* Specify service date */}
+        <div className="bg-white p-4 rounded shadow mb-6 border border-gray-300 text-bold">
+          {/* Specify service date */}
+          <div>
+            <label className="block mb-1 font-medium text-black">Service Date</label>
+            <input
+              type="date"
+              name="serviceDate"
+              onChange={handleDateChange}
+              className="w-full border p-2 rounded text-black"
+            />
+        </div>
+        
+        {/* Specify service type */}
+        <div>
+          <label className="block mb-1 font-medium text-black">Service Type</label>
           <select
-            value={selectedVehicleId}
-            onChange={handleVehicleChange}
+            name="serviceType"
+            value={formData.serviceType ?? ''}
+            onChange={handleChange}
             className="w-full border p-2 rounded text-black"
-            required
-            disabled={loading || error}
           >
-            <option value="">Select a vehicle</option>
-            {!loading && !error && data?.me?.vehicles?.map((vehicle: any) => (
-              <option key={vehicle._id} value={vehicle._id}>
-                {vehicle.year} {vehicle.make} {vehicle.model}
-              </option>
-            ))}
+            <option value="">Select a type</option>
+            <option value="Oil Change">Oil Change</option>
+            <option value="Brake Replacement">Brake Replacement</option>
+            <option value="Tire Rotation">Tire Rotation</option>
+            <option value="Battery Replacement">Battery Replacement</option>
+            <option value="Inspection">Inspection</option>
+            <option value="Other">Other</option>
           </select>
-          {error && <p className="text-red-500 text-sm mt-1">Failed to load vehicles.</p>}
+          {formData.serviceType === "Other" && (
+            <input
+              type="text"
+              maxLength={80}
+              placeholder="Enter custom service type"
+              value={customServiceType}
+              onChange={handleCustomServiceTypeChange}
+              className="mt-2 w-full border p-2 rounded text-black"
+            />
+          )}
         </div>
       
-     <div className="flex justify-center items-center flex-col mb-6">
-       <label className="block font-medium mb-2">Upload Image of Vehicle</label>
-         <div className="w-40 h-40 border-2 border-dashed rounded cursor-pointer bg-gray-200 hover:bg-gray-300 transition-colors duration-200 flex justify-center items-center">
-           <input type="file" accept="image/*" onChange={() => {}} className="hidden" id="vehicleImage" />
-              <label htmlFor="vehicleImage" className="text-center text-gray-700 cursor-pointer">
-               <i className="fas fa-image text-4xl mb-2"></i>
-                 <p>Select from your Vehicles</p>
-              </label>
-         </div>
-    </div>
-
-          
-    <form>
-    <div className="bg-white p-4 rounded shadow mb-6 border border-gray-300 text-bold">
-      <div>
-        <label className="block mb-1 font-medium text-black">Service Date</label>
-        <input
-          type="date"
-          name="serviceDate"
-          onChange={handleDateChange}
-          className="w-full border p-2 rounded text-black"
-        />
-      </div>
-      
-      <div>
-        <label className="block mb-1 font-medium text-black">Service Type</label>
-        <select
-          name="serviceType"
-          value={formData.serviceType ?? ''}
-          onChange={handleChange}
-          className="w-full border p-2 rounded text-black"
-        >
-          <option value="">Select a type</option>
-          <option value="Oil Change">Oil Change</option>
-          <option value="Brake Replacement">Brake Replacement</option>
-          <option value="Tire Rotation">Tire Rotation</option>
-          <option value="Battery Replacement">Battery Replacement</option>
-          <option value="Inspection">Inspection</option>
-          <option value="Other">Other</option>
-        </select>
-        {formData.serviceType === "Other" && (
-          <input
-            type="text"
-            maxLength={80}
-            placeholder="Enter custom service type"
-            value={customServiceType}
-            onChange={handleCustomServiceTypeChange}
-            className="mt-2 w-full border p-2 rounded text-black"
-          />
-        )}
-      </div>
-      
-
-      <div>
-        <label className="block mb-1 font-medium text-black">Mileage</label>
-        <input
-          type="number"
-          name="mileage"
-          value={formData.mileage ?? ''}
-          onChange={handleChange}
-          className="w-full border p-2 rounded text-black"
-        />
-      </div>
-      
-
-      <input
-        type="date"
-        name="nextServiceDate"
-        placeholder="Date Of Next Service"
-        className="w-full border p-2 rounded text-black"
-        />
-     </div>
-      <div>
-        <label className="block mb-1 font-medium text-black">Notes</label>
-        <textarea
-          name="notes"
-          value={formData.notes ?? ''}
-          onChange={handleChange}
-          className="w-full border p-2 rounded text-black"
-          rows={4}
-        />
-      </div>
-
-      <div>
-        <label className="block mb-1 font-medium text-black">Cost</label>
-        <div className="relative">
-          <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+        {/* Specify mileage */}
+        <div>
+          <label className="block mb-1 font-medium text-black">Mileage</label>
           <input
             type="number"
-            name="cost"
-            value={formData.cost ?? ''}
+            name="mileage"
+            value={formData.mileage ?? ''}
             onChange={handleChange}
-            className="w-full border p-2 pl-5 rounded text-black"
-            min="0"
-            step="0.01"
+            className="w-full border p-2 rounded text-black"
           />
         </div>
-      </div>
-
-      <div>
-        <label className="block mb-1 font-medium text-black">Shop Name</label>
+      
+        {/* This looks out of place */}
         <input
-          type="text"
-          name="shopName"
-          value={formData.shopName ?? ''}
-          onChange={handleChange}
+          type="date"
+          name="nextServiceDate"
+          placeholder="Date Of Next Service"
           className="w-full border p-2 rounded text-black"
-        />
-      </div>
+          />
+        </div>
 
-      <div>
-        <label className="block mb-1 font-medium text-black">Upload Receipt (optional)</label>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleFileChange}
-          className="w-full border p-2 rounded text-black"
-        />
-        {formData.receipt && (
-          <p className="text-sm mt-1 text-green-600">Receipt uploaded: {formData.receipt.name}</p>
-        )}
-      </div>
+        {/* Enter notes */}
+        <div>
+          <label className="block mb-1 font-medium text-black">Notes</label>
+          <textarea
+            name="notes"
+            value={formData.notes ?? ''}
+            onChange={handleChange}
+            className="w-full border p-2 rounded text-black"
+            rows={4}
+          />
+        </div>
+
+        <div>
+          <label className="block mb-1 font-medium text-black">Cost</label>
+          <div className="relative">
+            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+            <input
+              type="number"
+              name="cost"
+              value={formData.cost ?? ''}
+              onChange={handleChange}
+              className="w-full border p-2 pl-5 rounded text-black"
+              min="0"
+              step="0.01"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block mb-1 font-medium text-black">Shop Name</label>
+          <input
+            type="text"
+            name="shopName"
+            value={formData.shopName ?? ''}
+            onChange={handleChange}
+            className="w-full border p-2 rounded text-black"
+          />
+        </div>
+
+        <div>
+          <label className="block mb-1 font-medium text-black">Upload Receipt (optional)</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="w-full border p-2 rounded text-black"
+          />
+          {formData.receipt && (
+            <p className="text-sm mt-1 text-green-600">Receipt uploaded: {formData.receipt.name}</p>
+          )}
+        </div>
 
       {/* <div className="flex justify-center space-x-9 mt-4">
         <button className="flex justify-center bg-black text-white py-2 px-4 rounded mt-2">Add To Reminders</button>
       </div> */}
 
-    <div className="flex justify-center space-x-9 mt-4">
-      <button
-        type="submit"
-        className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded"
-      >
-        Submit Report
-      </button>
-      <button
-          type="button"
-          className="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded"
-          onClick={handleDelete}
-        >
-          Delete Report
-      </button>
+        <div className="flex justify-center space-x-9 mt-4">
+          <button
+            type="submit"
+            className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded"
+          >
+            Submit Report
+          </button>
+          <button
+              type="button"
+              className="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded"
+              onClick={handleDelete}
+            >
+              Delete Report
+          </button>
+        </div>
       </div>
-      </form>
-    </div>
+    </form>
   );
 };
 
