@@ -1,11 +1,15 @@
 import { User, Vehicle, ServiceRecord } from '../models/index.js';
 import { getVehicleParts } from '../utils/nhtsaApi.js';
-import { AuthenticationError } from '../utils/auth.js';
+import { AuthenticationError, signToken } from '../utils/auth.js';
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+
+// TODO: Right now, this file abuses the use of "any", which is not a best practice.
+// We need to rectify this matter...
 
 const resolvers = {
   Query: {
+    // USER QUERIES
+
     // Fetch all users
     users: async () => await User.find(),
 
@@ -13,17 +17,33 @@ const resolvers = {
     user: async (_: any, { userId }: { userId: string }) => await User.findById(userId),
 
     // Fetch the currently logged-in user
-    me: async (_: any, __: any, context: any) => {
+    me: async (_parent: unknown, _args: unknown, context: any) => {
+      console.log(context.user);
       if (!context.user) throw new AuthenticationError('Not logged in');
-      return await User.findById(context.user._id);
+      return await User.findById(context.user._id).populate({
+        path: 'vehicles',
+        populate: {
+          path: 'serviceRecords',
+          model: 'ServiceRecord'
+        }
+      });
     },
+
+    // VEHICLE QUERIES
+    getVehicles: async () => await Vehicle.find().populate('serviceRecords'),
 
     // Fetch a vehicle by ID
     getVehicleById: async (_: any, { id }: { id: string }) => await Vehicle.findById(id),
 
-    // Fetch all vehicles owned by a specific user
+    // Fetch all vehicles owned by an arbitrary user
     getVehiclesByUser: async (_: any, { ownerId }: { ownerId: string }) =>
       await Vehicle.find({ owner: ownerId }),
+
+    // Fetch all vehicles owned by the logged in user
+    getVehiclesOwned: async (_: any, __:any, context: any) => {
+      if (!context.user) throw new AuthenticationError('Not logged in');
+      return await Vehicle.find({ owner: context.user._id });
+    },
 
     // Fetch vehicle parts based on VIN or vehicle details
     vehicleParts: async (_: any, args: any) => {
@@ -35,6 +55,8 @@ const resolvers = {
   },
 
   Mutation: {
+    // USER MUTATIONS
+
     // Register a new user
     registerUser: async (_: any, { input }: any) => {
       const { firstName, lastName, email, password } = input;
@@ -44,14 +66,12 @@ const resolvers = {
       if (existingUser) throw new Error('User already exists');
 
       // Create a new user
-      const newUser = await User.create({ firstName, lastName, email, password });
+      const user = await User.create({ firstName, lastName, email, password, vehicles: [] });
 
       // Generate a JWT token
-      const token = jwt.sign({ _id: newUser._id }, process.env.JWT_SECRET_KEY!, {
-        expiresIn: '1h',
-      });
+      const token = signToken(user.firstName, user.lastName, user.email, user._id);
 
-      return { token, user: newUser };
+      return { token, user };
     },
 
     // Login an existing user
@@ -64,9 +84,7 @@ const resolvers = {
       if (!valid) throw new AuthenticationError('Invalid credentials');
 
       // Generate a JWT token
-      const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET_KEY!, {
-        expiresIn: '1h',
-      });
+      const token = signToken(user.firstName, user.lastName, user.email, user._id);
 
       return { token, user };
     },
@@ -76,13 +94,63 @@ const resolvers = {
       await User.findByIdAndUpdate(userId, input, { new: true }),
 
     // Delete a user by ID
-    deleteUser: async (_: any, { userId }: { userId: string }) =>
-      await User.findByIdAndDelete(userId),
+    deleteUser: async (_: any, { userId }: { userId: string }) => {
+      // First, identify the vehicles belonging to the user and delete those vehicles...
+      const user = await User.findById(userId);
+      if (user && user.vehicles) {
+        for (const vehicle_id of user.vehicles) {
+          // Update each vehicle the user had in the database so that it does not have an owner
+          const vehicle = await Vehicle.findById(vehicle_id);
+          if (vehicle) {
+            vehicle.owner = null;
+          }
+        }
+      }
+      return await User.findByIdAndDelete(userId);
+    },
 
-    // Register a new vehicle
-    registerVehicle: async (_: any, { ownerId, input }: any) => {
+    // VEHICLE MUTATIONS
+
+    // Register a new vehicle under the logged in user
+    registerVehicle: async (_: any, { input }: any, context: any) => {
+      if (!context.user) throw new AuthenticationError('Not logged in');
+      
+      const newVehicle = await Vehicle.create({ ...input, owner: context.user._id });
+
+      // Make sure it is understood that the user owns the vehicle!
+      return await User.findByIdAndUpdate(context.user._id, 
+        { $push: { vehicles: newVehicle._id } },
+        { new: true } // optional: returns the updated document, { new: true }),
+      );
+    },
+    
+    // For adding vehicles to arbitrary users
+    addVehicle: async (_: any, { ownerId, input }: any) => {
       const newVehicle = await Vehicle.create({ ...input, owner: ownerId });
       return newVehicle;
+    },
+
+    // Edit details of a vehicle
+    updateVehicle: async (_: any, { vehicleId, input }: any) => 
+      await Vehicle.findByIdAndUpdate(vehicleId, input, { new: true }),
+
+    // Delete vehicle
+    deleteVehicle: async(_: any, {vehicleId}: any) => {
+      const vehicle = await Vehicle.findById(vehicleId);
+      if (vehicle) {
+        // If the vehicle has an owner, identify that owner and remove the vehicle from his ownership
+        if (vehicle.owner) {
+          await User.findByIdAndUpdate(
+            vehicle.owner,
+            { $pull: { vehicles: vehicleId } },
+            { new: true } // optional: returns the updated document
+          );
+        }
+      };
+
+      // Now remove the vehicle
+      return await Vehicle.findByIdAndDelete(vehicleId);
+
     },
 
     // Transfer ownership of a vehicle

@@ -83,7 +83,7 @@ const Login = () => {
       />
 
       <h2 className="login-title" style={{ fontWeight: 'bold', fontSize: '3rem', marginBottom: '1rem' }}>
-        Welcome to TransCarrency! Please enter your username or email to login.
+        Welcome to TransCarrency! Please enter your email to login.
       </h2>
 
       {data ? (
@@ -105,7 +105,7 @@ const Login = () => {
         >
           <input
             className="login-input"
-            placeholder="Username or email"
+            placeholder="Email"
             name="email"
             type="text"
             value={formState.email}

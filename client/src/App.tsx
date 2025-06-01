@@ -7,7 +7,7 @@ import Signup from './pages/Signup';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Error from './pages/Error';
-// import MaintenancePage from './pages/MaintenancePage';
+import MaintenancePage from './pages/MaintenancePage';
 
 
 import LayoutWithHeader from './layouts/LayoutHeader';
@@ -29,6 +29,7 @@ const router = createBrowserRouter([
       { index: true, element: <Home /> },
       { path: '/login', element: <Login />},
       { path: '/signup', element: <Signup />},
+      {path: '/maintenance', element: <MaintenancePage />},
     ]
   },
   {

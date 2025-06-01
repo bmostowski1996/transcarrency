@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 // import { useNavigate } from 'react-router-dom';
-// import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 
 // Placeholder code while the login screen is still being put together
 // import { LOGIN_USER } from '../utils/mutations';
+import { QUERY_ME } from '../utils/queries'
 
-// import Auth from '../utils/auth';
+import Auth from '../utils/auth';
 
 // Import icons
 import calendarIcon from '../assets/service_icons/calendar_icon.png';
@@ -19,8 +20,8 @@ import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
 interface ServiceReportData {
-  serviceDate: Date | null;
-  serviceType: null | 'Oil Change' | 'Brake Replacement' | 'Tire Rotation' | 'Battery Replacement' | 'Inspection' | 'Other';
+  date: Date | null;
+  type: null | 'Oil Change' | 'Brake Replacement' | 'Tire Rotation' | 'Battery Replacement' | 'Inspection' | 'Other';
   mileage: null | number;
   notes: null | string;
   cost: null | number;
@@ -28,10 +29,23 @@ interface ServiceReportData {
 }
 
 const Dashboard = () => {
+
+  const { loading, error, data } = useQuery(QUERY_ME);
+
+  if (!loading) {
+    console.log(data.me.vehicles);
+  }
+
+  // We are going to slowly and slowly phase out dummy data for proper data
+  // TODO: Modify seeding so that one user *always* gets multiple vehicles for testing purposes
+
   const navigate = useNavigate();
+
+  // Determines the current vehicle to display in the dashboard
+  const [vehicleIndex, setVehicleIndex] = useState<number>(0);
   const [serviceReport, setServiceReport] = useState<ServiceReportData>({
-    serviceDate: null,
-    serviceType: null,
+    date: null,
+    type: null,
     mileage: null,
     notes: null,
     cost: null,
@@ -40,44 +54,75 @@ const Dashboard = () => {
   });
 
   const serviceReportData = [
-    {parameter: 'Date of Service', icon: calendarIcon, value: serviceReport.serviceDate},
-    {parameter: 'Service Type', icon: serviceIcon, value: serviceReport.serviceType},
+    {parameter: 'Date of Service', icon: calendarIcon, value: serviceReport.date},
+    {parameter: 'Service Type', icon: serviceIcon, value: serviceReport.type},
     {parameter: 'Mileage', icon: speedometerIcon, value: serviceReport.mileage},
     {parameter: 'Notes', icon: clipboardIcon, value: serviceReport.notes},
     {parameter: 'Cost', icon: moneyIcon, value: serviceReport.cost},
     {parameter: 'Shop Name', icon: carServiceIcon, value: serviceReport.shopName}
   ]
 
+  // Whenever the vehicle index is changed, we *also* need to update the most recent service report too!
+  useEffect(() => {
+    if (loading || error || !data) return;
+    const vehicle = data.me.vehicles[vehicleIndex];
+    const serviceReports = vehicle.serviceRecords;
+    
+    const mostRecent = serviceReports.reduce((latest: any, current: any) => {
+      const parseDate = (str: string) => {
+        const [day, month, year] = str.split('-').map(Number);
+        return new Date(year, month - 1, day); // months are 0-based
+      };
+
+      return parseDate(current.date) > parseDate(latest.date) ? current : latest;
+    });
+
+    console.log(mostRecent);
+    setServiceReport(mostRecent);
+
+  }, [vehicleIndex, data, loading, error]);
+
   // Dummy data for testing purposes
   useEffect(() => {
 
     // Check if the user is logged in. If they aren't, redirect them to the login page.
-    // For now, this is commented out because server isn't up and running yet and I need to test *something*
-    // if (!Auth.loggedIn()) {
-    //   navigate('/login');
-    // }
+    if (!Auth.loggedIn() || Auth.isTokenExpired(Auth.getToken())) {
+      console.log('User is not logged in!');
+      navigate('/login');
+    };
 
-    setServiceReport({
-      serviceDate: new Date(`2025-05-26`),
-      mileage: 20000,
-      serviceType: 'Oil Change',
-      notes: 'Car owner drinks way too much Pepsi',
-      cost: 115,
-      shopName: null
-    });
+    // Now that we've verified that the user is logged in, let's retrieve information about them...
+
+    setVehicleIndex(0);
   },[]);
+  
+  const getVehicleName = () => {
+    const vehicle = data.me.vehicles[vehicleIndex];
+    return `${vehicle.year} ${vehicle.make} ${vehicle.model}`;
+  };
 
-  function handlePrevVehicle(event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
-    // Placeholder: In a real app, this would update the selected vehicle index/state
-    // For now, just log to console
-    console.log('Previous vehicle button clicked');
+  function handlePrevVehicle(_event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
+    let val = vehicleIndex - 1;
+    if (val < 0) {
+      val = data.me.vehicles.length - 1;
+    }
+    setVehicleIndex(val);
   }
 
-  function handleNextVehicle(event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
-    // Placeholder: In a real app, this would update the selected vehicle index/state
-    // For now, just log to console
-    console.log('Next vehicle button clicked');
+  function handleNextVehicle(_event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
+    let val = vehicleIndex + 1;
+    if (val >= data.me.vehicles.length) {
+      val = 0;
+    }
+    setVehicleIndex(val);
   }
+
+  const deleteVehicle = () => {
+
+  };
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
 
   return (
     <div className='bg-dashboard mx-auto w-7/8 items-center p-6'>
@@ -87,7 +132,7 @@ const Dashboard = () => {
       <h3 className='font-dashboard-h3'>My Vehicles</h3>
       <div className="flex justify-center mb-4 gap-2">
       <button className='bg-green-100 text-black p-2 rounded-lg hover:bg-mint-200' onClick={() => navigate('/addvehicle')}>Add Vehicle</button>
-      <button className='bg-green-100 text-black p-2 rounded-lg hover:bg-mint-200' onClick={() => edit('/addvehicle')}>Edit Vehicle</button>
+      <button className='bg-green-100 text-black p-2 rounded-lg hover:bg-mint-200' onClick={() => navigate('/addvehicle')}>Edit Vehicle</button>
       {/* <button className='bg-green-100 text-black p-2 rounded-lg hover:bg-mint-200' onClick={() => deleteVehicle()}>Delete Vehicle</button>
        */}
       </div>
@@ -108,7 +153,7 @@ const Dashboard = () => {
         <FaChevronRight size={32} />
       </button>
     </div>
-      <h3 className='font-dashboard-h3'>1971 Ford Mustang</h3>
+      <h3 className='font-dashboard-h3'>{getVehicleName()}</h3>
       
       {/* Displays the most recent service report recorded for the vehicle */}
       <div className='service-report mx-auto w-7/8'>
