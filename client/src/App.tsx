@@ -14,7 +14,7 @@ import LayoutWithHeader from './layouts/LayoutHeader';
 import LayoutNoHeader from './layouts/LayoutNoHeader';
 
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import AddVehicle from './pages/Addvehicle';
+import AddVehicle from './pages/AddVehicle';
 
 const router = createBrowserRouter([
   {

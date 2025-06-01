@@ -1,6 +1,14 @@
 import React, { useState } from 'react';
 
-// import { useNavigate } from 'react-router-dom';
+import { useMutation } from '@apollo/client';
+import { REGISTER_VEHICLE } from '../utils/mutations';
+
+// Huge mistake to not be using this at some point...
+import { useNavigate } from 'react-router-dom';
+
+import Auth from '../utils/auth';
+
+
 // import DOS from '../assets/icons-two/2014.png'; // Adjust the path as necessary
 import calendarIcon from '../assets/icons-two/calendar_icon.png';
 import serviceIcon from '../assets/icons-two/service_icon.png';
@@ -14,8 +22,8 @@ import yearIcon from '../assets/icons-two/2014.png'; // Adjust the path as neces
 import vinIcon from '../assets/icons-two/Vehicle Insurance.png'; // Adjust the path as necessary
 
 
-const Addvehicle: React.FC = () => {
-  // const navigate = useNavigate();
+const AddVehicle: React.FC = () => {
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     mileage: '',
@@ -79,21 +87,33 @@ const Addvehicle: React.FC = () => {
     if (!validateForm()) return;
 
     try {
-      const userId = Auth.getUser()?.data?._id;
-      await registerVehicle({
+      // console.log(`Get user results: ${Auth.getUser()?.data}`);
+      // const userId = Auth.getUser()?.data?._id;
+      console.log(`Form data:`);
+      console.log({
+        make: formData.vehicleMake,
+        model: formData.vehicleModel,
+        year: parseInt(formData.vehicleYear), // Make sure this isn't NaN
+        vin: formData.vin,
+        mileage: parseInt(formData.mileage)   // Same here
+      });
+      
+      const { data } = await registerVehicle({
         variables: {
-          ownerId: userId,
           input: {
             make: formData.vehicleMake,
             model: formData.vehicleModel,
             year: parseInt(formData.vehicleYear),
             vin: formData.vin,
-            mileage: parseInt(formData.mileage),
-            notes: formData.notes,
+            mileage: parseInt(formData.mileage)
           },
         },
       });
+      console.log(data);
 
+      // TODO: It would be nice to have a success message here...
+      console.log('Vehicle registered successfully');
+      // Redirect to the dashboard after successful registration
       navigate('/dashboard');
     } catch (error) {
       console.error('Registration error:', error);

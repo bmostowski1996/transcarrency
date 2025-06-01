@@ -112,7 +112,8 @@ const resolvers = {
     // VEHICLE MUTATIONS
 
     // Register a new vehicle under the logged in user
-    registerVehicle: async (_: any, { input }: any, context: any) => {
+    registerVehicle: async (_parent: unknown, { input }: any, context: any) => {
+      console.log('Registering vehicle:', input);
       if (!context.user) throw new AuthenticationError('Not logged in');
       
       const newVehicle = await Vehicle.create({ ...input, owner: context.user._id });
