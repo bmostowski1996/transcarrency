@@ -1,7 +1,7 @@
 
 import React, { useState, ChangeEvent } from 'react';
 import { useQuery, gql } from '@apollo/client';
-
+import { QUERY_ME } from '../utils/queries'
 
 
 interface ServiceReportData {
@@ -63,21 +63,21 @@ const ServiceReport: React.FC = () => {
   };
 
   const Header: React.FC = () => (
-  <div className="bg-black text-white flex items-center justify-between p-4">
-    <div className="flex items-center">
-      <img src="/logo.png" alt="Logo" className="h-10 mr-4" />
-      <h1 className="text-lg font-bold">TransCarney</h1>
+    <div className="bg-black text-white flex items-center justify-between p-4">
+      <div className="flex items-center">
+        <img src="/logo.png" alt="Logo" className="h-10 mr-4" />
+        <h1 className="text-lg font-bold">TransCarney</h1>
+      </div>
+      <nav className="space-x-6">
+        <a href="#" className="hover:underline">Dashboard</a>
+        <a href="#" className="hover:underline">My Vehicles</a>
+        <a href="#" className="hover:underline font-bold">Service Reports</a>
+      </nav>
+      <button className="text-white">
+        <i className="fas fa-bars"></i>
+      </button>
     </div>
-    <nav className="space-x-6">
-      <a href="#" className="hover:underline">Dashboard</a>
-      <a href="#" className="hover:underline">My Vehicles</a>
-      <a href="#" className="hover:underline font-bold">Service Reports</a>
-    </nav>
-    <button className="text-white">
-      <i className="fas fa-bars"></i>
-    </button>
-  </div>
-);
+  );
 
 
   // Handle custom service type input
@@ -111,7 +111,7 @@ const ServiceReport: React.FC = () => {
     // You can integrate backend submission logic here
   };
 
-   const handleDelete = () => {
+  const handleDelete = () => {
     if (window.confirm("Are you sure you wish to eliminate this service report?")) {
       // Add your delete logic here
       console.log("Service report deleted.");
@@ -119,8 +119,8 @@ const ServiceReport: React.FC = () => {
     }
   };
 
-  const [selectedVehicleId, setSelectedVehicleId] = useState<string>('683bc9d84e75b038d3cec82c');
-  const [selectedVehicleId, setSelectedVehicleId] = useState<string>('683bc9d84e75b038d3cec82d');
+  // const [selectedVehicleId, setSelectedVehicleId] = useState<string>('683bc9d84e75b038d3cec82c');
+  // const [selectedVehicleId, setSelectedVehicleId] = useState<string>('683bc9d84e75b038d3cec82d');
 
   return (
     <form onSubmit={handleSubmit}>
@@ -179,7 +179,8 @@ const ServiceReport: React.FC = () => {
          </div>
     </div>
 
-
+          
+    <form>
     <div className="bg-white p-4 rounded shadow mb-6 border border-gray-300 text-bold">
       <div>
         <label className="block mb-1 font-medium text-black">Service Date</label>
@@ -309,7 +310,7 @@ const ServiceReport: React.FC = () => {
           Delete Report
       </button>
       </div>
-    </form>
+      </form>
     </div>
   );
 };

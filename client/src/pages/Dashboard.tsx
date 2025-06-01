@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 // import { useNavigate } from 'react-router-dom';
-import { useQuery } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client';
 
 // Placeholder code while the login screen is still being put together
-// import { LOGIN_USER } from '../utils/mutations';
+import { DELETE_VEHICLE } from '../utils/mutations';
 import { QUERY_ME } from '../utils/queries'
 
 import Auth from '../utils/auth';
@@ -30,6 +30,7 @@ interface ServiceReportData {
 
 const Dashboard = () => {
 
+  const [deleteVehicle] = useMutation(DELETE_VEHICLE);
   const { loading, error, data } = useQuery(QUERY_ME);
 
   if (!loading) {
@@ -65,24 +66,37 @@ const Dashboard = () => {
   // Whenever the vehicle index is changed, we *also* need to update the most recent service report too!
   useEffect(() => {
     if (loading || error || !data) return;
-    const vehicle = data.me.vehicles[vehicleIndex];
-    const serviceReports = vehicle.serviceRecords;
+
+    try {
+      const vehicle = data.me.vehicles[vehicleIndex];
+      const serviceReports = vehicle.serviceRecords;
+      
+      const mostRecent = serviceReports.reduce((latest: any, current: any) => {
+        const parseDate = (str: string) => {
+          const [day, month, year] = str.split('-').map(Number);
+          return new Date(year, month - 1, day); // months are 0-based
+        };
+
+        return parseDate(current.date) > parseDate(latest.date) ? current : latest;
+      });
+
+      console.log(mostRecent);
+      setServiceReport(mostRecent);
+    } catch {
+      setServiceReport({
+        date: null,
+        type: null,
+        mileage: null,
+        notes: null,
+        cost: null,
+        shopName: null
+      })
+    }
     
-    const mostRecent = serviceReports.reduce((latest: any, current: any) => {
-      const parseDate = (str: string) => {
-        const [day, month, year] = str.split('-').map(Number);
-        return new Date(year, month - 1, day); // months are 0-based
-      };
-
-      return parseDate(current.date) > parseDate(latest.date) ? current : latest;
-    });
-
-    console.log(mostRecent);
-    setServiceReport(mostRecent);
 
   }, [vehicleIndex, data, loading, error]);
 
-  // Dummy data for testing purposes
+  // For when we first log in...
   useEffect(() => {
 
     // Check if the user is logged in. If they aren't, redirect them to the login page.
@@ -91,14 +105,16 @@ const Dashboard = () => {
       navigate('/login');
     };
 
-    // Now that we've verified that the user is logged in, let's retrieve information about them...
-
     setVehicleIndex(0);
   },[]);
   
   const getVehicleName = () => {
-    const vehicle = data.me.vehicles[vehicleIndex];
-    return `${vehicle.year} ${vehicle.make} ${vehicle.model}`;
+    if (data.me.vehicles.length > 0) {
+      const vehicle = data.me.vehicles[vehicleIndex];
+      return `${vehicle.year} ${vehicle.make} ${vehicle.model}`;
+    } else {
+      return ' '
+    }
   };
 
   function handlePrevVehicle(_event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
@@ -117,26 +133,23 @@ const Dashboard = () => {
     setVehicleIndex(val);
   }
 
-  const deleteVehicle = () => {
-
+  const handleDeleteVehicle = async () => {
+    // Here, we need to call a mutation and update the server
+    await deleteVehicle({
+      variables: {vehicleId: data.me.vehicles[vehicleIndex]._id},
+      refetchQueries: [{ query: QUERY_ME }],
+    });
+    if (vehicleIndex > 0) {
+      setVehicleIndex(vehicleIndex - 1);
+    } else {
+      setVehicleIndex(0);
+    }
   };
+  
+  const vehicleSelect = () => {
+    if (loading || error || !data) return;
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
-
-  return (
-    <div className='bg-dashboard mx-auto w-7/8 items-center p-6'>
-      {/* Displays current vehicles */}
-      {/* TODO: Add arrows which let you move between vehicles */}
-      <h2 className='font-dashboard'>Dashboard</h2>
-      <h3 className='font-dashboard-h3'>My Vehicles</h3>
-      <div className="flex justify-center mb-4 gap-2">
-      <button className='bg-green-100 text-black p-2 rounded-lg hover:bg-mint-200' onClick={() => navigate('/addvehicle')}>Add Vehicle</button>
-      <button className='bg-green-100 text-black p-2 rounded-lg hover:bg-mint-200' onClick={() => navigate('/addvehicle')}>Edit Vehicle</button>
-      {/* <button className='bg-green-100 text-black p-2 rounded-lg hover:bg-mint-200' onClick={() => deleteVehicle()}>Delete Vehicle</button>
-       */}
-      </div>
-      <div className="flex items-center justify-center mb-6 gap-10">
+    return (data.me.vehicles && data.me.vehicles.length > 0) ? (<div className="flex items-center justify-center mb-6 gap-10">
       <button
         className="p-2 rounded-full bg-gray-500 hover:bg-gray-300"
         aria-label="Previous Vehicle"
@@ -152,11 +165,23 @@ const Dashboard = () => {
       >
         <FaChevronRight size={32} />
       </button>
-    </div>
-      <h3 className='font-dashboard-h3'>{getVehicleName()}</h3>
+    </div>) : (<p className='font-dashboard'>No vehicles found. Please add a vehicle.</p>);
+  };
+  
+  const showServiceReport = () => {
+    if (loading || error || !data) return;
+
+    if(!data.me.vehicles || 
+      !data.me.vehicles[vehicleIndex] || 
+      !data.me.vehicles[vehicleIndex].serviceRecords || 
+      data.me.vehicles[vehicleIndex].serviceRecords.length < 1) {
       
-      {/* Displays the most recent service report recorded for the vehicle */}
-      <div className='service-report mx-auto w-7/8'>
+      return (<div className='service-report mx-auto w-7/8'>
+        <h4 className="text-black text-center"> No service reports to display</h4>
+        </div>);
+    }
+
+    return (<div className='service-report mx-auto w-7/8'>
         <h3 className='font-dashboard-h3'>Most Recent Service Report</h3>
         {/* Grid of service report details */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-4 bg-mint-100 rounded-xl">
@@ -171,13 +196,38 @@ const Dashboard = () => {
           
         </div>
         
+      </div>);
+  };
+   
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
+
+  return (
+    <div className='bg-dashboard mx-auto w-7/8 items-center p-6'>
+      {/* Displays current vehicles */}
+      {/* TODO: Add arrows which let you move between vehicles */}
+      <h2 className='font-dashboard'>Dashboard</h2>
+      <h3 className='font-dashboard-h3'>My Vehicles</h3>
+      <div className="flex justify-center mb-4 gap-2">
+      <button className='bg-green-100 text-black p-2 rounded-lg hover:bg-mint-200' onClick={() => navigate('/addvehicle')}>Add Vehicle</button>
+      <button className='bg-green-100 text-black p-2 rounded-lg hover:bg-mint-200' onClick={() => navigate('/addvehicle')}>Edit Vehicle</button>
+      {/* <button className='bg-green-100 text-black p-2 rounded-lg hover:bg-mint-200' onClick={() => deleteVehicle()}>Delete Vehicle</button>
+       */}
       </div>
+      
+      {vehicleSelect()}
+      
+      <h3 className='font-dashboard-h3'>{getVehicleName()}</h3>
+      
+      {/* Displays the most recent service report recorded for the vehicle */}
+      {showServiceReport()}
+
       <div className="col-span-full flex justify-center mt-4">
            <button
             className='bg-red-500 text-black p-2 rounded-lg hover:bg-red-200'
             onClick={() => {
             if (window.confirm('Are you sure you wish to delete this vehicle?')) {
-             deleteVehicle();
+             handleDeleteVehicle();
               }
              }}
              >
