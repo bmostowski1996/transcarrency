@@ -130,7 +130,8 @@ const ServiceReport: React.FC = () => {
         record: {
           ...dataToSubmit
         }
-      }
+      },
+      refetchQueries: [{ query: QUERY_ME }]
     });
 
     console.log(data);

@@ -32,7 +32,7 @@ const Dashboard = () => {
 
   const [deleteVehicle] = useMutation(DELETE_VEHICLE);
   const [removeServiceReport] = useMutation(REMOVE_SERVICE_RECORD);
-  const { loading, error, data } = useQuery(QUERY_ME);
+  const { loading, error, data, refetch } = useQuery(QUERY_ME);
 
   if (!loading) {
     console.log(data.me.vehicles);
@@ -81,12 +81,26 @@ const Dashboard = () => {
   useEffect(() => {
     if (loading || error || !data) return;
 
+    refetch(); 
+    
     try {
 
       const vehicle = data.me.vehicles[vehicleIndex];
       const serviceReports = vehicle.serviceRecords;
 
-      setServiceReport(serviceReports[serviceReportIndex]);
+      if (serviceReports.length > 0) {
+        setServiceReport(serviceReports[serviceReportIndex]);
+      } else {
+        setServiceReport({
+          date: null,
+          type: null,
+          mileage: null,
+          notes: null,
+          cost: null,
+          shopName: null
+        });
+      }
+      
       console.log(`Set Service Report: ${JSON.stringify(serviceReports[serviceReportIndex])}`);
 
     } catch {
@@ -102,7 +116,7 @@ const Dashboard = () => {
     };
     
 
-  }, [serviceReportIndex, loading, error]);
+  }, [vehicleIndex, serviceReportIndex, loading, error]);
 
   // For when we first log in...
   useEffect(() => {
@@ -235,7 +249,11 @@ const Dashboard = () => {
       data.me.vehicles[vehicleIndex].serviceRecords.length < 1) {
       
       return (<div className='service-report mx-auto w-7/8'>
-        <h4 className="text-black text-center"> No service reports to display</h4>
+        <div className='flex justify-center p-6 gap-4'>
+          <button className='bg-black text-white p-2 rounded-lg hover:bg-gray-500' onClick={() => navigate('/servicereport')}>
+            Add New Service Report
+          </button>
+        </div>
         </div>);
     }
 
