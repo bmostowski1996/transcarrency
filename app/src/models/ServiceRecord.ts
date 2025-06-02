@@ -15,7 +15,8 @@ export interface IServiceRecord extends Document {
 const serviceRecordSchema = new Schema<IServiceRecord>(
   {
     date: {
-      type: String,
+      type: Date,
+      required: true
     },
     type: {
       type: String,
@@ -38,8 +39,7 @@ const serviceRecordSchema = new Schema<IServiceRecord>(
     },
     vehicle: {
       type: Schema.Types.ObjectId,
-      ref: 'Vehicle',
-      required: true
+      ref: 'Vehicle'
     }
   },
   {

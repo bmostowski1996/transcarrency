@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 import { useMutation } from '@apollo/client';
 import { REGISTER_VEHICLE } from '../utils/mutations';
+import { QUERY_ME } from '../utils/queries';
 
 // Huge mistake to not be using this at some point...
 import { useNavigate } from 'react-router-dom';
@@ -100,6 +101,7 @@ const AddVehicle: React.FC = () => {
             vin: formData.vin,
             mileage: parseInt(formData.mileage)
           },
+          refetchQueries: [{ query: QUERY_ME }]
         },
       });
       console.log(data);

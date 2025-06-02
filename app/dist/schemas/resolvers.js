@@ -125,12 +125,16 @@ const resolvers = {
         transferOwnership: async (_, { vehicleId, newOwnerId }) => await Vehicle.findByIdAndUpdate(vehicleId, { owner: newOwnerId }, { new: true }),
         // Add a new service record to a vehicle
         addServiceRecord: async (_, { vehicleId, record }) => {
+            // Create the new service record and associate it with the vehicle
             const newRecord = await ServiceRecord.create({ ...record, vehicle: vehicleId });
-            console.log(newRecord);
-            const vehicle = await Vehicle.findByIdAndUpdate(vehicleId, { $push: { serviceRecords: newRecord._id }, new: true });
-            console.log(vehicle);
-            if (!vehicle)
-                throw new Error('Vehicle not found');
+            // console.log(newRecord);
+            // Identify the vehicle and update it with the new service record
+            await Vehicle.findByIdAndUpdate(vehicleId, { $push: { serviceRecords: newRecord._id }, new: true });
+            // if (!vehicle) throw new Error('Vehicle not found');
+            // console.log(vehicle);
+            // Service records could be added out of order. *Sort* the serviceRecords array so that it is in chronological order.
+            // const vehicle = await Vehicle.findById(vehicleId).populate('serviceRecords'); 
+            // vehicle?.serviceRecords.sort((a,b) =>  new Date(a.date) - new Date(b.date));
             return await Vehicle.findById(vehicleId).populate('serviceRecords');
         },
         // Remove a service record from a vehicle

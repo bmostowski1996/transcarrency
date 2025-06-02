@@ -2,7 +2,8 @@
 import { Schema, model } from 'mongoose';
 const serviceRecordSchema = new Schema({
     date: {
-        type: String,
+        type: Date,
+        required: true
     },
     type: {
         type: String,
@@ -25,8 +26,7 @@ const serviceRecordSchema = new Schema({
     },
     vehicle: {
         type: Schema.Types.ObjectId,
-        ref: 'Vehicle',
-        required: true
+        ref: 'Vehicle'
     }
 }, {
     timestamps: true,
