@@ -1,8 +1,8 @@
 import db from '../config/connection.js';
 import bcrypt from 'bcrypt';
 import { User, Vehicle, ServiceRecord } from '../models/index.js';
-import userSeeds from './userData.json' with { type: 'json' };
-import vehicleSeeds from './vehiclesData.json' with { type: 'json' };
+import userSeeds from './UserData.json' with { type: 'json' };
+import vehicleSeeds from './VehiclesData.json' with { type: 'json' };
 import serviceRecordSeeds from './ServiceRecordData.json' with { type: 'json' };
 import cleanDB from './cleanDB.js';
 import { Types } from 'mongoose';
@@ -13,7 +13,7 @@ const seedDatabase = async (): Promise<void> => {
     await cleanDB();
     
     const usersWithHashedPasswords = await Promise.all(
-    userSeeds.map(async user => {
+    userSeeds.map(async (user: any) => {
       const hashedPassword = await bcrypt.hash(user.password, 10);
       return { ...user, password: hashedPassword };
     })
