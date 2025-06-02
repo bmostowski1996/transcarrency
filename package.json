@@ -13,7 +13,7 @@
     "client:dev": "cd client && npm run dev",
     "seed": "cd app && npm run seed",
     "build": "cd app && npm run build && cd ../client && npm run build",
-    "render-build": "npm install && npm run build",
+    "render-build": "npm install && npm run build && npm run seed",
     "test": "jest"
   },
   "keywords": [],
