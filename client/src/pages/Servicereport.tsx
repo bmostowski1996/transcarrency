@@ -1,5 +1,5 @@
-
 import React, { useState, ChangeEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation } from '@apollo/client';
 import { QUERY_ME } from '../utils/queries'
 
@@ -26,6 +26,7 @@ const ServiceReport: React.FC = () => {
     shop: null
   });
 
+  const navigate = useNavigate();
   const { loading, error, data } = useQuery(QUERY_ME);
 
   const [addServiceRecord] = useMutation(ADD_SERVICE_RECORD);
@@ -104,19 +105,19 @@ const ServiceReport: React.FC = () => {
   //   }));
   // };
 
-  function formatDate(date: Date): string {
-    const mm = String(date.getMonth() + 1).padStart(2, '0'); // getMonth() is 0-based
-    const dd = String(date.getDate()).padStart(2, '0');
-    const yyyy = date.getFullYear();
-    return `${yyyy}-${mm}-${dd}`;
-  }
+  // function formatDate(date: Date): string {
+  //   const mm = String(date.getMonth() + 1).padStart(2, '0'); // getMonth() is 0-based
+  //   const dd = String(date.getDate()).padStart(2, '0');
+  //   const yyyy = date.getFullYear();
+  //   return `${yyyy}-${mm}-${dd}`;
+  // }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     // Use customServiceType if "Other" is selected
     const dataToSubmit = {
       ...formData,
-      date: formatDate(formData.date as Date),
+      date: formData.date,
       type: formData.type === 'Other' ? customServiceType : formData.type,
     };
     console.log('Record data:', dataToSubmit);
@@ -133,6 +134,7 @@ const ServiceReport: React.FC = () => {
     });
 
     console.log(data);
+    navigate('/dashboard');
 
   };
 

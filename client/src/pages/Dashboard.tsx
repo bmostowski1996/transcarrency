@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
 
 // Placeholder code while the login screen is still being put together
-import { DELETE_VEHICLE } from '../utils/mutations';
+import { DELETE_VEHICLE, REMOVE_SERVICE_RECORD } from '../utils/mutations';
 import { QUERY_ME } from '../utils/queries'
 
 import Auth from '../utils/auth';
@@ -31,6 +31,7 @@ interface ServiceReportData {
 const Dashboard = () => {
 
   const [deleteVehicle] = useMutation(DELETE_VEHICLE);
+  const [removeServiceReport] = useMutation(REMOVE_SERVICE_RECORD);
   const { loading, error, data } = useQuery(QUERY_ME);
 
   if (!loading) {
@@ -44,6 +45,10 @@ const Dashboard = () => {
 
   // Determines the current vehicle to display in the dashboard
   const [vehicleIndex, setVehicleIndex] = useState<number>(0);
+  
+  // Determine the current service report to display in the dashboard
+  const [serviceReportIndex, setServiceReportIndex] = useState<number>(0);
+
   const [serviceReport, setServiceReport] = useState<ServiceReportData>({
     date: null,
     type: null,
@@ -61,28 +66,31 @@ const Dashboard = () => {
     {parameter: 'Notes', icon: clipboardIcon, value: serviceReport.notes},
     {parameter: 'Cost', icon: moneyIcon, value: serviceReport.cost},
     {parameter: 'Shop Name', icon: carServiceIcon, value: serviceReport.shopName}
-  ]
+  ];
+
+  function formatDate(date: Date): string {
+    console.log(`Formatting date: ${date}`);
+    const mm = String(date.getMonth() + 1).padStart(2, '0'); // getMonth() is 0-based
+    const dd = String(date.getDate()).padStart(2, '0');
+    const yyyy = date.getFullYear();
+    console.log(`Formatted date: ${yyyy}-${mm}-${dd}`);
+    return `${yyyy}-${mm}-${dd}`;
+  }
 
   // Whenever the vehicle index is changed, we *also* need to update the most recent service report too!
   useEffect(() => {
     if (loading || error || !data) return;
 
     try {
+
       const vehicle = data.me.vehicles[vehicleIndex];
       const serviceReports = vehicle.serviceRecords;
-      
-      const mostRecent = serviceReports.reduce((latest: any, current: any) => {
-        const parseDate = (str: string) => {
-          const [day, month, year] = str.split('-').map(Number);
-          return new Date(year, month - 1, day); // months are 0-based
-        };
 
-        return parseDate(current.date) < parseDate(latest.date) ? current : latest;
-      });
+      setServiceReport(serviceReports[serviceReportIndex]);
+      console.log(`Set Service Report: ${JSON.stringify(serviceReports[serviceReportIndex])}`);
 
-      console.log(mostRecent);
-      setServiceReport(mostRecent);
     } catch {
+
       setServiceReport({
         date: null,
         type: null,
@@ -91,10 +99,10 @@ const Dashboard = () => {
         cost: null,
         shopName: null
       })
-    }
+    };
     
 
-  }, [vehicleIndex, data, loading, error]);
+  }, [serviceReportIndex, loading, error]);
 
   // For when we first log in...
   useEffect(() => {
@@ -106,6 +114,8 @@ const Dashboard = () => {
     };
 
     setVehicleIndex(0);
+    setServiceReportIndex(0);
+
   },[]);
   
   const getVehicleName = () => {
@@ -117,12 +127,14 @@ const Dashboard = () => {
     }
   };
 
+  // For buttons handling previous and next vehicles
   function handlePrevVehicle(_event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
     let val = vehicleIndex - 1;
     if (val < 0) {
       val = data.me.vehicles.length - 1;
     }
     setVehicleIndex(val);
+    setServiceReportIndex(0); // Reset service report index when changing vehicle
   }
 
   function handleNextVehicle(_event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
@@ -131,6 +143,52 @@ const Dashboard = () => {
       val = 0;
     }
     setVehicleIndex(val);
+    setServiceReportIndex(0); // Reset service report index when changing vehicle
+  }
+
+  // For buttons handling previous and next service reports
+  function handlePrevServiceReport(_event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
+    let val = serviceReportIndex - 1;
+    if (val < 0) {
+      val = data.me.vehicles[vehicleIndex].serviceRecords.length - 1;
+    }
+    setServiceReportIndex(val);
+  }
+
+  function handleNextServiceReport(_event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
+    let val = serviceReportIndex + 1;
+    if (val >= data.me.vehicles[vehicleIndex].serviceRecords.length) {
+      val = 0;
+    }
+    setServiceReportIndex(val);  
+  }
+
+  const handleDeleteServiceReport = async (): Promise<void> => {
+    if (loading || error || !data) return;
+
+    try {
+      const vehicle = data.me.vehicles[vehicleIndex];
+
+      console.log(`Deleting service report for vehicle: ${vehicle._id}`);
+      console.log(`Service record ID: ${data.me.vehicles[vehicleIndex].serviceRecords[serviceReportIndex]._id}`);
+
+      if (!vehicle) {
+        console.error('Error: handleDeleteServiceReport: Vehicle not found');
+        return;
+      };
+
+      await removeServiceReport({
+        variables: {
+          vehicleId: data.me.vehicles[vehicleIndex]._id,
+          recordId: data.me.vehicles[vehicleIndex].serviceRecords[serviceReportIndex]._id
+        },
+        refetchQueries: [{ query: QUERY_ME }]
+      });
+      setServiceReportIndex(0);
+    } catch (err) {
+      console.error('Error deleting service report:', err);
+    };
+
   }
 
   const handleDeleteVehicle = async () => {
@@ -181,6 +239,23 @@ const Dashboard = () => {
         </div>);
     }
 
+    const displayValue = (item: any) => {
+      const date = item.value;
+
+      if (!date) return;
+
+      if (item.parameter === 'Date of Service') {
+        const parsedDate = typeof date === 'string' && /^\d+$/.test(date)
+        ? new Date(Number(date))
+        : new Date(date);
+        return formatDate(parsedDate);
+      } else {
+        return date;
+      }
+    }
+    
+    // For now, just try to place the buttons in there...
+    // We'll modify their locations later.
     return (
       <div className='service-report mx-auto w-7/8'>
         <h3 className='font-dashboard-h3'>Most Recent Service Report</h3>
@@ -191,17 +266,32 @@ const Dashboard = () => {
             <div className='flex flex-col items-center text-center' key={item.parameter}>
               <h3 className="service-report-text">{item.parameter}</h3>
               <img src={item.icon} style={{height: '15vh'}}></img>
-              <p className="text-xl text-black">{item.value instanceof Date ? item.value.toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'}) : item.value}</p>
+              <p className="text-xl text-black">{displayValue(item)}</p>
             </div>
           ))}
           
         </div>
-
+        
+        {/* Buttons to navigate between service reports */}
+        <div className='flex justify-center p-6 gap-4'>
+          <button className='bg-black text-white p-2 rounded-lg hover:bg-gray-500' onClick={handlePrevServiceReport}>
+            Previous Service Report
+          </button>
+          <button className='bg-black text-white p-2 rounded-lg hover:bg-gray-500' onClick={handleNextServiceReport}>
+            Next Service Report
+          </button>
+        </div>
+        
+        {/* Buttons to add or delete service reports */}
         <div className='flex justify-center p-6 gap-4'>
           <button className='bg-black text-white p-2 rounded-lg hover:bg-gray-500' onClick={() => navigate('/servicereport')}>
             Add New Service Report
           </button>
-          <button className='bg-black text-white p-2 rounded-lg hover:bg-gray-500'>
+          <button className='bg-red-500 text-white p-2 rounded-lg hover:bg-red-200' onClick={() => {
+            if (window.confirm('Are you sure you wish to delete this service report?')) {
+              handleDeleteServiceReport();
+            }
+             }}>
             Delete Service Report
           </button>
         </div>

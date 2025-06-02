@@ -94,7 +94,7 @@ export const REMOVE_SERVICE_RECORD = gql`
   mutation removeServiceRecord($vehicleId: ID!, $recordId: ID!) {
     removeServiceRecord(vehicleId: $vehicleId, recordId: $recordId) {
       _id
-      serviceHistory {
+      serviceRecords {
         _id
       }
     }
