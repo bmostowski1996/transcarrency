@@ -83,15 +83,8 @@ export const ADD_SERVICE_RECORD = gql`
   mutation addServiceRecord($vehicleId: ID!, $record: ServiceRecordInput!) {
     addServiceRecord(vehicleId: $vehicleId, record: $record) {
       _id
-      serviceHistory {
+      serviceRecords {
         _id
-        type
-        date
-        cost
-        mileage
-        notes
-        shop
-        invoiceUrl
       }
     }
   }

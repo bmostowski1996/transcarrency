@@ -1,31 +1,34 @@
 
 import React, { useState, ChangeEvent } from 'react';
-import { useQuery, gql } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client';
 import { QUERY_ME } from '../utils/queries'
+
+import { ADD_SERVICE_RECORD } from '../utils/mutations';
 
 
 interface ServiceReportData {
-  serviceDate: Date | null;
-  serviceType: null | 'Oil Change' | 'Brake Replacement' | 'Tire Rotation' | 'Battery Replacement' | 'Inspection' | 'Other';
+  date: Date | null;
+  type: null | 'Oil Change' | 'Brake Replacement' | 'Tire Rotation' | 'Battery Replacement' | 'Inspection' | 'Other';
   mileage: null | number;
   notes: null | string;
   cost: null | number;
-  shopName: string | null;
-  receipt?: File | null;
+  shop: string | null;
+  // receipt?: File | null;
 }
 
 const ServiceReport: React.FC = () => {
   const [formData, setFormData] = useState<ServiceReportData>({
-    serviceDate: null,
-    serviceType: null,
+    date: null,
+    type: null,
     mileage: null,
     notes: null,
     cost: null,
-    shopName: null,
-    receipt: null,
+    shop: null
   });
 
   const { loading, error, data } = useQuery(QUERY_ME);
+
+  const [addServiceRecord] = useMutation(ADD_SERVICE_RECORD);
    
   if (!loading) {
     console.log(data.me.vehicles);
@@ -39,13 +42,14 @@ const ServiceReport: React.FC = () => {
 
   const [customServiceType, setCustomServiceType] = useState('');
 
+
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
 
-    if (name === 'serviceType') {
+    if (name === 'type') {
       setFormData(prev => ({
         ...prev,
-        serviceType: value as ServiceReportData['serviceType'],
+        type: value as ServiceReportData['type'],
       }));
       // Reset custom service type if not "Other"
       if (value !== 'Other') setCustomServiceType('');
@@ -62,25 +66,25 @@ const ServiceReport: React.FC = () => {
     }
   };
 
-  const Header: React.FC = () => (
-    <div className="bg-black text-white flex items-center justify-between p-4">
-      <div className="flex items-center">
-        <img src="/logo.png" alt="Logo" className="h-10 mr-4" />
-        <h1 className="text-lg font-bold">TransCarney</h1>
-      </div>
-      <nav className="space-x-6">
-        <a href="#" className="hover:underline">Dashboard</a>
-        <a href="#" className="hover:underline">My Vehicles</a>
-        <a href="#" className="hover:underline font-bold">Service Reports</a>
-      </nav>
-      <button className="text-white">
-        <i className="fas fa-bars"></i>
-      </button>
-    </div>
-  );
-
+  // const Header: React.FC = () => (
+  //   <div className="bg-black text-white flex items-center justify-between p-4">
+  //     <div className="flex items-center">
+  //       <img src="/logo.png" alt="Logo" className="h-10 mr-4" />
+  //       <h1 className="text-lg font-bold">TransCarney</h1>
+  //     </div>
+  //     <nav className="space-x-6">
+  //       <a href="#" className="hover:underline">Dashboard</a>
+  //       <a href="#" className="hover:underline">My Vehicles</a>
+  //       <a href="#" className="hover:underline font-bold">Service Reports</a>
+  //     </nav>
+  //     <button className="text-white">
+  //       <i className="fas fa-bars"></i>
+  //     </button>
+  //   </div>
+  // );
 
   // Handle custom service type input
+  
   const handleCustomServiceTypeChange = (e: ChangeEvent<HTMLInputElement>) => {
     setCustomServiceType(e.target.value);
   };
@@ -88,27 +92,48 @@ const ServiceReport: React.FC = () => {
   const handleDateChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
       ...prev,
-      serviceDate: e.target.value ? new Date(e.target.value) : null,
+      date: e.target.value ? new Date(e.target.value) : null,
     }));
   };
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
-    setFormData(prev => ({
-      ...prev,
-      receipt: file,
-    }));
-  };
+  // const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  //   const file = e.target.files?.[0] || null;
+  //   setFormData(prev => ({
+  //     ...prev,
+  //     receipt: file,
+  //   }));
+  // };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  function formatDate(date: Date): string {
+    const mm = String(date.getMonth() + 1).padStart(2, '0'); // getMonth() is 0-based
+    const dd = String(date.getDate()).padStart(2, '0');
+    const yyyy = date.getFullYear();
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     // Use customServiceType if "Other" is selected
     const dataToSubmit = {
       ...formData,
-      serviceType: formData.serviceType === 'Other' ? customServiceType : formData.serviceType,
+      date: formatDate(formData.date as Date),
+      type: formData.type === 'Other' ? customServiceType : formData.type,
     };
-    console.log('Submitted data:', dataToSubmit);
+    console.log('Record data:', dataToSubmit);
+    console.log('Vehicle ID:', selectedVehicleId);
+
     // You can integrate backend submission logic here
+    const { data } = await addServiceRecord({
+      variables: {
+        vehicleId: selectedVehicleId,
+        record: {
+          ...dataToSubmit
+        }
+      }
+    });
+
+    console.log(data);
+
   };
 
   const handleDelete = () => {
@@ -118,9 +143,6 @@ const ServiceReport: React.FC = () => {
       // Optionally, reset form or navigate away
     }
   };
-
-  // const [selectedVehicleId, setSelectedVehicleId] = useState<string>('683bc9d84e75b038d3cec82c');
-  // const [selectedVehicleId, setSelectedVehicleId] = useState<string>('683bc9d84e75b038d3cec82d');
 
   return (
     
@@ -175,7 +197,7 @@ const ServiceReport: React.FC = () => {
             <label className="block mb-1 font-medium text-black">Service Date</label>
             <input
               type="date"
-              name="serviceDate"
+              name="date"
               onChange={handleDateChange}
               className="w-full border p-2 rounded text-black"
             />
@@ -185,8 +207,8 @@ const ServiceReport: React.FC = () => {
         <div>
           <label className="block mb-1 font-medium text-black">Service Type</label>
           <select
-            name="serviceType"
-            value={formData.serviceType ?? ''}
+            name="type"
+            value={formData.type ?? ''}
             onChange={handleChange}
             className="w-full border p-2 rounded text-black"
           >
@@ -198,7 +220,7 @@ const ServiceReport: React.FC = () => {
             <option value="Inspection">Inspection</option>
             <option value="Other">Other</option>
           </select>
-          {formData.serviceType === "Other" && (
+          {formData.type === "Other" && (
             <input
               type="text"
               maxLength={80}
@@ -264,13 +286,13 @@ const ServiceReport: React.FC = () => {
           <input
             type="text"
             name="shopName"
-            value={formData.shopName ?? ''}
+            value={formData.shop ?? ''}
             onChange={handleChange}
             className="w-full border p-2 rounded text-black"
           />
         </div>
 
-        <div>
+        {/* <div>
           <label className="block mb-1 font-medium text-black">Upload Receipt (optional)</label>
           <input
             type="file"
@@ -281,7 +303,7 @@ const ServiceReport: React.FC = () => {
           {formData.receipt && (
             <p className="text-sm mt-1 text-green-600">Receipt uploaded: {formData.receipt.name}</p>
           )}
-        </div>
+        </div> */}
 
       {/* <div className="flex justify-center space-x-9 mt-4">
         <button className="flex justify-center bg-black text-white py-2 px-4 rounded mt-2">Add To Reminders</button>

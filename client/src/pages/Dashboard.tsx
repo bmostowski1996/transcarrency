@@ -77,7 +77,7 @@ const Dashboard = () => {
           return new Date(year, month - 1, day); // months are 0-based
         };
 
-        return parseDate(current.date) > parseDate(latest.date) ? current : latest;
+        return parseDate(current.date) < parseDate(latest.date) ? current : latest;
       });
 
       console.log(mostRecent);
@@ -181,7 +181,8 @@ const Dashboard = () => {
         </div>);
     }
 
-    return (<div className='service-report mx-auto w-7/8'>
+    return (
+      <div className='service-report mx-auto w-7/8'>
         <h3 className='font-dashboard-h3'>Most Recent Service Report</h3>
         {/* Grid of service report details */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-4 bg-mint-100 rounded-xl">
@@ -195,7 +196,15 @@ const Dashboard = () => {
           ))}
           
         </div>
-        
+
+        <div className='flex justify-center p-6 gap-4'>
+          <button className='bg-black text-white p-2 rounded-lg hover:bg-gray-500' onClick={() => navigate('/servicereport')}>
+            Add New Service Report
+          </button>
+          <button className='bg-black text-white p-2 rounded-lg hover:bg-gray-500'>
+            Delete Service Report
+          </button>
+        </div>
       </div>);
   };
    

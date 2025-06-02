@@ -25,7 +25,8 @@ const serviceRecordSchema = new Schema({
     },
     vehicle: {
         type: Schema.Types.ObjectId,
-        ref: 'Vehicle'
+        ref: 'Vehicle',
+        required: true
     }
 }, {
     timestamps: true,

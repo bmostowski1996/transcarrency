@@ -163,15 +163,19 @@ const resolvers = {
     // Add a new service record to a vehicle
     addServiceRecord: async (_: any, { vehicleId, record }: any) => {
       const newRecord = await ServiceRecord.create({ ...record, vehicle: vehicleId });
-      await Vehicle.findByIdAndUpdate(vehicleId, { $push: { serviceHistory: newRecord._id } });
-      return await Vehicle.findById(vehicleId).populate('serviceHistory');
+      console.log(newRecord);
+      const vehicle = await Vehicle.findByIdAndUpdate(vehicleId, { $push: { serviceRecords: newRecord._id }, new: true });
+      console.log(vehicle);
+      if (!vehicle) throw new Error('Vehicle not found');
+
+      return await Vehicle.findById(vehicleId).populate('serviceRecords');
     },
 
     // Remove a service record from a vehicle
     removeServiceRecord: async (_: any, { vehicleId, recordId }: any) => {
       await ServiceRecord.findByIdAndDelete(recordId);
-      await Vehicle.findByIdAndUpdate(vehicleId, { $pull: { serviceHistory: recordId } });
-      return await Vehicle.findById(vehicleId).populate('serviceHistory');
+      await Vehicle.findByIdAndUpdate(vehicleId, { $pull: { serviceRecords: recordId } });
+      return await Vehicle.findById(vehicleId).populate('serviceRecords');
     },
 
     // Upload an invoice to a specific service record

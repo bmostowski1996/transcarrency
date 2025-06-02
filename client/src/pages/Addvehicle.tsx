@@ -6,16 +6,9 @@ import { REGISTER_VEHICLE } from '../utils/mutations';
 // Huge mistake to not be using this at some point...
 import { useNavigate } from 'react-router-dom';
 
-import Auth from '../utils/auth';
-
 
 // import DOS from '../assets/icons-two/2014.png'; // Adjust the path as necessary
-import calendarIcon from '../assets/icons-two/calendar_icon.png';
-import serviceIcon from '../assets/icons-two/service_icon.png';
 import speedometerIcon from '../assets/icons-two/speedometer_icon.png';
-import clipboardIcon from '../assets/icons-two/notes_icon.png';
-import carServiceIcon from '../assets/icons-two/car_service_icon.png';
-import moneyIcon from '../assets/icons-two/money_icon.png';
 import modelIcon from '../assets/icons-two/People in Car Side View.png'; // Adjust the path as necessary
 import makeIcon from '../assets/icons-two/Quad Bike.png'; // Adjust the path as necessary
 import yearIcon from '../assets/icons-two/2014.png'; // Adjust the path as necessary
@@ -97,7 +90,7 @@ const AddVehicle: React.FC = () => {
         vin: formData.vin,
         mileage: parseInt(formData.mileage)   // Same here
       });
-      
+
       const { data } = await registerVehicle({
         variables: {
           input: {

@@ -185,7 +185,7 @@ const MaintenancePage: React.FC = () => {
 
   const inputClasses = "w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm";
   const labelClasses = "block text-sm font-medium text-gray-700 mb-1";
-  const buttonPrimaryClasses = "w-full px-4 py-2 bg-blue-600 text-black font-semibold rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50";
+  // const buttonPrimaryClasses = "w-full px-4 py-2 bg-blue-600 text-black font-semibold rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50";
   const buttonSecondaryClasses = "px-3 py-2 bg-green-600 text-black font-semibold rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50";
   const buttonDangerClasses = "px-3 py-1 bg-red-500 text-black text-xs font-medium rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1";
   const buttonNeutralClasses = "px-3 py-2 bg-gray-500 text-black text-sm font-medium rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-1";
