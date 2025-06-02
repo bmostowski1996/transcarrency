@@ -37,7 +37,7 @@ const startApolloServer = async () => {
   // We are not allowed 
   // app.use('/', googleCalendarController);
 
-  if (process.env.NODE_ENV === 'production') {
+  if (/*process.env.NODE_ENV === 'production'*/ true) {
     app.use(express.static(path.join(__dirname, '../../client/dist')));
 
     app.get('*', (_req: Request, res: Response) => {
