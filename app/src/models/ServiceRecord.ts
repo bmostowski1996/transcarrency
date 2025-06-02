@@ -38,7 +38,8 @@ const serviceRecordSchema = new Schema<IServiceRecord>(
     },
     vehicle: {
       type: Schema.Types.ObjectId,
-      ref: 'Vehicle'
+      ref: 'Vehicle',
+      required: true
     }
   },
   {

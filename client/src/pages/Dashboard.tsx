@@ -9,12 +9,12 @@ import { QUERY_ME } from '../utils/queries'
 import Auth from '../utils/auth';
 
 // Import icons
-import calendarIcon from '../assets/service_icons/calendar_icon.png';
-import serviceIcon from '../assets/service_icons/service_icon.png';
-import speedometerIcon from '../assets/service_icons/speedometer_icon.png';
-import clipboardIcon from '../assets/service_icons/notes_icon.png';
-import carServiceIcon from '../assets/service_icons/car_service_icon.png';
-import moneyIcon from '../assets/service_icons/money_icon.png';
+import calendarIcon from '../assets/icons-two/calendar_icon.png';
+import serviceIcon from '../assets/icons-two/service_icon.png';
+import speedometerIcon from '../assets/icons-two/speedometer_icon.png';
+import clipboardIcon from '../assets/icons-two/notes_icon.png';
+import carServiceIcon from '../assets/icons-two/car_service_icon.png';
+import moneyIcon from '../assets/icons-two/money_icon.png';
 import ford_mustang from '../assets/ford_mustang.png';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
@@ -77,7 +77,7 @@ const Dashboard = () => {
           return new Date(year, month - 1, day); // months are 0-based
         };
 
-        return parseDate(current.date) > parseDate(latest.date) ? current : latest;
+        return parseDate(current.date) < parseDate(latest.date) ? current : latest;
       });
 
       console.log(mostRecent);
@@ -181,13 +181,14 @@ const Dashboard = () => {
         </div>);
     }
 
-    return (<div className='service-report mx-auto w-7/8'>
+    return (
+      <div className='service-report mx-auto w-7/8'>
         <h3 className='font-dashboard-h3'>Most Recent Service Report</h3>
         {/* Grid of service report details */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-4 bg-mint-100 rounded-xl">
           
           {serviceReportData.map(item => (
-            <div className='flex flex-col items-center text-center'>
+            <div className='flex flex-col items-center text-center' key={item.parameter}>
               <h3 className="service-report-text">{item.parameter}</h3>
               <img src={item.icon} style={{height: '15vh'}}></img>
               <p className="text-xl text-black">{item.value instanceof Date ? item.value.toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'}) : item.value}</p>
@@ -195,7 +196,15 @@ const Dashboard = () => {
           ))}
           
         </div>
-        
+
+        <div className='flex justify-center p-6 gap-4'>
+          <button className='bg-black text-white p-2 rounded-lg hover:bg-gray-500' onClick={() => navigate('/servicereport')}>
+            Add New Service Report
+          </button>
+          <button className='bg-black text-white p-2 rounded-lg hover:bg-gray-500'>
+            Delete Service Report
+          </button>
+        </div>
       </div>);
   };
    

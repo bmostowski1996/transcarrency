@@ -59,17 +59,11 @@ export const DELETE_VEHICLE = gql`
     }
   }
 `
-// How does this mutation work?
-// I don't think our code uses it right now...
+// For adding a vehicle to the new user
 export const REGISTER_VEHICLE = gql`
-  mutation registerVehicle($ownerId: ID!, $input: VehicleInput!) {
-    registerVehicle(ownerId: $ownerId, input: $input) {
+  mutation registerVehicle($input: VehicleInput!) {
+    registerVehicle(input: $input) {
       _id
-      make
-      model
-      year
-      vin
-      mileage
     }
   }
 `;
@@ -89,15 +83,8 @@ export const ADD_SERVICE_RECORD = gql`
   mutation addServiceRecord($vehicleId: ID!, $record: ServiceRecordInput!) {
     addServiceRecord(vehicleId: $vehicleId, record: $record) {
       _id
-      serviceHistory {
+      serviceRecords {
         _id
-        type
-        date
-        cost
-        mileage
-        notes
-        shop
-        invoiceUrl
       }
     }
   }

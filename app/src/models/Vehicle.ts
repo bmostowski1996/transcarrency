@@ -35,7 +35,8 @@ const vehicleSchema = new Schema(
     },
     serviceRecords: [{
       type: Schema.Types.ObjectId,
-      ref: 'ServiceRecord'
+      ref: 'ServiceRecord',
+      default: []
     }]
   },
   {
